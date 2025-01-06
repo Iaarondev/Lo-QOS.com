@@ -3,100 +3,144 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Welcome to Lo-QOS</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: #f4f4f9;
-            color: #333;
-        }
-        header {
-            background-color: #333;
-            color: #fff;
-            padding: 20px 0;
-            text-align: center;
-        }
-        section {
-            max-width: 800px;
-            margin: 20px auto;
-            padding: 20px;
-            background: #fff;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-        }
-        h1, h2, h3 {
-            color: #444;
-        }
-        .subscribe-form {
-            margin-top: 20px;
-        }
-        .subscribe-form input, .subscribe-form button {
-            padding: 10px;
-            font-size: 16px;
-            margin: 5px 0;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-        }
-        .subscribe-form button {
-            background-color: #333;
-            color: #fff;
-            cursor: pointer;
-        }
-        .subscribe-form button:hover {
-            background-color: #555;
-        }
-        footer {
-            text-align: center;
-            padding: 20px 0;
-            background-color: #333;
-            color: #fff;
-            position: fixed;
-            width: 100%;
-            bottom: 0;
-        }
-    </style>
+    <title>Lo-QOS - Quantum Operating System</title>
+    <link rel="stylesheet" href="assets/css/styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
 </head>
 <body>
     <header>
-        <h1>Welcome to Lo-QOS</h1>
-        <p>The Future of Decentralized Operating Systems</p>
+        <div class="header-content">
+            <h1>Lo-QOS</h1>
+            <nav>
+                <ul>
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="pages/features/staking.html">Staking</a></li>
+                    <li><a href="pages/features/dex.html">DEX</a></li>
+                    <li><a href="pages/features/marketplace.html">Marketplace</a></li>
+                    <li><a href="pages/docs/api.html">API</a></li>
+                    <li><a href="pages/tutorials/getting-started.html">Get Started</a></li>
+                </ul>
+            </nav>
+        </div>
     </header>
+    <main>
+        <section class="hero">
+            <h2>Welcome to Lo-QOS</h2>
+            <p>The next-generation quantum-ready operating system with integrated AI, blockchain, and distributed computing capabilities.</p>
+            <div class="stats-container">
+                <div class="stat">
+                    <span class="stat-value">12%</span>
+                    <span class="stat-label">Max Staking APY</span>
+                </div>
+                <div class="stat">
+                    <span class="stat-value">0.1%</span>
+                    <span class="stat-label">DEX Fees</span>
+                </div>
+                <div class="stat">
+                    <span class="stat-value">4</span>
+                    <span class="stat-label">Blockchain Layers</span>
+                </div>
+            </div>
+            <div class="cta-buttons">
+                <a href="pages/tutorials/getting-started.html" class="cta-primary">Get Started</a>
+                <a href="pages/features/staking.html" class="cta-secondary">Start Staking</a>
+            </div>
+            <div class="quantum-particles" id="particles-js"></div>
+        </section>
 
-    <section>
-        <h2>Overview</h2>
-        <p>Lo-QOS is a cutting-edge operating system that integrates lightweight design, blockchain, AI, and quantum computing technologies. Accessible directly through your browser, Lo-QOS enables seamless decentralized interactions and advanced computing capabilities.</p>
+        <section class="features">
+            <h3>Core Features</h3>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <div class="feature-icon staking-icon"></div>
+                    <h4>Staking</h4>
+                    <p>Earn up to 12% APY with flexible lock periods and automatic compounding.</p>
+                    <a href="pages/features/staking.html" class="feature-link">Learn More</a>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon dex-icon"></div>
+                    <h4>DEX Trading</h4>
+                    <p>Trade with minimal fees and AI-optimized routing across multiple chains.</p>
+                    <a href="pages/features/dex.html" class="feature-link">Start Trading</a>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon marketplace-icon"></div>
+                    <h4>dApp Marketplace</h4>
+                    <p>Discover and deploy quantum-ready applications for your needs.</p>
+                    <a href="pages/features/marketplace.html" class="feature-link">Explore Apps</a>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon mining-icon"></div>
+                    <h4>Quantum Mining</h4>
+                    <p>Contribute computing power and earn rewards through quantum-safe mining.</p>
+                    <a href="pages/features/mining.html" class="feature-link">Start Mining</a>
+                </div>
+            </div>
+        </section>
 
-        <h2>Key Features</h2>
-        <ul>
-            <li>Blockchain integration with 100 trillion token supply</li>
-            <li>Quantum computing support and quantum-safe encryption</li>
-            <li>AI-driven optimization for kernel, compiler, and shell processes</li>
-            <li>Custom dApps framework for innovative applications</li>
-            <li>Distributed hardware integration for personal supercomputers</li>
-            <li>Layered blockchain solutions for specialized use cases</li>
-        </ul>
-
-        <h2>Roadmap</h2>
-        <p>Here's what we are working on to bring Lo-QOS to life:</p>
-        <ol>
-            <li><strong>Q1 2025</strong>: Initial beta release with core OS features.</li>
-            <li><strong>Q2 2025</strong>: Integration of custom dApps framework and Layer 2 chains.</li>
-            <li><strong>Q3 2025</strong>: Decentralized Exchange (DEX) and Layer 3 chain development.</li>
-            <li><strong>Q4 2025</strong>: Full quantum computing support and governance analytics.</li>
-        </ol>
-
-        <h2>Subscribe for Updates</h2>
-        <p>Stay in the loop about our progress, upcoming features, and release dates. Subscribe to receive updates directly in your inbox.</p>
-        <form class="subscribe-form" action="/subscribe" method="POST">
-            <input type="email" name="email" placeholder="Enter your email" required>
-            <button type="submit">Subscribe</button>
-        </form>
-    </section>
-
+        <section class="rewards">
+            <h3>Reward Structure</h3>
+            <div class="rewards-grid">
+                <div class="reward-card">
+                    <h4>Validators</h4>
+                    <p class="reward-percentage">60%</p>
+                    <ul>
+                        <li>Network validation</li>
+                        <li>Block production</li>
+                        <li>Quantum computations</li>
+                    </ul>
+                </div>
+                <div class="reward-card">
+                    <h4>Miners</h4>
+                    <p class="reward-percentage">30%</p>
+                    <ul>
+                        <li>Resource provision</li>
+                        <li>Storage contribution</li>
+                        <li>Computational power</li>
+                    </ul>
+                </div>
+                <div class="reward-card">
+                    <h4>Treasury</h4>
+                    <p class="reward-percentage">10%</p>
+                    <ul>
+                        <li>Development fund</li>
+                        <li>Community grants</li>
+                        <li>Protocol upgrades</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+    </main>
     <footer>
-        <p>&copy; 2025 Lo-QOS. All rights reserved.</p>
+        <div class="footer-content">
+            <div class="footer-section">
+                <h4>Core Features</h4>
+                <ul>
+                    <li><a href="pages/features/staking.html">Staking</a></li>
+                    <li><a href="pages/features/mining.html">Mining</a></li>
+                    <li><a href="pages/features/dex.html">DEX</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h4>Resources</h4>
+                <ul>
+                    <li><a href="pages/docs/api.html">API Documentation</a></li>
+                    <li><a href="pages/docs/sdk.html">SDK Guide</a></li>
+                    <li><a href="pages/tutorials">Tutorials</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h4>Community</h4>
+                <ul>
+                    <li><a href="pages/governance.html">Governance</a></li>
+                    <li><a href="pages/ecosystem.html">Ecosystem</a></li>
+                    <li><a href="pages/contribute.html">Contribute</a></li>
+                </ul>
+            </div>
+        </div>
+        <p class="copyright">&copy; 2025 Lo-QOS. All rights reserved.</p>
     </footer>
+    <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
+    <script src="assets/js/main.js"></script>
 </body>
 </html>
