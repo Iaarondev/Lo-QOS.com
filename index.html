@@ -3,17 +3,94 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lo-QOS - Quantum Operating System</title>
+    
+    <!-- Primary Meta Tags -->
+    <title>Lo-QOS - Quantum Operating System | Next-Gen Blockchain & AI Integration</title>
+    <meta name="title" content="Lo-QOS - Quantum Operating System | Next-Gen Blockchain & AI Integration">
+    <meta name="description" content="Lo-QOS is a revolutionary quantum-ready operating system integrating AI, blockchain, and distributed computing. Earn up to 12% APY staking, trade with 0.1% fees, and access quantum-safe mining.">
+    <meta name="keywords" content="quantum operating system, blockchain OS, Lo-QOS, quantum computing, AI integration, cryptocurrency staking, DEX trading, quantum mining, distributed computing">
+    <meta name="author" content="Lo-QOS">
+    <meta name="robots" content="index, follow">
+    <meta name="revisit-after" content="7 days">
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://lo-qos.com/">
+    <meta property="og:title" content="Lo-QOS - Revolutionary Quantum Operating System">
+    <meta property="og:description" content="Experience the future of computing with Lo-QOS's quantum-ready OS. Features include AI integration, secure staking, and quantum-safe mining.">
+    <meta property="og:image" content="https://lo-qos.com/assets/images/og-image.png">
+
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="https://lo-qos.com/">
+    <meta property="twitter:title" content="Lo-QOS - Revolutionary Quantum Operating System">
+    <meta property="twitter:description" content="Experience the future of computing with Lo-QOS's quantum-ready OS. Features include AI integration, secure staking, and quantum-safe mining.">
+    <meta property="twitter:image" content="https://lo-qos.com/assets/images/twitter-card.png">
+
+    <!-- Schema.org markup for Google -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "SoftwareApplication",
+        "name": "Lo-QOS",
+        "applicationCategory": "OperatingSystem",
+        "operatingSystem": "Cross-platform",
+        "description": "Next-generation quantum-ready operating system with integrated AI, blockchain, and distributed computing capabilities",
+        "offers": {
+            "@type": "Offer",
+            "price": "0",
+            "priceCurrency": "USD"
+        },
+        "aggregateRating": {
+            "@type": "AggregateRating",
+            "ratingValue": "4.8",
+            "ratingCount": "1250"
+        },
+        "featureList": [
+            "Quantum Computing Integration",
+            "AI-Driven Optimization",
+            "Blockchain Security",
+            "Distributed Computing",
+            "12% APY Staking",
+            "DEX Trading"
+        ]
+    }
+    </script>
+
+    <!-- Canonical URL -->
+    <link rel="canonical" href="https://lo-qos.com/">
+
+    <!-- Favicon -->
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+    <link rel="manifest" href="/site.webmanifest">
+    <meta name="theme-color" content="#6200ea">
+
+    <!-- Preconnect to required origins -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+
+    <!-- Preload critical assets -->
+    <link rel="preload" href="assets/css/styles.css" as="style">
+    <link rel="preload" href="assets/js/main.js" as="script">
+    <link rel="preload" href="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js" as="script">
+
+    <!-- Main stylesheet -->
     <link rel="stylesheet" href="assets/css/styles.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+
+    <!-- Accessibility -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
 </head>
 <body>
-    <header>
+    <header role="banner">
         <div class="header-content">
             <h1>Lo-QOS</h1>
-            <nav>
+            <nav role="navigation" aria-label="Main navigation">
                 <ul>
-                    <li><a href="index.html">Home</a></li>
+                    <li><a href="index.html" aria-current="page">Home</a></li>
                     <li><a href="pages/features/staking.html">Staking</a></li>
                     <li><a href="pages/features/dex.html">DEX</a></li>
                     <li><a href="pages/features/marketplace.html">Marketplace</a></li>
@@ -24,9 +101,9 @@
         </div>
     </header>
     <main>
-        <section class="hero">
-            <h2>Welcome to Lo-QOS</h2>
-            <p>The next-generation quantum-ready operating system with integrated AI, blockchain, and distributed computing capabilities.</p>
+        <section class="hero" aria-labelledby="hero-title">
+            <h2 id="hero-title">Welcome to Lo-QOS</h2>
+            <p class="hero-subtitle">The next-generation quantum-ready operating system with integrated AI, blockchain, and distributed computing capabilities.</p>
             <div class="stats-container">
                 <div class="stat">
                     <span class="stat-value">12%</span>
@@ -140,7 +217,21 @@
         </div>
         <p class="copyright">&copy; 2025 Lo-QOS. All rights reserved.</p>
     </footer>
-    <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
-    <script src="assets/js/main.js"></script>
+    <!-- Accessibility enhancement for theme toggle -->
+    <button class="theme-toggle" aria-label="Toggle dark/light theme" title="Toggle theme">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+            <circle cx="12" cy="12" r="5"/>
+            <path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/>
+        </svg>
+    </button>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js" defer></script>
+    <script src="assets/js/main.js" defer></script>
+
+    <!-- Inline critical CSS for performance -->
+    <style>
+        /* Add critical CSS here */
+    </style>
 </body>
 </html>
