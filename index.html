@@ -1,168 +1,114 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
-    <!-- Primary Meta Tags -->
-    <title>
-      Lo-QOS - Quantum Computing Operating System | AI & Blockchain Integration
-    </title>
-    <meta
-      name="description"
-      content="Lo-QOS is a quantum-native operating system that integrates AI, blockchain, and distributed computing. Features quantum-safe encryption, Layer 4 chain architecture, and seamless dApp integration."
-    />
-    <meta
-      name="keywords"
-      content="quantum operating system, Lo-QOS, quantum computing, blockchain OS, AI integration, distributed computing, quantum-safe encryption, dApp platform, quantum dex, layer 4 blockchain"
-    />
-
-    <!-- Author and Robots Meta -->
-    <meta name="author" content="Lo-QOS Development Team" />
-    <meta
-      name="robots"
-      content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1"
-    />
-
-    <!-- Open Graph Tags for Social Sharing -->
-    <meta property="og:type" content="website" />
-    <meta property="og:url" content="https://lo-qos.com/" />
-    <meta
-      property="og:title"
-      content="Lo-QOS - Quantum Computing Operating System | AI & Blockchain Integration"
-    />
-    <meta
-      property="og:description"
-      content="Discover Lo-QOS: A next-generation quantum-native OS combining blockchain, AI, and distributed computing for unparalleled performance."
-    />
-    <meta
-      property="og:image"
-      content="https://lo-qos.com/assets/images/og-image.png"
-    />
-
-    <!-- Twitter Card Tags -->
-    <meta name="twitter:card" content="summary_large_image" />
-    <meta
-      name="twitter:title"
-      content="Lo-QOS - Quantum Computing Operating System"
-    />
-    <meta
-      name="twitter:description"
-      content="Revolutionize your computing experience with Lo-QOS: Quantum-native architecture, AI-powered optimization, and blockchain scalability."
-    />
-    <meta
-      name="twitter:image"
-      content="https://lo-qos.com/assets/images/twitter-card.png"
-    />
-
-    <!-- Canonical URL -->
-    <link rel="canonical" href="https://lo-qos.com/" />
-
-    <!-- Structured Data -->
-    <script type="application/ld+json">
-      {
-        "@context": "https://schema.org",
-        "@type": "SoftwareApplication",
-        "name": "Lo-QOS",
-        "applicationCategory": "OperatingSystem",
-        "operatingSystem": "Cross-platform",
-        "offers": {
-          "@type": "Offer",
-          "price": "0",
-          "priceCurrency": "USD"
-        },
-        "description": "A quantum-native operating system with AI, blockchain, and distributed computing capabilities",
-        "softwareVersion": "1.0.0-alpha",
-        "downloadUrl": "https://lo-qos.com/downloads/Lo-QOS_Alpha_Release.zip",
-        "screenshot": "https://lo-qos.com/assets/images/screenshot.png",
-        "aggregateRating": {
-          "@type": "AggregateRating",
-          "ratingValue": "4.9",
-          "ratingCount": "182"
-        }
-      }
-    </script>
-
-    <!-- Preloading Critical Assets -->
-    <link
-      rel="preload"
-      href="assets/fonts/inter-var.woff2"
-      as="font"
-      type="font/woff2"
-      crossorigin
-    />
-    <link rel="preload" href="assets/css/styles.css" as="style" />
-    <link rel="preload" href="assets/images/quantum-sphere.svg" as="image" />
-
-    <!-- Favicons -->
-    <link rel="icon" href="assets/icons/favicon-32x32.png" type="image/png" />
-    <link rel="apple-touch-icon" href="assets/icons/apple-touch-icon.png" />
-
-    <!-- Robots.txt Inclusion -->
-    <meta name="robots" content="index, follow" />
-
-    <!-- Security Headers -->
-    <meta
-      http-equiv="Content-Security-Policy"
-      content="default-src 'self'; script-src 'self' 'unsafe-inline' https://www.google-analytics.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:;"
-    />
-    <meta http-equiv="X-Content-Type-Options" content="nosniff" />
-    <meta http-equiv="X-Frame-Options" content="SAMEORIGIN" />
-
-    <!-- Stylesheet -->
-    <link rel="stylesheet" href="assets/css/styles.css" />
-  </head>
-  <body>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lo-QOS - Quantum Computing Operating System</title>
+    <link rel="stylesheet" href="assets/css/styles.css">
+</head>
+<body>
     <!-- Header -->
     <header>
-      <h1>Welcome to Lo-QOS</h1>
-      <nav>
-        <ul>
-          <li><a href="/">Home</a></li>
-          <li><a href="/features">Features</a></li>
-          <li><a href="/developers">Developers</a></li>
-          <li><a href="/marketplace">Marketplace</a></li>
-          <li><a href="/docs">Documentation</a></li>
-        </ul>
-      </nav>
+        <h1>Welcome to Lo-QOS</h1>
+        <nav>
+            <ul>
+                <li><a href="/">Home</a></li>
+                <li><a href="/features">Features</a></li>
+                <li><a href="/developers">Developers</a></li>
+                <li><a href="/marketplace">Marketplace</a></li>
+                <li><a href="/docs">Documentation</a></li>
+            </ul>
+        </nav>
     </header>
 
     <!-- Main Content -->
     <main>
-      <p>
-        Lo-QOS is the next-generation operating system combining quantum
-        computing, blockchain, and AI.
-      </p>
+        <section>
+            <h2>Lo-QOS: The Quantum Future</h2>
+            <p>Explore our cutting-edge operating system designed for quantum computing, blockchain, and AI integration.</p>
+        </section>
 
-      <!-- Quantum Emulation -->
-      <section>
-        <h2>Quantum Emulation</h2>
-        <div id="quantum-log"></div>
-        <button onclick="simulateQuantum()">Simulate Quantum Operation</button>
-      </section>
+        <!-- QRGB Example Section -->
+        <section>
+            <h2>QRGB Example</h2>
+            <p>Convert traditional RGB values into QRGB quantum states and visualize the output:</p>
+            <div id="qrgb-converter">
+                <label>
+                    R: <input type="number" id="rgb-r" min="0" max="255" value="255">
+                </label>
+                <label>
+                    G: <input type="number" id="rgb-g" min="0" max="255" value="128">
+                </label>
+                <label>
+                    B: <input type="number" id="rgb-b" min="0" max="255" value="64">
+                </label>
+                <button onclick="convertToQRGB()">Convert to QRGB</button>
+            </div>
+            <div id="qrgb-output">
+                <p><strong>QRGB Output:</strong></p>
+                <pre id="qrgb-result"></pre>
+                <div id="qrgb-visual" style="width: 100px; height: 100px; border: 1px solid #000;"></div>
+            </div>
+        </section>
+
+        <!-- Quantum Emulation Section -->
+        <section>
+            <h2>Quantum Emulation Example</h2>
+            <p>Simulate a quantum operation with emulated qubits:</p>
+            <div id="quantum-log"></div>
+            <button onclick="simulateQuantum()">Simulate Quantum Operation</button>
+        </section>
     </main>
 
     <!-- Footer -->
     <footer>
-      <p>&copy; 2025 Lo-QOS. All rights reserved.</p>
-      <p>
-        <a href="/privacy">Privacy Policy</a> |
-        <a href="/terms">Terms of Service</a>
-      </p>
+        <p>&copy; 2025 Lo-QOS. All rights reserved.</p>
     </footer>
 
-    <!-- Scripts -->
-    <script src="assets/js/protocol.js" defer></script>
-    <script src="assets/js/quantum-emulation.js" defer></script>
+    <!-- QRGB Script -->
     <script>
-      function simulateQuantum() {
-        const log = document.getElementById("quantum-log");
-        const qubitState = Math.random() < 0.5 ? 0 : 1; // Simulate a qubit
-        const message = `Qubit State: ${qubitState}`;
-        const logEntry = document.createElement("div");
-        logEntry.textContent = message;
-        log.appendChild(logEntry);
-      }
+        function convertToQuantumState(value) {
+            const normalized = value / 255;
+            if (normalized <= 0.33) return 0;
+            if (normalized <= 0.66) return 0.5;
+            return 1;
+        }
+
+        function convertToQRGB() {
+            const r = document.getElementById("rgb-r").value;
+            const g = document.getElementById("rgb-g").value;
+            const b = document.getElementById("rgb-b").value;
+
+            const qR = convertToQuantumState(r);
+            const qG = convertToQuantumState(g);
+            const qB = convertToQuantumState(b);
+
+            const entanglementState = ((qR * 9) + (qG * 3) + qB) / 13;
+
+            const result = {
+                QRGB: { r: qR, g: qG, b: qB },
+                EntanglementState: entanglementState.toFixed(2)
+            };
+
+            // Update Output
+            document.getElementById("qrgb-result").textContent = JSON.stringify(result, null, 2);
+
+            // Update Visual
+            const visual = document.getElementById("qrgb-visual");
+            visual.style.backgroundColor = `rgb(${r}, ${g}, ${b})`;
+        }
     </script>
-  </body>
+
+    <!-- Quantum Emulation Script -->
+    <script>
+        function simulateQuantum() {
+            const log = document.getElementById("quantum-log");
+            const qubitState = Math.random() < 0.5 ? 0 : 1; // Simulate a qubit state
+            const message = `Qubit State: ${qubitState}`;
+            const logEntry = document.createElement("div");
+            logEntry.textContent = message;
+            log.appendChild(logEntry);
+        }
+    </script>
+</body>
 </html>
