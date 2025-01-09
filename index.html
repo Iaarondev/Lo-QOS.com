@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="en">
-    
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -27,6 +26,23 @@
         <section>
             <h2>Lo-QOS: The Quantum Future</h2>
             <p>Explore our cutting-edge operating system designed for quantum computing, blockchain, and AI integration.</p>
+        </section>
+
+        <!-- Quantum File Type Example Section -->
+        <section>
+            <h2>Quantum File Types (Q-Formats)</h2>
+            <p>Experience a new way to represent common file formats using quantum principles:</p>
+            <div id="q-file-types">
+                <ul>
+                    <li><strong>Qmp3</strong>: Quantum Audio File (smaller, highly compressed, entangled metadata)</li>
+                    <li><strong>Qmp4</strong>: Quantum Video File (adaptive quantum frames for efficient streaming)</li>
+                    <li><strong>Qjpeg</strong>: Quantum Image File (compressed with Q-algorithms, resolution-specific superposition)</li>
+                    <li><strong>Qjs</strong>: Quantum Script File (optimized JS for quantum environments)</li>
+                    <li><strong>Qcss</strong>: Quantum Style File (dynamic and responsive CSS with quantum-enhanced rendering)</li>
+                </ul>
+                <button onclick="simulateQFile()">Simulate Quantum File Usage</button>
+                <div id="q-file-log"></div>
+            </div>
         </section>
 
         <!-- QRGB Example Section -->
@@ -66,8 +82,9 @@
         <p>&copy; 2025 Lo-QOS. All rights reserved.</p>
     </footer>
 
-    <!-- QRGB Script -->
+    <!-- Scripts -->
     <script>
+        /* QRGB Example */
         function convertToQuantumState(value) {
             const normalized = value / 255;
             if (normalized <= 0.33) return 0;
@@ -98,14 +115,23 @@
             const visual = document.getElementById("qrgb-visual");
             visual.style.backgroundColor = `rgb(${r}, ${g}, ${b})`;
         }
-    </script>
 
-    <!-- Quantum Emulation Script -->
-    <script>
+        /* Quantum Emulation Example */
         function simulateQuantum() {
             const log = document.getElementById("quantum-log");
             const qubitState = Math.random() < 0.5 ? 0 : 1; // Simulate a qubit state
             const message = `Qubit State: ${qubitState}`;
+            const logEntry = document.createElement("div");
+            logEntry.textContent = message;
+            log.appendChild(logEntry);
+        }
+
+        /* Quantum File Type Simulation */
+        function simulateQFile() {
+            const log = document.getElementById("q-file-log");
+            const fileTypes = ["Qmp3", "Qmp4", "Qjpeg", "Qjs", "Qcss"];
+            const selectedFile = fileTypes[Math.floor(Math.random() * fileTypes.length)];
+            const message = `Simulated File: ${selectedFile}`;
             const logEntry = document.createElement("div");
             logEntry.textContent = message;
             log.appendChild(logEntry);
