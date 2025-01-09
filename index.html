@@ -1,83 +1,168 @@
-
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
     <!-- Primary Meta Tags -->
-    <title>Lo-QOS - Quantum Computing Operating System | AI & Blockchain Integration</title>
-    <meta name="description" content="Lo-QOS is a quantum-native operating system that integrates AI, blockchain, and distributed computing. Features quantum-safe encryption, Layer 4 chain architecture, and seamless dApp integration.">
-    <meta name="keywords" content="quantum operating system, Lo-QOS, quantum computing, blockchain OS, AI integration, distributed computing, quantum-safe encryption, dApp platform, quantum dex, layer 4 blockchain">
+    <title>
+      Lo-QOS - Quantum Computing Operating System | AI & Blockchain Integration
+    </title>
+    <meta
+      name="description"
+      content="Lo-QOS is a quantum-native operating system that integrates AI, blockchain, and distributed computing. Features quantum-safe encryption, Layer 4 chain architecture, and seamless dApp integration."
+    />
+    <meta
+      name="keywords"
+      content="quantum operating system, Lo-QOS, quantum computing, blockchain OS, AI integration, distributed computing, quantum-safe encryption, dApp platform, quantum dex, layer 4 blockchain"
+    />
 
     <!-- Author and Robots Meta -->
-    <meta name="author" content="Lo-QOS Development Team">
-    <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
+    <meta name="author" content="Lo-QOS Development Team" />
+    <meta
+      name="robots"
+      content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1"
+    />
 
     <!-- Open Graph Tags for Social Sharing -->
-    <meta property="og:type" content="website">
-    <meta property="og:url" content="https://lo-qos.com/">
-    <meta property="og:title" content="Lo-QOS - Quantum Computing Operating System | AI & Blockchain Integration">
-    <meta property="og:description" content="Discover Lo-QOS: A next-generation quantum-native OS combining blockchain, AI, and distributed computing for unparalleled performance.">
-    <meta property="og:image" content="https://lo-qos.com/assets/images/og-image.png">
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://lo-qos.com/" />
+    <meta
+      property="og:title"
+      content="Lo-QOS - Quantum Computing Operating System | AI & Blockchain Integration"
+    />
+    <meta
+      property="og:description"
+      content="Discover Lo-QOS: A next-generation quantum-native OS combining blockchain, AI, and distributed computing for unparalleled performance."
+    />
+    <meta
+      property="og:image"
+      content="https://lo-qos.com/assets/images/og-image.png"
+    />
 
     <!-- Twitter Card Tags -->
-    <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="Lo-QOS - Quantum Computing Operating System">
-    <meta name="twitter:description" content="Revolutionize your computing experience with Lo-QOS: Quantum-native architecture, AI-powered optimization, and blockchain scalability.">
-    <meta name="twitter:image" content="https://lo-qos.com/assets/images/twitter-card.png">
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta
+      name="twitter:title"
+      content="Lo-QOS - Quantum Computing Operating System"
+    />
+    <meta
+      name="twitter:description"
+      content="Revolutionize your computing experience with Lo-QOS: Quantum-native architecture, AI-powered optimization, and blockchain scalability."
+    />
+    <meta
+      name="twitter:image"
+      content="https://lo-qos.com/assets/images/twitter-card.png"
+    />
 
     <!-- Canonical URL -->
-    <link rel="canonical" href="https://lo-qos.com/">
+    <link rel="canonical" href="https://lo-qos.com/" />
 
     <!-- Structured Data -->
     <script type="application/ld+json">
-    {
+      {
         "@context": "https://schema.org",
         "@type": "SoftwareApplication",
         "name": "Lo-QOS",
         "applicationCategory": "OperatingSystem",
         "operatingSystem": "Cross-platform",
         "offers": {
-            "@type": "Offer",
-            "price": "0",
-            "priceCurrency": "USD"
+          "@type": "Offer",
+          "price": "0",
+          "priceCurrency": "USD"
         },
         "description": "A quantum-native operating system with AI, blockchain, and distributed computing capabilities",
         "softwareVersion": "1.0.0-alpha",
         "downloadUrl": "https://lo-qos.com/downloads/Lo-QOS_Alpha_Release.zip",
         "screenshot": "https://lo-qos.com/assets/images/screenshot.png",
         "aggregateRating": {
-            "@type": "AggregateRating",
-            "ratingValue": "4.9",
-            "ratingCount": "182"
+          "@type": "AggregateRating",
+          "ratingValue": "4.9",
+          "ratingCount": "182"
         }
-    }
+      }
     </script>
 
     <!-- Preloading Critical Assets -->
-    <link rel="preload" href="assets/fonts/inter-var.woff2" as="font" type="font/woff2" crossorigin>
-    <link rel="preload" href="assets/css/styles.css" as="style">
-    <link rel="preload" href="assets/images/quantum-sphere.svg" as="image">
+    <link
+      rel="preload"
+      href="assets/fonts/inter-var.woff2"
+      as="font"
+      type="font/woff2"
+      crossorigin
+    />
+    <link rel="preload" href="assets/css/styles.css" as="style" />
+    <link rel="preload" href="assets/images/quantum-sphere.svg" as="image" />
 
     <!-- Favicons -->
-    <link rel="icon" href="assets/icons/favicon-32x32.png" type="image/png">
-    <link rel="apple-touch-icon" href="assets/icons/apple-touch-icon.png">
+    <link rel="icon" href="assets/icons/favicon-32x32.png" type="image/png" />
+    <link rel="apple-touch-icon" href="assets/icons/apple-touch-icon.png" />
 
     <!-- Robots.txt Inclusion -->
-    <meta name="robots" content="index, follow">
+    <meta name="robots" content="index, follow" />
 
     <!-- Security Headers -->
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://www.google-analytics.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:;">
-    <meta http-equiv="X-Content-Type-Options" content="nosniff">
-    <meta http-equiv="X-Frame-Options" content="SAMEORIGIN">
-</head>
-<body>
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'self'; script-src 'self' 'unsafe-inline' https://www.google-analytics.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:;"
+    />
+    <meta http-equiv="X-Content-Type-Options" content="nosniff" />
+    <meta http-equiv="X-Frame-Options" content="SAMEORIGIN" />
+
+    <!-- Stylesheet -->
+    <link rel="stylesheet" href="assets/css/styles.css" />
+  </head>
+  <body>
+    <!-- Header -->
     <header>
-        <h1>Welcome to Lo-QOS</h1>
+      <h1>Welcome to Lo-QOS</h1>
+      <nav>
+        <ul>
+          <li><a href="/">Home</a></li>
+          <li><a href="/features">Features</a></li>
+          <li><a href="/developers">Developers</a></li>
+          <li><a href="/marketplace">Marketplace</a></li>
+          <li><a href="/docs">Documentation</a></li>
+        </ul>
+      </nav>
     </header>
+
+    <!-- Main Content -->
     <main>
-        <p>Lo-QOS is the next-generation operating system combining quantum computing, blockchain, and AI.</p>
+      <p>
+        Lo-QOS is the next-generation operating system combining quantum
+        computing, blockchain, and AI.
+      </p>
+
+      <!-- Quantum Emulation -->
+      <section>
+        <h2>Quantum Emulation</h2>
+        <div id="quantum-log"></div>
+        <button onclick="simulateQuantum()">Simulate Quantum Operation</button>
+      </section>
     </main>
-</body>
+
+    <!-- Footer -->
+    <footer>
+      <p>&copy; 2025 Lo-QOS. All rights reserved.</p>
+      <p>
+        <a href="/privacy">Privacy Policy</a> |
+        <a href="/terms">Terms of Service</a>
+      </p>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="assets/js/protocol.js" defer></script>
+    <script src="assets/js/quantum-emulation.js" defer></script>
+    <script>
+      function simulateQuantum() {
+        const log = document.getElementById("quantum-log");
+        const qubitState = Math.random() < 0.5 ? 0 : 1; // Simulate a qubit
+        const message = `Qubit State: ${qubitState}`;
+        const logEntry = document.createElement("div");
+        logEntry.textContent = message;
+        log.appendChild(logEntry);
+      }
+    </script>
+  </body>
 </html>
