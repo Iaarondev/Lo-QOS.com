@@ -1,17 +1,114 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Marketplace - Lo-QOS</title>
-    <link rel="stylesheet" href="../assets/css/styles.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lo-QOS - Quantum Computing Operating System</title>
+    <link rel="stylesheet" href="assets/css/styles.css">
 </head>
 <body>
+    <!-- Header -->
     <header>
-        <h1>Marketplace</h1>
+        <h1>Welcome to Lo-QOS</h1>
+        <nav>
+            <ul>
+                <li><a href="/">Home</a></li>
+                <li><a href="/features">Features</a></li>
+                <li><a href="/developers">Developers</a></li>
+                <li><a href="/marketplace">Marketplace</a></li>
+                <li><a href="/docs">Documentation</a></li>
+            </ul>
+        </nav>
     </header>
+
+    <!-- Main Content -->
     <main>
-        <p>Explore dApps and digital assets available in the Lo-QOS ecosystem.</p>
+        <section>
+            <h2>Lo-QOS: The Quantum Future</h2>
+            <p>Explore our cutting-edge operating system designed for quantum computing, blockchain, and AI integration.</p>
+        </section>
+
+        <!-- QRGB Example Section -->
+        <section>
+            <h2>QRGB Example</h2>
+            <p>Convert traditional RGB values into QRGB quantum states and visualize the output:</p>
+            <div id="qrgb-converter">
+                <label>
+                    R: <input type="number" id="rgb-r" min="0" max="255" value="255">
+                </label>
+                <label>
+                    G: <input type="number" id="rgb-g" min="0" max="255" value="128">
+                </label>
+                <label>
+                    B: <input type="number" id="rgb-b" min="0" max="255" value="64">
+                </label>
+                <button onclick="convertToQRGB()">Convert to QRGB</button>
+            </div>
+            <div id="qrgb-output">
+                <p><strong>QRGB Output:</strong></p>
+                <pre id="qrgb-result"></pre>
+                <div id="qrgb-visual" style="width: 100px; height: 100px; border: 1px solid #000;"></div>
+            </div>
+        </section>
+
+        <!-- Quantum Emulation Section -->
+        <section>
+            <h2>Quantum Emulation Example</h2>
+            <p>Simulate a quantum operation with emulated qubits:</p>
+            <div id="quantum-log"></div>
+            <button onclick="simulateQuantum()">Simulate Quantum Operation</button>
+        </section>
     </main>
+
+    <!-- Footer -->
+    <footer>
+        <p>&copy; 2025 Lo-QOS. All rights reserved.</p>
+    </footer>
+
+    <!-- QRGB Script -->
+    <script>
+        function convertToQuantumState(value) {
+            const normalized = value / 255;
+            if (normalized <= 0.33) return 0;
+            if (normalized <= 0.66) return 0.5;
+            return 1;
+        }
+
+        function convertToQRGB() {
+            const r = document.getElementById("rgb-r").value;
+            const g = document.getElementById("rgb-g").value;
+            const b = document.getElementById("rgb-b").value;
+
+            const qR = convertToQuantumState(r);
+            const qG = convertToQuantumState(g);
+            const qB = convertToQuantumState(b);
+
+            const entanglementState = ((qR * 9) + (qG * 3) + qB) / 13;
+
+            const result = {
+                QRGB: { r: qR, g: qG, b: qB },
+                EntanglementState: entanglementState.toFixed(2)
+            };
+
+            // Update Output
+            document.getElementById("qrgb-result").textContent = JSON.stringify(result, null, 2);
+
+            // Update Visual
+            const visual = document.getElementById("qrgb-visual");
+            visual.style.backgroundColor = `rgb(${r}, ${g}, ${b})`;
+        }
+    </script>
+
+    <!-- Quantum Emulation Script -->
+    <script>
+        function simulateQuantum() {
+            const log = document.getElementById("quantum-log");
+            const qubitState = Math.random() < 0.5 ? 0 : 1; // Simulate a qubit state
+            const message = `Qubit State: ${qubitState}`;
+            const logEntry = document.createElement("div");
+            logEntry.textContent = message;
+            log.appendChild(logEntry);
+        }
+    </script>
 </body>
 </html>
