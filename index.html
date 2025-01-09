@@ -3,139 +3,293 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lo-QOS - Quantum Computing Operating System</title>
-    <link rel="stylesheet" href="assets/css/styles.css">
+    <meta name="description" content="Lo-QOS - Revolutionary Quantum Computing Operating System with AI and Blockchain integration. Experience quantum-native file formats, QRGB color system, and quantum computing emulation.">
+    <meta name="keywords" content="quantum computing, operating system, quantum OS, QRGB, quantum files, blockchain OS, AI integration">
+    <meta name="author" content="Lo-QOS Development Team">
+    <meta property="og:title" content="Lo-QOS - Quantum Computing Operating System">
+    <meta property="og:description" content="Experience the future of computing with Lo-QOS - The first quantum-native operating system">
+    <meta property="og:type" content="website">
+    <title>Lo-QOS - Revolutionary Quantum Computing Operating System</title>
+    <style>
+        :root {
+            --quantum-primary: #00b4d8;
+            --quantum-secondary: #0077b6;
+            --quantum-accent: #90e0ef;
+            --quantum-dark: #03045e;
+            --quantum-light: #caf0f8;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(135deg, var(--quantum-dark), var(--quantum-secondary));
+            color: white;
+        }
+
+        header {
+            background: rgba(0, 0, 0, 0.2);
+            padding: 1rem;
+            backdrop-filter: blur(10px);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        nav ul {
+            list-style: none;
+            display: flex;
+            gap: 2rem;
+            padding: 0;
+        }
+
+        nav a {
+            color: var(--quantum-light);
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        main {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        section {
+            margin-bottom: 3rem;
+            padding: 2rem;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            backdrop-filter: blur(5px);
+        }
+
+        .quantum-visualization {
+            position: relative;
+            width: 300px;
+            height: 300px;
+            margin: 2rem auto;
+            perspective: 1000px;
+        }
+
+        .quantum-sphere {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            transform-style: preserve-3d;
+            animation: quantum-rotate 20s infinite linear;
+        }
+
+        .quantum-particle {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            background: var(--quantum-accent);
+            border-radius: 50%;
+            box-shadow: 0 0 20px var(--quantum-accent);
+        }
+
+        @keyframes quantum-rotate {
+            from { transform: rotateX(0) rotateY(0) rotateZ(0); }
+            to { transform: rotateX(360deg) rotateY(720deg) rotateZ(360deg); }
+        }
+
+        .qubit-game {
+            border: 2px solid var(--quantum-accent);
+            padding: 1rem;
+            border-radius: 10px;
+            margin-top: 2rem;
+        }
+
+        .qubit-display {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+            margin: 1rem 0;
+        }
+
+        .qubit {
+            aspect-ratio: 1;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .qubit-0 { background: #ff4444; }
+        .qubit-0-5 { background: #ffae44; }
+        .qubit-1 { background: #44ff44; }
+
+        button {
+            background: var(--quantum-primary);
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        button:hover {
+            background: var(--quantum-secondary);
+        }
+
+        #quantum-log {
+            margin-top: 1rem;
+            padding: 1rem;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 5px;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+    </style>
 </head>
 <body>
-    <!-- Header -->
     <header>
-        <h1>Welcome to Lo-QOS</h1>
+        <h1>Lo-QOS</h1>
         <nav>
             <ul>
-                <li><a href="/">Home</a></li>
-                <li><a href="/features">Features</a></li>
-                <li><a href="/developers">Developers</a></li>
-                <li><a href="/marketplace">Marketplace</a></li>
-                <li><a href="/docs">Documentation</a></li>
+                <li><a href="#home">Home</a></li>
+                <li><a href="#quantum-demo">Quantum Demo</a></li>
+                <li><a href="#qrgb">QRGB</a></li>
+                <li><a href="#quantum-game">Quantum Game</a></li>
             </ul>
         </nav>
     </header>
 
-    <!-- Main Content -->
     <main>
-        <section>
-            <h2>Lo-QOS: The Quantum Future</h2>
-            <p>Explore our cutting-edge operating system designed for quantum computing, blockchain, and AI integration.</p>
-        </section>
-
-        <!-- Quantum File Type Example Section -->
-        <section>
-            <h2>Quantum File Types (Q-Formats)</h2>
-            <p>Experience a new way to represent common file formats using quantum principles:</p>
-            <div id="q-file-types">
-                <ul>
-                    <li><strong>Qmp3</strong>: Quantum Audio File (smaller, highly compressed, entangled metadata)</li>
-                    <li><strong>Qmp4</strong>: Quantum Video File (adaptive quantum frames for efficient streaming)</li>
-                    <li><strong>Qjpeg</strong>: Quantum Image File (compressed with Q-algorithms, resolution-specific superposition)</li>
-                    <li><strong>Qjs</strong>: Quantum Script File (optimized JS for quantum environments)</li>
-                    <li><strong>Qcss</strong>: Quantum Style File (dynamic and responsive CSS with quantum-enhanced rendering)</li>
-                </ul>
-                <button onclick="simulateQFile()">Simulate Quantum File Usage</button>
-                <div id="q-file-log"></div>
+        <section id="home">
+            <h2>Welcome to the Quantum Future</h2>
+            <p>Experience computing at the quantum level with Lo-QOS, the first quantum-native operating system.</p>
+            
+            <div class="quantum-visualization">
+                <div class="quantum-sphere" id="quantum-sphere"></div>
             </div>
         </section>
 
-        <!-- QRGB Example Section -->
-        <section>
-            <h2>QRGB Example</h2>
-            <p>Convert traditional RGB values into QRGB quantum states and visualize the output:</p>
-            <div id="qrgb-converter">
-                <label>
-                    R: <input type="number" id="rgb-r" min="0" max="255" value="255">
-                </label>
-                <label>
-                    G: <input type="number" id="rgb-g" min="0" max="255" value="128">
-                </label>
-                <label>
-                    B: <input type="number" id="rgb-b" min="0" max="255" value="64">
-                </label>
-                <button onclick="convertToQRGB()">Convert to QRGB</button>
-            </div>
-            <div id="qrgb-output">
-                <p><strong>QRGB Output:</strong></p>
-                <pre id="qrgb-result"></pre>
-                <div id="qrgb-visual" style="width: 100px; height: 100px; border: 1px solid #000;"></div>
-            </div>
-        </section>
-
-        <!-- Quantum Emulation Section -->
-        <section>
-            <h2>Quantum Emulation Example</h2>
-            <p>Simulate a quantum operation with emulated qubits:</p>
+        <section id="quantum-demo">
+            <h2>Quantum State Visualization</h2>
+            <p>Experience how quantum states work with our interactive demonstrator:</p>
+            <div class="qubit-display" id="qubit-display"></div>
+            <button onclick="toggleQuantumState()">Toggle Quantum State</button>
             <div id="quantum-log"></div>
-            <button onclick="simulateQuantum()">Simulate Quantum Operation</button>
+        </section>
+
+        <section id="qrgb">
+            <h2>QRGB Color System</h2>
+            <p>Convert classical RGB values to quantum RGB states:</p>
+            <div id="qrgb-converter">
+                <label>R: <input type="range" id="rgb-r" min="0" max="255" value="128"></label>
+                <label>G: <input type="range" id="rgb-g" min="0" max="255" value="128"></label>
+                <label>B: <input type="range" id="rgb-b" min="0" max="255" value="128"></label>
+                <button onclick="updateQRGB()">Update QRGB</button>
+                <div id="qrgb-preview"></div>
+            </div>
+        </section>
+
+        <section id="quantum-game">
+            <h2>Quantum Frame Game</h2>
+            <p>Experience how quantum states affect game rendering:</p>
+            <div class="qubit-game">
+                <div id="game-container"></div>
+                <button onclick="startGame()">Start Game</button>
+                <button onclick="toggleGameState()">Toggle Quantum State</button>
+            </div>
         </section>
     </main>
 
-    <!-- Footer -->
-    <footer>
-        <p>&copy; 2025 Lo-QOS. All rights reserved.</p>
-    </footer>
-
-    <!-- Scripts -->
     <script>
-        /* QRGB Example */
-        function convertToQuantumState(value) {
-            const normalized = value / 255;
-            if (normalized <= 0.33) return 0;
-            if (normalized <= 0.66) return 0.5;
-            return 1;
+        // Quantum Sphere Animation
+        const sphere = document.getElementById('quantum-sphere');
+        for (let i = 0; i < 50; i++) {
+            const particle = document.createElement('div');
+            particle.className = 'quantum-particle';
+            particle.style.transform = `rotateY(${i * 7.2}deg) translateZ(100px)`;
+            sphere.appendChild(particle);
         }
 
-        function convertToQRGB() {
-            const r = document.getElementById("rgb-r").value;
-            const g = document.getElementById("rgb-g").value;
-            const b = document.getElementById("rgb-b").value;
+        // Quantum State Management
+        let currentState = 0;
+        const states = [0, 0.5, 1];
+        const qubitDisplay = document.getElementById('qubit-display');
 
-            const qR = convertToQuantumState(r);
-            const qG = convertToQuantumState(g);
-            const qB = convertToQuantumState(b);
-
-            const entanglementState = ((qR * 9) + (qG * 3) + qB) / 13;
-
-            const result = {
-                QRGB: { r: qR, g: qG, b: qB },
-                EntanglementState: entanglementState.toFixed(2)
-            };
-
-            // Update Output
-            document.getElementById("qrgb-result").textContent = JSON.stringify(result, null, 2);
-
-            // Update Visual
-            const visual = document.getElementById("qrgb-visual");
-            visual.style.backgroundColor = `rgb(${r}, ${g}, ${b})`;
+        function updateQubitDisplay() {
+            qubitDisplay.innerHTML = states.map(state => 
+                `<div class="qubit qubit-${state}" onclick="setQuantumState(${state})">
+                    ${state}
+                </div>`
+            ).join('');
+            document.querySelector(`.qubit-${currentState}`).style.transform = 'scale(1.2)';
         }
 
-        /* Quantum Emulation Example */
-        function simulateQuantum() {
-            const log = document.getElementById("quantum-log");
-            const qubitState = Math.random() < 0.5 ? 0 : 1; // Simulate a qubit state
-            const message = `Qubit State: ${qubitState}`;
-            const logEntry = document.createElement("div");
-            logEntry.textContent = message;
-            log.appendChild(logEntry);
+        function setQuantumState(state) {
+            currentState = state;
+            updateQubitDisplay();
+            logQuantumState();
         }
 
-        /* Quantum File Type Simulation */
-        function simulateQFile() {
-            const log = document.getElementById("q-file-log");
-            const fileTypes = ["Qmp3", "Qmp4", "Qjpeg", "Qjs", "Qcss"];
-            const selectedFile = fileTypes[Math.floor(Math.random() * fileTypes.length)];
-            const message = `Simulated File: ${selectedFile}`;
-            const logEntry = document.createElement("div");
-            logEntry.textContent = message;
-            log.appendChild(logEntry);
+        function toggleQuantumState() {
+            currentState = states[(states.indexOf(currentState) + 1) % states.length];
+            updateQubitDisplay();
+            logQuantumState();
         }
+
+        function logQuantumState() {
+            const log = document.getElementById('quantum-log');
+            log.innerHTML += `<div>Quantum State: |${currentState}⟩</div>`;
+            log.scrollTop = log.scrollHeight;
+        }
+
+        // QRGB System
+        function updateQRGB() {
+            const r = document.getElementById('rgb-r').value;
+            const g = document.getElementById('rgb-g').value;
+            const b = document.getElementById('rgb-b').value;
+
+            const qr = Math.round(r / 255 * 2) / 2;
+            const qg = Math.round(g / 255 * 2) / 2;
+            const qb = Math.round(b / 255 * 2) / 2;
+
+            const preview = document.getElementById('qrgb-preview');
+            preview.style.background = `rgb(${r}, ${g}, ${b})`;
+            preview.style.width = '100px';
+            preview.style.height = '100px';
+            preview.style.margin = '1rem 0';
+            preview.style.borderRadius = '10px';
+            preview.innerHTML = `<div style="padding: 1rem; color: black;">
+                QRGB: (${qr}, ${qg}, ${qb})
+            </div>`;
+        }
+
+        // Quantum Game
+        let gameState = 0;
+        let gameInterval;
+        const gameContainer = document.getElementById('game-container');
+
+        function startGame() {
+            if (gameInterval) clearInterval(gameInterval);
+            gameContainer.innerHTML = `
+                <div style="width: 50px; height: 50px; background: var(--quantum-accent); 
+                     position: relative; transition: all ${0.5 + gameState}s ease-in-out;">
+                </div>`;
+            
+            gameInterval = setInterval(() => {
+                const element = gameContainer.firstElementChild;
+                element.style.left = Math.random() * (gameContainer.offsetWidth - 50) + 'px';
+                element.style.top = Math.random() * (gameContainer.offsetHeight - 50) + 'px';
+            }, 1000);
+        }
+
+        function toggleGameState() {
+            gameState = (gameState + 0.5) % 1.5;
+            startGame();
+        }
+
+        // Initialize
+        updateQubitDisplay();
+        updateQRGB();
     </script>
 </body>
 </html>
