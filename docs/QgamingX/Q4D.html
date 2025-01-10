@@ -1,1666 +1,220 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>QAIGamingX - It's Not Just a Game, It's a Qubit</title>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Lo-QOS Developer Quantum Demo</title>
     <style>
-        /* [Previous styles] */
-
-        .quantum-evolution {
-            position: relative;
-            background: #000913;
-            border-radius: 1rem;
-            padding: 2rem;
-            margin: 2rem 0;
-            overflow: hidden;
-        }
-
-        .evolution-header {
-            text-align: center;
-            color: #fff;
-            position: relative;
-            z-index: 2;
-            margin-bottom: 2rem;
-        }
-
-        .evolution-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 1.5rem;
-            position: relative;
-            z-index: 2;
-        }
-
-        .quantum-metric {
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 0.5rem;
-            padding: 1rem;
-            color: #fff;
-        }
-
-        .compression-graph" id="coherenceGraph"></div>
-                    </div>
-
-                    <div class="quantum-metric">
-                        <div class="optimization-label">Learning Iterations</div>
-                        <div class="compression-rate" id="iterationCount">1,432,897</div>
-                        <div class="optimization-history" id="learningHistory"></div>
-                    </div>
-                </div>
-
-                <!-- ZKP Compression Visualization -->
-                <div class="zkp-compression">
-                    <h3>Zero-Knowledge Proof Optimization</h3>
-                    <div id="zkpVisualization"></div>
-                </div>
-            </div>
-
-            <!-- Game Evolution Stats -->
-            <div class="evolution-stats">
-                <div class="stats-grid">
-                    <div class="stat-card">
-                        <h4>Initial State</h4>
-                        <ul>
-                            <li>Memory Usage: 1.2 GB</li>
-                            <li>Frame Time: 16.7ms</li>
-                            <li>State Size: 100%</li>
-                        </ul>
-                    </div>
-                    <div class="stat-card">
-                        <h4>Current State</h4>
-                        <ul>
-                            <li>Memory Usage: 284 MB</li>
-                            <li>Frame Time: 4.2ms</li>
-                            <li>State Size: 23.7%</li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <script>
-        class QuantumEvolutionSystem {
-            constructor() {
-                this.initializeSystem();
-                this.startEvolution();
-            }
-
-            initializeSystem() {
-                this.zkpCompressor = new ZKPCompressor();
-                this.quantumOptimizer = new QuantumOptimizer();
-                this.learningHistory = [];
-                this.compressionHistory = [];
-                
-                // Initialize visualization elements
-                this.initializeVisuals();
-            }
-
-            initializeVisuals() {
-                // Create quantum particles
-                const particles = document.getElementById('particles');
-                for (let i = 0; i < 50; i++) {
-                    const particle = document.createElement('div');
-                    particle.className = 'quantum-particle';
-                    particle.style.left = `${Math.random() * 100}%`;
-                    particle.style.top = `${Math.random() * 100}%`;
-                    particles.appendChild(particle);
-                }
-
-                // Initialize graphs
-                this.initializeGraphs();
-            }
-
-            startEvolution() {
-                let iterationCount = 0;
-                
-                const evolve = () => {
-                    // Update ZKP compression
-                    const compressionRate = this.zkpCompressor.compress();
-                    this.updateCompressionMetrics(compressionRate);
-
-                    // Update quantum optimization
-                    const optimizationResult = this.quantumOptimizer.optimize();
-                    this.updateOptimizationMetrics(optimizationResult);
-
-                    // Update learning history
-                    iterationCount++;
-                    this.updateLearningHistory(iterationCount, optimizationResult);
-
-                    // Schedule next evolution
-                    requestAnimationFrame(evolve);
-                };
-
-                evolve();
-            }
-
-            updateCompressionMetrics(rate) {
-                const compressionRate = document.getElementById('compressionRate');
-                compressionRate.textContent = `${(rate * 100).toFixed(1)}%`;
-
-                // Update compression graph
-                this.compressionHistory.push(rate);
-                if (this.compressionHistory.length > 50) {
-                    this.compressionHistory.shift();
-                }
-
-                const graph = document.getElementById('compressionGraph');
-                graph.innerHTML = this.compressionHistory
-                    .map(rate => `
-                        <div class="compression-bar" 
-                             style="height: ${rate * 100}%"></div>
-                    `).join('');
-            }
-
-            updateOptimizationMetrics(result) {
-                const coherenceRate = document.getElementById('coherenceRate');
-                coherenceRate.textContent = 
-                    `${(result.coherence * 100).toFixed(1)}%`;
-
-                // Update coherence graph
-                const graph = document.getElementById('coherenceGraph');
-                graph.innerHTML = `
-                    <div class="compression-bar" 
-                         style="height: ${result.coherence * 100}%"></div>
-                `;
-            }
-
-            updateLearningHistory(iterations, result) {
-                const iterationCount = document.getElementById('iterationCount');
-                iterationCount.textContent = iterations.toLocaleString();
-
-                this.learningHistory.push({
-                    iterations,
-                    performance: result.performance
-                });
-
-                // Update history visualization
-                const history = document.getElementById('learningHistory');
-                history.innerHTML = this.learningHistory
-                    .map(point => `
-                        <div class="history-point" 
-                             style="bottom: ${point.performance * 100}%; 
-                                    left: ${(point.iterations / iterations) * 100}%">
-                        </div>
-                    `).join('');
-            }
-        }
-
-        class ZKPCompressor {
-            constructor() {
-                this.compressionRatio = 0.2; // Initial compression
-                this.learningRate = 0.001;
-                this.optimizationSteps = 0;
-            }
-
-            compress() {
-                // Simulate ZKP compression optimization
-                this.optimizationSteps++;
-                const improvement = Math.exp(-this.optimizationSteps * this.learningRate);
-                this.compressionRatio = Math.max(
-                    0.05, // Minimum compression ratio
-                    this.compressionRatio * improvement
-                );
-
-                return 1 - this.compressionRatio;
-            }
-        }
-
-        class QuantumOptimizer {
-            constructor() {
-                this.coherence = 0.8; // Initial quantum coherence
-                this.learningRate = 0.0005;
-                this.optimizationSteps = 0;
-            }
-
-            optimize() {
-                // Simulate quantum optimization
-                this.optimizationSteps++;
-                const improvement = 1 - Math.exp(-this.optimizationSteps * this.learningRate);
-                this.coherence = Math.min(
-                    0.99, // Maximum coherence
-                    this.coherence + (1 - this.coherence) * improvement
-                );
-
-                return {
-                    coherence: this.coherence,
-                    performance: improvement
-                };
-            }
-        }
-
-        // Initialize the evolution system when document is loaded
-        document.addEventListener('DOMContentLoaded', () => {
-            const evolution = new QuantumEvolutionSystem();
-
-            // Add interactive particle effects
-            document.addEventListener('mousemove', (e) => {
-                const particles = document.querySelectorAll('.quantum-particle');
-                particles.forEach((particle, index) => {
-                    const speed = 0.1 + (index % 5) * 0.1;
-                    const angle = (index * Math.PI * 2) / particles.length;
-                    const radius = 50 + (index % 3) * 20;
-
-                    particle.style.transform = `translate(
-                        ${Math.cos(angle + performance.now() * speed) * radius}px,
-                        ${Math.sin(angle + performance.now() * speed) * radius}px
-                    )`;
-                });
-            });
-        });
-    </script>
-</body>
-</html>rate {
-            font-size: 2rem;
-            font-weight: bold;
-            margin: 0.5rem 0;
-            background: linear-gradient(90deg, #3b82f6, #10b981);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
-        .quantum-wave {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            opacity: 0.1;
-            background: repeating-linear-gradient(
-                45deg,
-                transparent,
-                transparent 10px,
-                rgba(59, 130, 246, 0.1) 10px,
-                rgba(59, 130, 246, 0.1) 20px
-            );
-            animation: wave 20s linear infinite;
-        }
-
-        @keyframes wave {
-            0% { transform: translate(-50%, -50%) rotate(0deg); }
-            100% { transform: translate(-50%, -50%) rotate(360deg); }
-        }
-
-        .optimization-history {
-            margin-top: 2rem;
-            padding: 1rem;
-            background: rgba(0, 0, 0, 0.3);
-            border-radius: 0.5rem;
-            height: 200px;
-            position: relative;
-        }
-
-        .history-point {
-            position: absolute;
-            width: 6px;
-            height: 6px;
-            background: #3b82f6;
-            border-radius: 50%;
-            transform: translate(-50%, -50%);
-        }
-
-        .optimization-label {
-            font-size: 0.75rem;
-            color: rgba(255, 255, 255, 0.6);
-            margin-bottom: 0.25rem;
-        }
-
-        .slogan-banner {
-            text-align: center;
-            padding: 2rem;
-            background: linear-gradient(135deg, #000913, #001233);
-            color: #fff;
-            margin: 2rem 0;
-            border-radius: 1rem;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .slogan-text {
-            font-size: 2rem;
-            font-weight: bold;
-            margin: 0;
-            position: relative;
-            z-index: 2;
-        }
-
-        .slogan-subtext {
-            color: rgba(255, 255, 255, 0.8);
-            margin-top: 1rem;
-            position: relative;
-            z-index: 2;
-        }
-
-        .quantum-particle {
-            position: absolute;
-            width: 4px;
-            height: 4px;
-            background: #3b82f6;
-            border-radius: 50%;
-            filter: blur(1px);
-        }
-
-        .zkp-compression {
-            margin-top: 2rem;
-            padding: 1rem;
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 0.5rem;
-        }
-
-        .compression-graph" id="coherenceGraph"></div>
-                    </div>
-
-                    <div class="quantum-metric">
-                        <div class="optimization-label">Learning Iterations</div>
-                        <div class="compression-rate" id="iterationCount">1,432,897</div>
-                        <div class="optimization-history" id="learningHistory"></div>
-                    </div>
-                </div>
-
-                <!-- ZKP Compression Visualization -->
-                <div class="zkp-compression">
-                    <h3>Zero-Knowledge Proof Optimization</h3>
-                    <div id="zkpVisualization"></div>
-                </div>
-            </div>
-
-            <!-- Game Evolution Stats -->
-            <div class="evolution-stats">
-                <div class="stats-grid">
-                    <div class="stat-card">
-                        <h4>Initial State</h4>
-                        <ul>
-                            <li>Memory Usage: 1.2 GB</li>
-                            <li>Frame Time: 16.7ms</li>
-                            <li>State Size: 100%</li>
-                        </ul>
-                    </div>
-                    <div class="stat-card">
-                        <h4>Current State</h4>
-                        <ul>
-                            <li>Memory Usage: 284 MB</li>
-                            <li>Frame Time: 4.2ms</li>
-                            <li>State Size: 23.7%</li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <script>
-        class QuantumEvolutionSystem {
-            constructor() {
-                this.initializeSystem();
-                this.startEvolution();
-            }
-
-            initializeSystem() {
-                this.zkpCompressor = new ZKPCompressor();
-                this.quantumOptimizer = new QuantumOptimizer();
-                this.learningHistory = [];
-                this.compressionHistory = [];
-                
-                // Initialize visualization elements
-                this.initializeVisuals();
-            }
-
-            initializeVisuals() {
-                // Create quantum particles
-                const particles = document.getElementById('particles');
-                for (let i = 0; i < 50; i++) {
-                    const particle = document.createElement('div');
-                    particle.className = 'quantum-particle';
-                    particle.style.left = `${Math.random() * 100}%`;
-                    particle.style.top = `${Math.random() * 100}%`;
-                    particles.appendChild(particle);
-                }
-
-                // Initialize graphs
-                this.initializeGraphs();
-            }
-
-            startEvolution() {
-                let iterationCount = 0;
-                
-                const evolve = () => {
-                    // Update ZKP compression
-                    const compressionRate = this.zkpCompressor.compress();
-                    this.updateCompressionMetrics(compressionRate);
-
-                    // Update quantum optimization
-                    const optimizationResult = this.quantumOptimizer.optimize();
-                    this.updateOptimizationMetrics(optimizationResult);
-
-                    // Update learning history
-                    iterationCount++;
-                    this.updateLearningHistory(iterationCount, optimizationResult);
-
-                    // Schedule next evolution
-                    requestAnimationFrame(evolve);
-                };
-
-                evolve();
-            }
-
-            updateCompressionMetrics(rate) {
-                const compressionRate = document.getElementById('compressionRate');
-                compressionRate.textContent = `${(rate * 100).toFixed(1)}%`;
-
-                // Update compression graph
-                this.compressionHistory.push(rate);
-                if (this.compressionHistory.length > 50) {
-                    this.compressionHistory.shift();
-                }
-
-                const graph = document.getElementById('compressionGraph');
-                graph.innerHTML = this.compressionHistory
-                    .map(rate => `
-                        <div class="compression-bar" 
-                             style="height: ${rate * 100}%"></div>
-                    `).join('');
-            }
-
-            updateOptimizationMetrics(result) {
-                const coherenceRate = document.getElementById('coherenceRate');
-                coherenceRate.textContent = 
-                    `${(result.coherence * 100).toFixed(1)}%`;
-
-                // Update coherence graph
-                const graph = document.getElementById('coherenceGraph');
-                graph.innerHTML = `
-                    <div class="compression-bar" 
-                         style="height: ${result.coherence * 100}%"></div>
-                `;
-            }
-
-            updateLearningHistory(iterations, result) {
-                const iterationCount = document.getElementById('iterationCount');
-                iterationCount.textContent = iterations.toLocaleString();
-
-                this.learningHistory.push({
-                    iterations,
-                    performance: result.performance
-                });
-
-                // Update history visualization
-                const history = document.getElementById('learningHistory');
-                history.innerHTML = this.learningHistory
-                    .map(point => `
-                        <div class="history-point" 
-                             style="bottom: ${point.performance * 100}%; 
-                                    left: ${(point.iterations / iterations) * 100}%">
-                        </div>
-                    `).join('');
-            }
-        }
-
-        class ZKPCompressor {
-            constructor() {
-                this.compressionRatio = 0.2; // Initial compression
-                this.learningRate = 0.001;
-                this.optimizationSteps = 0;
-            }
-
-            compress() {
-                // Simulate ZKP compression optimization
-                this.optimizationSteps++;
-                const improvement = Math.exp(-this.optimizationSteps * this.learningRate);
-                this.compressionRatio = Math.max(
-                    0.05, // Minimum compression ratio
-                    this.compressionRatio * improvement
-                );
-
-                return 1 - this.compressionRatio;
-            }
-        }
-
-        class QuantumOptimizer {
-            constructor() {
-                this.coherence = 0.8; // Initial quantum coherence
-                this.learningRate = 0.0005;
-                this.optimizationSteps = 0;
-            }
-
-            optimize() {
-                // Simulate quantum optimization
-                this.optimizationSteps++;
-                const improvement = 1 - Math.exp(-this.optimizationSteps * this.learningRate);
-                this.coherence = Math.min(
-                    0.99, // Maximum coherence
-                    this.coherence + (1 - this.coherence) * improvement
-                );
-
-                return {
-                    coherence: this.coherence,
-                    performance: improvement
-                };
-            }
-        }
-
-        // Initialize the evolution system when document is loaded
-        document.addEventListener('DOMContentLoaded', () => {
-            const evolution = new QuantumEvolutionSystem();
-
-            // Add interactive particle effects
-            document.addEventListener('mousemove', (e) => {
-                const particles = document.querySelectorAll('.quantum-particle');
-                particles.forEach((particle, index) => {
-                    const speed = 0.1 + (index % 5) * 0.1;
-                    const angle = (index * Math.PI * 2) / particles.length;
-                    const radius = 50 + (index % 3) * 20;
-
-                    particle.style.transform = `translate(
-                        ${Math.cos(angle + performance.now() * speed) * radius}px,
-                        ${Math.sin(angle + performance.now() * speed) * radius}px
-                    )`;
-                });
-            });
-        });
-    </script>
-</body>
-</html>graph {
-            height: 150px;
-            margin: 1rem 0;
-            display: flex;
-            align-items: flex-end;
-            gap: 2px;
-        }
-
-        .compression-graph" id="coherenceGraph"></div>
-                    </div>
-
-                    <div class="quantum-metric">
-                        <div class="optimization-label">Learning Iterations</div>
-                        <div class="compression-rate" id="iterationCount">1,432,897</div>
-                        <div class="optimization-history" id="learningHistory"></div>
-                    </div>
-                </div>
-
-                <!-- ZKP Compression Visualization -->
-                <div class="zkp-compression">
-                    <h3>Zero-Knowledge Proof Optimization</h3>
-                    <div id="zkpVisualization"></div>
-                </div>
-            </div>
-
-            <!-- Game Evolution Stats -->
-            <div class="evolution-stats">
-                <div class="stats-grid">
-                    <div class="stat-card">
-                        <h4>Initial State</h4>
-                        <ul>
-                            <li>Memory Usage: 1.2 GB</li>
-                            <li>Frame Time: 16.7ms</li>
-                            <li>State Size: 100%</li>
-                        </ul>
-                    </div>
-                    <div class="stat-card">
-                        <h4>Current State</h4>
-                        <ul>
-                            <li>Memory Usage: 284 MB</li>
-                            <li>Frame Time: 4.2ms</li>
-                            <li>State Size: 23.7%</li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <script>
-        class QuantumEvolutionSystem {
-            constructor() {
-                this.initializeSystem();
-                this.startEvolution();
-            }
-
-            initializeSystem() {
-                this.zkpCompressor = new ZKPCompressor();
-                this.quantumOptimizer = new QuantumOptimizer();
-                this.learningHistory = [];
-                this.compressionHistory = [];
-                
-                // Initialize visualization elements
-                this.initializeVisuals();
-            }
-
-            initializeVisuals() {
-                // Create quantum particles
-                const particles = document.getElementById('particles');
-                for (let i = 0; i < 50; i++) {
-                    const particle = document.createElement('div');
-                    particle.className = 'quantum-particle';
-                    particle.style.left = `${Math.random() * 100}%`;
-                    particle.style.top = `${Math.random() * 100}%`;
-                    particles.appendChild(particle);
-                }
-
-                // Initialize graphs
-                this.initializeGraphs();
-            }
-
-            startEvolution() {
-                let iterationCount = 0;
-                
-                const evolve = () => {
-                    // Update ZKP compression
-                    const compressionRate = this.zkpCompressor.compress();
-                    this.updateCompressionMetrics(compressionRate);
-
-                    // Update quantum optimization
-                    const optimizationResult = this.quantumOptimizer.optimize();
-                    this.updateOptimizationMetrics(optimizationResult);
-
-                    // Update learning history
-                    iterationCount++;
-                    this.updateLearningHistory(iterationCount, optimizationResult);
-
-                    // Schedule next evolution
-                    requestAnimationFrame(evolve);
-                };
-
-                evolve();
-            }
-
-            updateCompressionMetrics(rate) {
-                const compressionRate = document.getElementById('compressionRate');
-                compressionRate.textContent = `${(rate * 100).toFixed(1)}%`;
-
-                // Update compression graph
-                this.compressionHistory.push(rate);
-                if (this.compressionHistory.length > 50) {
-                    this.compressionHistory.shift();
-                }
-
-                const graph = document.getElementById('compressionGraph');
-                graph.innerHTML = this.compressionHistory
-                    .map(rate => `
-                        <div class="compression-bar" 
-                             style="height: ${rate * 100}%"></div>
-                    `).join('');
-            }
-
-            updateOptimizationMetrics(result) {
-                const coherenceRate = document.getElementById('coherenceRate');
-                coherenceRate.textContent = 
-                    `${(result.coherence * 100).toFixed(1)}%`;
-
-                // Update coherence graph
-                const graph = document.getElementById('coherenceGraph');
-                graph.innerHTML = `
-                    <div class="compression-bar" 
-                         style="height: ${result.coherence * 100}%"></div>
-                `;
-            }
-
-            updateLearningHistory(iterations, result) {
-                const iterationCount = document.getElementById('iterationCount');
-                iterationCount.textContent = iterations.toLocaleString();
-
-                this.learningHistory.push({
-                    iterations,
-                    performance: result.performance
-                });
-
-                // Update history visualization
-                const history = document.getElementById('learningHistory');
-                history.innerHTML = this.learningHistory
-                    .map(point => `
-                        <div class="history-point" 
-                             style="bottom: ${point.performance * 100}%; 
-                                    left: ${(point.iterations / iterations) * 100}%">
-                        </div>
-                    `).join('');
-            }
-        }
-
-        class ZKPCompressor {
-            constructor() {
-                this.compressionRatio = 0.2; // Initial compression
-                this.learningRate = 0.001;
-                this.optimizationSteps = 0;
-            }
-
-            compress() {
-                // Simulate ZKP compression optimization
-                this.optimizationSteps++;
-                const improvement = Math.exp(-this.optimizationSteps * this.learningRate);
-                this.compressionRatio = Math.max(
-                    0.05, // Minimum compression ratio
-                    this.compressionRatio * improvement
-                );
-
-                return 1 - this.compressionRatio;
-            }
-        }
-
-        class QuantumOptimizer {
-            constructor() {
-                this.coherence = 0.8; // Initial quantum coherence
-                this.learningRate = 0.0005;
-                this.optimizationSteps = 0;
-            }
-
-            optimize() {
-                // Simulate quantum optimization
-                this.optimizationSteps++;
-                const improvement = 1 - Math.exp(-this.optimizationSteps * this.learningRate);
-                this.coherence = Math.min(
-                    0.99, // Maximum coherence
-                    this.coherence + (1 - this.coherence) * improvement
-                );
-
-                return {
-                    coherence: this.coherence,
-                    performance: improvement
-                };
-            }
-        }
-
-        // Initialize the evolution system when document is loaded
-        document.addEventListener('DOMContentLoaded', () => {
-            const evolution = new QuantumEvolutionSystem();
-
-            // Add interactive particle effects
-            document.addEventListener('mousemove', (e) => {
-                const particles = document.querySelectorAll('.quantum-particle');
-                particles.forEach((particle, index) => {
-                    const speed = 0.1 + (index % 5) * 0.1;
-                    const angle = (index * Math.PI * 2) / particles.length;
-                    const radius = 50 + (index % 3) * 20;
-
-                    particle.style.transform = `translate(
-                        ${Math.cos(angle + performance.now() * speed) * radius}px,
-                        ${Math.sin(angle + performance.now() * speed) * radius}px
-                    )`;
-                });
-            });
-        });
-    </script>
-</body>
-</html>bar {
-            flex: 1;
-            background: #3b82f6;
-            transition: height 0.3s ease-out;
-        }
+      body {
+        margin: 0;
+        overflow: hidden;
+        background: #000;
+        font-family: Arial, sans-serif;
+      }
+      #stats {
+        position: absolute;
+        top: 10px;
+        left: 10px;
+        color: #fff;
+        background: rgba(0, 0, 0, 0.5);
+        padding: 10px;
+        border-radius: 8px;
+        display: none;
+      }
+      #controls {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        color: #fff;
+        background: rgba(0, 0, 0, 0.5);
+        padding: 10px;
+        border-radius: 8px;
+      }
+      button {
+        background: #333;
+        color: #fff;
+        border: none;
+        padding: 10px;
+        border-radius: 5px;
+        cursor: pointer;
+        margin-top: 5px;
+      }
+      button:hover {
+        background: #555;
+      }
+      .tooltip {
+        position: absolute;
+        background: #444;
+        color: #fff;
+        padding: 5px;
+        border-radius: 5px;
+        font-size: 12px;
+        display: none;
+      }
     </style>
-</head>
-<body>
-    <div class="container">
-        <div class="card">
-            <!-- Slogan Banner -->
-            <div class="slogan-banner">
-                <h1 class="slogan-text">It's Not Just a Game, It's a Qubit</h1>
-                <p class="slogan-subtext">Experience evolving gameplay through quantum optimization</p>
-                <div id="particles"></div>
-            </div>
-
-            <!-- Quantum Evolution Section -->
-            <div class="quantum-evolution">
-                <div class="quantum-wave"></div>
-                <div class="evolution-header">
-                    <h2>Quantum Evolution Metrics</h2>
-                    <p>Real-time optimization through ZKP compression</p>
-                </div>
-
-                <div class="evolution-grid">
-                    <div class="quantum-metric">
-                        <div class="optimization-label">ZKP Compression Rate</div>
-                        <div class="compression-graph" id="coherenceGraph"></div>
-                    </div>
-
-                    <div class="quantum-metric">
-                        <div class="optimization-label">Learning Iterations</div>
-                        <div class="compression-rate" id="iterationCount">1,432,897</div>
-                        <div class="optimization-history" id="learningHistory"></div>
-                    </div>
-                </div>
-
-                <!-- ZKP Compression Visualization -->
-                <div class="zkp-compression">
-                    <h3>Zero-Knowledge Proof Optimization</h3>
-                    <div id="zkpVisualization"></div>
-                </div>
-            </div>
-
-            <!-- Game Evolution Stats -->
-            <div class="evolution-stats">
-                <div class="stats-grid">
-                    <div class="stat-card">
-                        <h4>Initial State</h4>
-                        <ul>
-                            <li>Memory Usage: 1.2 GB</li>
-                            <li>Frame Time: 16.7ms</li>
-                            <li>State Size: 100%</li>
-                        </ul>
-                    </div>
-                    <div class="stat-card">
-                        <h4>Current State</h4>
-                        <ul>
-                            <li>Memory Usage: 284 MB</li>
-                            <li>Frame Time: 4.2ms</li>
-                            <li>State Size: 23.7%</li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-        </div>
+  </head>
+  <body>
+    <div id="stats">
+      <p><strong>Quantum Stats</strong></p>
+      <p
+        data-tooltip="Frames per second, a measure of performance. Higher is better."
+      >
+        FPS: <span id="fps">0</span>
+      </p>
+      <p data-tooltip="Score represents the player's progress in the story.">
+        Score: <span id="score">0</span>
+      </p>
+      <p data-tooltip="Player lives left. Game over when it reaches 0.">
+        Lives: <span id="lives">3</span>
+      </p>
+      <p
+        data-tooltip="Current quantum integration level, representing system optimization."
+      >
+        Integration Level: <span id="integration">0.2</span>
+      </p>
+      <p
+        data-tooltip="Number of qubits processed for dynamic state calculations."
+      >
+        Qubits Processed: <span id="qubits">0</span>
+      </p>
+      <p data-tooltip="Number of zero-knowledge proof validations performed.">
+        ZKP Validations: <span id="zkp">0</span>
+      </p>
+      <p
+        data-tooltip="The quantum kernel manages entanglement maps and optimizations."
+      >
+        Kernel Quantum Integrations: <span id="kernel">0</span>
+      </p>
     </div>
+    <div id="controls">
+      <button id="toggleStats">Toggle Stats</button>
+      <button id="unlockFrames">Unlock Frames</button>
+      <button id="resetGame">Reset Game</button>
+    </div>
+    <canvas id="gameCanvas"></canvas>
+    <div id="tooltip" class="tooltip"></div>
 
     <script>
-        class QuantumEvolutionSystem {
-            constructor() {
-                this.initializeSystem();
-                this.startEvolution();
-            }
+      const canvas = document.getElementById("gameCanvas");
+      const ctx = canvas.getContext("2d");
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
 
-            initializeSystem() {
-                this.zkpCompressor = new ZKPCompressor();
-                this.quantumOptimizer = new QuantumOptimizer();
-                this.learningHistory = [];
-                this.compressionHistory = [];
-                
-                // Initialize visualization elements
-                this.initializeVisuals();
-            }
+      let frameCount = 0;
+      let lastTime = performance.now();
+      let fps = 0;
+      let score = 0;
+      let lives = 3;
+      let qubitsProcessed = 0;
+      let zkpValidations = 0;
+      let integrationLevel = 0.2;
+      let unlockedFrames = false;
+      let kernelQuantumIntegrations = 0;
 
-            initializeVisuals() {
-                // Create quantum particles
-                const particles = document.getElementById('particles');
-                for (let i = 0; i < 50; i++) {
-                    const particle = document.createElement('div');
-                    particle.className = 'quantum-particle';
-                    particle.style.left = `${Math.random() * 100}%`;
-                    particle.style.top = `${Math.random() * 100}%`;
-                    particles.appendChild(particle);
-                }
+      const tooltip = document.getElementById("tooltip");
 
-                // Initialize graphs
-                this.initializeGraphs();
-            }
+      // Game Entities
+      const player = {
+        x: canvas.width / 2,
+        y: canvas.height - 50,
+        size: 20,
+        color: "#00ff00",
+        speed: 5,
+        health: 3,
+      };
+      const projectiles = [];
+      const enemies = [];
 
-            startEvolution() {
-                let iterationCount = 0;
-                
-                const evolve = () => {
-                    // Update ZKP compression
-                    const compressionRate = this.zkpCompressor.compress();
-                    this.updateCompressionMetrics(compressionRate);
+      // Dynamic Quantum Environment
+      const environment = {
+        level: 0.2,
+        generate() {
+          // Procedural generation based on integration level
+          const colorIntensity = Math.round((this.level / 1.0) * 255);
+          ctx.fillStyle = `rgb(${colorIntensity}, ${colorIntensity / 2}, ${
+            colorIntensity / 3
+          })`;
+          ctx.fillRect(0, 0, canvas.width, canvas.height);
+        },
+      };
 
-                    // Update quantum optimization
-                    const optimizationResult = this.quantumOptimizer.optimize();
-                    this.updateOptimizationMetrics(optimizationResult);
+      // Simulate Qubit Processing
+      function processQubit() {
+        qubitsProcessed++;
+        return Math.random() < 0.5 ? 0 : 1;
+      }
 
-                    // Update learning history
-                    iterationCount++;
-                    this.updateLearningHistory(iterationCount, optimizationResult);
+      // Simulate ZKP Validation
+      function validateZKP(state) {
+        zkpValidations++;
+        const proof = btoa(state.toString());
+        return atob(proof) === state.toString();
+      }
 
-                    // Schedule next evolution
-                    requestAnimationFrame(evolve);
-                };
+      // Tooltip Hover Handling
+      document.addEventListener("mouseover", (e) => {
+        const tooltipText = e.target.getAttribute("data-tooltip");
+        if (tooltipText) {
+          tooltip.textContent = tooltipText;
+          tooltip.style.display = "block";
+          tooltip.style.left = `${e.pageX + 10}px`;
+          tooltip.style.top = `${e.pageY + 10}px`;
+        }
+      });
 
-                evolve();
-            }
+      document.addEventListener("mouseout", (e) => {
+        if (e.target.getAttribute("data-tooltip")) {
+          tooltip.style.display = "none";
+        }
+      });
 
-            updateCompressionMetrics(rate) {
-                const compressionRate = document.getElementById('compressionRate');
-                compressionRate.textContent = `${(rate * 100).toFixed(1)}%`;
+      // Toggle Stats Display
+      document.getElementById("toggleStats").addEventListener("click", () => {
+        const statsDiv = document.getElementById("stats");
+        statsDiv.style.display =
+          statsDiv.style.display === "none" ? "block" : "none";
+      });
 
-                // Update compression graph
-                this.compressionHistory.push(rate);
-                if (this.compressionHistory.length > 50) {
-                    this.compressionHistory.shift();
-                }
+      // Unlock Frames
+      document.getElementById("unlockFrames").addEventListener("click", () => {
+        unlockedFrames = true;
+        integrationLevel = 1.0; // Simulate full quantum optimization
+      });
 
-                const graph = document.getElementById('compressionGraph');
-                graph.innerHTML = this.compressionHistory
-                    .map(rate => `
-                        <div class="compression-bar" 
-                             style="height: ${rate * 100}%"></div>
-                    `).join('');
-            }
+      // Reset Game
+      document.getElementById("resetGame").addEventListener("click", () => {
+        location.reload();
+      });
 
-            updateOptimizationMetrics(result) {
-                const coherenceRate = document.getElementById('coherenceRate');
-                coherenceRate.textContent = 
-                    `${(result.coherence * 100).toFixed(1)}%`;
+      // Game Loop
+      function gameLoop() {
+        const now = performance.now();
+        const deltaTime = now - lastTime;
+        frameCount++;
 
-                // Update coherence graph
-                const graph = document.getElementById('coherenceGraph');
-                graph.innerHTML = `
-                    <div class="compression-bar" 
-                         style="height: ${result.coherence * 100}%"></div>
-                `;
-            }
-
-            updateLearningHistory(iterations, result) {
-                const iterationCount = document.getElementById('iterationCount');
-                iterationCount.textContent = iterations.toLocaleString();
-
-                this.learningHistory.push({
-                    iterations,
-                    performance: result.performance
-                });
-
-                // Update history visualization
-                const history = document.getElementById('learningHistory');
-                history.innerHTML = this.learningHistory
-                    .map(point => `
-                        <div class="history-point" 
-                             style="bottom: ${point.performance * 100}%; 
-                                    left: ${(point.iterations / iterations) * 100}%">
-                        </div>
-                    `).join('');
-            }
+        if (!unlockedFrames && deltaTime > 1000) {
+          fps = Math.round((frameCount / deltaTime) * 1000);
+          document.getElementById("fps").textContent = fps;
+          frameCount = 0;
+          lastTime = now;
         }
 
-        class ZKPCompressor {
-            constructor() {
-                this.compressionRatio = 0.2; // Initial compression
-                this.learningRate = 0.001;
-                this.optimizationSteps = 0;
-            }
+        environment.generate();
+        document.getElementById("score").textContent = score;
+        document.getElementById("lives").textContent = lives;
+        document.getElementById("qubits").textContent = qubitsProcessed;
+        document.getElementById("zkp").textContent = zkpValidations;
+        document.getElementById("integration").textContent =
+          integrationLevel.toFixed(1);
+        document.getElementById("kernel").textContent =
+          kernelQuantumIntegrations;
 
-            compress() {
-                // Simulate ZKP compression optimization
-                this.optimizationSteps++;
-                const improvement = Math.exp(-this.optimizationSteps * this.learningRate);
-                this.compressionRatio = Math.max(
-                    0.05, // Minimum compression ratio
-                    this.compressionRatio * improvement
-                );
+        // Request next frame
+        requestAnimationFrame(gameLoop);
+      }
 
-                return 1 - this.compressionRatio;
-            }
-        }
-
-        class QuantumOptimizer {
-            constructor() {
-                this.coherence = 0.8; // Initial quantum coherence
-                this.learningRate = 0.0005;
-                this.optimizationSteps = 0;
-            }
-
-            optimize() {
-                // Simulate quantum optimization
-                this.optimizationSteps++;
-                const improvement = 1 - Math.exp(-this.optimizationSteps * this.learningRate);
-                this.coherence = Math.min(
-                    0.99, // Maximum coherence
-                    this.coherence + (1 - this.coherence) * improvement
-                );
-
-                return {
-                    coherence: this.coherence,
-                    performance: improvement
-                };
-            }
-        }
-
-        // Initialize the evolution system when document is loaded
-        document.addEventListener('DOMContentLoaded', () => {
-            const evolution = new QuantumEvolutionSystem();
-
-            // Add interactive particle effects
-            document.addEventListener('mousemove', (e) => {
-                const particles = document.querySelectorAll('.quantum-particle');
-                particles.forEach((particle, index) => {
-                    const speed = 0.1 + (index % 5) * 0.1;
-                    const angle = (index * Math.PI * 2) / particles.length;
-                    const radius = 50 + (index % 3) * 20;
-
-                    particle.style.transform = `translate(
-                        ${Math.cos(angle + performance.now() * speed) * radius}px,
-                        ${Math.sin(angle + performance.now() * speed) * radius}px
-                    )`;
-                });
-            });
-        });
+      // Start Game Loop
+      gameLoop();
     </script>
-</body>
-</html>rate" id="compressionRate">98.7%</div>
-                        <div class="compression-graph" id="coherenceGraph"></div>
-                    </div>
-
-                    <div class="quantum-metric">
-                        <div class="optimization-label">Learning Iterations</div>
-                        <div class="compression-rate" id="iterationCount">1,432,897</div>
-                        <div class="optimization-history" id="learningHistory"></div>
-                    </div>
-                </div>
-
-                <!-- ZKP Compression Visualization -->
-                <div class="zkp-compression">
-                    <h3>Zero-Knowledge Proof Optimization</h3>
-                    <div id="zkpVisualization"></div>
-                </div>
-            </div>
-
-            <!-- Game Evolution Stats -->
-            <div class="evolution-stats">
-                <div class="stats-grid">
-                    <div class="stat-card">
-                        <h4>Initial State</h4>
-                        <ul>
-                            <li>Memory Usage: 1.2 GB</li>
-                            <li>Frame Time: 16.7ms</li>
-                            <li>State Size: 100%</li>
-                        </ul>
-                    </div>
-                    <div class="stat-card">
-                        <h4>Current State</h4>
-                        <ul>
-                            <li>Memory Usage: 284 MB</li>
-                            <li>Frame Time: 4.2ms</li>
-                            <li>State Size: 23.7%</li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <script>
-        class QuantumEvolutionSystem {
-            constructor() {
-                this.initializeSystem();
-                this.startEvolution();
-            }
-
-            initializeSystem() {
-                this.zkpCompressor = new ZKPCompressor();
-                this.quantumOptimizer = new QuantumOptimizer();
-                this.learningHistory = [];
-                this.compressionHistory = [];
-                
-                // Initialize visualization elements
-                this.initializeVisuals();
-            }
-
-            initializeVisuals() {
-                // Create quantum particles
-                const particles = document.getElementById('particles');
-                for (let i = 0; i < 50; i++) {
-                    const particle = document.createElement('div');
-                    particle.className = 'quantum-particle';
-                    particle.style.left = `${Math.random() * 100}%`;
-                    particle.style.top = `${Math.random() * 100}%`;
-                    particles.appendChild(particle);
-                }
-
-                // Initialize graphs
-                this.initializeGraphs();
-            }
-
-            startEvolution() {
-                let iterationCount = 0;
-                
-                const evolve = () => {
-                    // Update ZKP compression
-                    const compressionRate = this.zkpCompressor.compress();
-                    this.updateCompressionMetrics(compressionRate);
-
-                    // Update quantum optimization
-                    const optimizationResult = this.quantumOptimizer.optimize();
-                    this.updateOptimizationMetrics(optimizationResult);
-
-                    // Update learning history
-                    iterationCount++;
-                    this.updateLearningHistory(iterationCount, optimizationResult);
-
-                    // Schedule next evolution
-                    requestAnimationFrame(evolve);
-                };
-
-                evolve();
-            }
-
-            updateCompressionMetrics(rate) {
-                const compressionRate = document.getElementById('compressionRate');
-                compressionRate.textContent = `${(rate * 100).toFixed(1)}%`;
-
-                // Update compression graph
-                this.compressionHistory.push(rate);
-                if (this.compressionHistory.length > 50) {
-                    this.compressionHistory.shift();
-                }
-
-                const graph = document.getElementById('compressionGraph');
-                graph.innerHTML = this.compressionHistory
-                    .map(rate => `
-                        <div class="compression-bar" 
-                             style="height: ${rate * 100}%"></div>
-                    `).join('');
-            }
-
-            updateOptimizationMetrics(result) {
-                const coherenceRate = document.getElementById('coherenceRate');
-                coherenceRate.textContent = 
-                    `${(result.coherence * 100).toFixed(1)}%`;
-
-                // Update coherence graph
-                const graph = document.getElementById('coherenceGraph');
-                graph.innerHTML = `
-                    <div class="compression-bar" 
-                         style="height: ${result.coherence * 100}%"></div>
-                `;
-            }
-
-            updateLearningHistory(iterations, result) {
-                const iterationCount = document.getElementById('iterationCount');
-                iterationCount.textContent = iterations.toLocaleString();
-
-                this.learningHistory.push({
-                    iterations,
-                    performance: result.performance
-                });
-
-                // Update history visualization
-                const history = document.getElementById('learningHistory');
-                history.innerHTML = this.learningHistory
-                    .map(point => `
-                        <div class="history-point" 
-                             style="bottom: ${point.performance * 100}%; 
-                                    left: ${(point.iterations / iterations) * 100}%">
-                        </div>
-                    `).join('');
-            }
-        }
-
-        class ZKPCompressor {
-            constructor() {
-                this.compressionRatio = 0.2; // Initial compression
-                this.learningRate = 0.001;
-                this.optimizationSteps = 0;
-            }
-
-            compress() {
-                // Simulate ZKP compression optimization
-                this.optimizationSteps++;
-                const improvement = Math.exp(-this.optimizationSteps * this.learningRate);
-                this.compressionRatio = Math.max(
-                    0.05, // Minimum compression ratio
-                    this.compressionRatio * improvement
-                );
-
-                return 1 - this.compressionRatio;
-            }
-        }
-
-        class QuantumOptimizer {
-            constructor() {
-                this.coherence = 0.8; // Initial quantum coherence
-                this.learningRate = 0.0005;
-                this.optimizationSteps = 0;
-            }
-
-            optimize() {
-                // Simulate quantum optimization
-                this.optimizationSteps++;
-                const improvement = 1 - Math.exp(-this.optimizationSteps * this.learningRate);
-                this.coherence = Math.min(
-                    0.99, // Maximum coherence
-                    this.coherence + (1 - this.coherence) * improvement
-                );
-
-                return {
-                    coherence: this.coherence,
-                    performance: improvement
-                };
-            }
-        }
-
-        // Initialize the evolution system when document is loaded
-        document.addEventListener('DOMContentLoaded', () => {
-            const evolution = new QuantumEvolutionSystem();
-
-            // Add interactive particle effects
-            document.addEventListener('mousemove', (e) => {
-                const particles = document.querySelectorAll('.quantum-particle');
-                particles.forEach((particle, index) => {
-                    const speed = 0.1 + (index % 5) * 0.1;
-                    const angle = (index * Math.PI * 2) / particles.length;
-                    const radius = 50 + (index % 3) * 20;
-
-                    particle.style.transform = `translate(
-                        ${Math.cos(angle + performance.now() * speed) * radius}px,
-                        ${Math.sin(angle + performance.now() * speed) * radius}px
-                    )`;
-                });
-            });
-        });
-    </script>
-</body>
-</html>graph" id="compressionGraph"></div>
-                    </div>
-
-                    <div class="quantum-metric">
-                        <div class="optimization-label">Quantum Coherence</div>
-                        <div class="compression-graph" id="coherenceGraph"></div>
-                    </div>
-
-                    <div class="quantum-metric">
-                        <div class="optimization-label">Learning Iterations</div>
-                        <div class="compression-rate" id="iterationCount">1,432,897</div>
-                        <div class="optimization-history" id="learningHistory"></div>
-                    </div>
-                </div>
-
-                <!-- ZKP Compression Visualization -->
-                <div class="zkp-compression">
-                    <h3>Zero-Knowledge Proof Optimization</h3>
-                    <div id="zkpVisualization"></div>
-                </div>
-            </div>
-
-            <!-- Game Evolution Stats -->
-            <div class="evolution-stats">
-                <div class="stats-grid">
-                    <div class="stat-card">
-                        <h4>Initial State</h4>
-                        <ul>
-                            <li>Memory Usage: 1.2 GB</li>
-                            <li>Frame Time: 16.7ms</li>
-                            <li>State Size: 100%</li>
-                        </ul>
-                    </div>
-                    <div class="stat-card">
-                        <h4>Current State</h4>
-                        <ul>
-                            <li>Memory Usage: 284 MB</li>
-                            <li>Frame Time: 4.2ms</li>
-                            <li>State Size: 23.7%</li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <script>
-        class QuantumEvolutionSystem {
-            constructor() {
-                this.initializeSystem();
-                this.startEvolution();
-            }
-
-            initializeSystem() {
-                this.zkpCompressor = new ZKPCompressor();
-                this.quantumOptimizer = new QuantumOptimizer();
-                this.learningHistory = [];
-                this.compressionHistory = [];
-                
-                // Initialize visualization elements
-                this.initializeVisuals();
-            }
-
-            initializeVisuals() {
-                // Create quantum particles
-                const particles = document.getElementById('particles');
-                for (let i = 0; i < 50; i++) {
-                    const particle = document.createElement('div');
-                    particle.className = 'quantum-particle';
-                    particle.style.left = `${Math.random() * 100}%`;
-                    particle.style.top = `${Math.random() * 100}%`;
-                    particles.appendChild(particle);
-                }
-
-                // Initialize graphs
-                this.initializeGraphs();
-            }
-
-            startEvolution() {
-                let iterationCount = 0;
-                
-                const evolve = () => {
-                    // Update ZKP compression
-                    const compressionRate = this.zkpCompressor.compress();
-                    this.updateCompressionMetrics(compressionRate);
-
-                    // Update quantum optimization
-                    const optimizationResult = this.quantumOptimizer.optimize();
-                    this.updateOptimizationMetrics(optimizationResult);
-
-                    // Update learning history
-                    iterationCount++;
-                    this.updateLearningHistory(iterationCount, optimizationResult);
-
-                    // Schedule next evolution
-                    requestAnimationFrame(evolve);
-                };
-
-                evolve();
-            }
-
-            updateCompressionMetrics(rate) {
-                const compressionRate = document.getElementById('compressionRate');
-                compressionRate.textContent = `${(rate * 100).toFixed(1)}%`;
-
-                // Update compression graph
-                this.compressionHistory.push(rate);
-                if (this.compressionHistory.length > 50) {
-                    this.compressionHistory.shift();
-                }
-
-                const graph = document.getElementById('compressionGraph');
-                graph.innerHTML = this.compressionHistory
-                    .map(rate => `
-                        <div class="compression-bar" 
-                             style="height: ${rate * 100}%"></div>
-                    `).join('');
-            }
-
-            updateOptimizationMetrics(result) {
-                const coherenceRate = document.getElementById('coherenceRate');
-                coherenceRate.textContent = 
-                    `${(result.coherence * 100).toFixed(1)}%`;
-
-                // Update coherence graph
-                const graph = document.getElementById('coherenceGraph');
-                graph.innerHTML = `
-                    <div class="compression-bar" 
-                         style="height: ${result.coherence * 100}%"></div>
-                `;
-            }
-
-            updateLearningHistory(iterations, result) {
-                const iterationCount = document.getElementById('iterationCount');
-                iterationCount.textContent = iterations.toLocaleString();
-
-                this.learningHistory.push({
-                    iterations,
-                    performance: result.performance
-                });
-
-                // Update history visualization
-                const history = document.getElementById('learningHistory');
-                history.innerHTML = this.learningHistory
-                    .map(point => `
-                        <div class="history-point" 
-                             style="bottom: ${point.performance * 100}%; 
-                                    left: ${(point.iterations / iterations) * 100}%">
-                        </div>
-                    `).join('');
-            }
-        }
-
-        class ZKPCompressor {
-            constructor() {
-                this.compressionRatio = 0.2; // Initial compression
-                this.learningRate = 0.001;
-                this.optimizationSteps = 0;
-            }
-
-            compress() {
-                // Simulate ZKP compression optimization
-                this.optimizationSteps++;
-                const improvement = Math.exp(-this.optimizationSteps * this.learningRate);
-                this.compressionRatio = Math.max(
-                    0.05, // Minimum compression ratio
-                    this.compressionRatio * improvement
-                );
-
-                return 1 - this.compressionRatio;
-            }
-        }
-
-        class QuantumOptimizer {
-            constructor() {
-                this.coherence = 0.8; // Initial quantum coherence
-                this.learningRate = 0.0005;
-                this.optimizationSteps = 0;
-            }
-
-            optimize() {
-                // Simulate quantum optimization
-                this.optimizationSteps++;
-                const improvement = 1 - Math.exp(-this.optimizationSteps * this.learningRate);
-                this.coherence = Math.min(
-                    0.99, // Maximum coherence
-                    this.coherence + (1 - this.coherence) * improvement
-                );
-
-                return {
-                    coherence: this.coherence,
-                    performance: improvement
-                };
-            }
-        }
-
-        // Initialize the evolution system when document is loaded
-        document.addEventListener('DOMContentLoaded', () => {
-            const evolution = new QuantumEvolutionSystem();
-
-            // Add interactive particle effects
-            document.addEventListener('mousemove', (e) => {
-                const particles = document.querySelectorAll('.quantum-particle');
-                particles.forEach((particle, index) => {
-                    const speed = 0.1 + (index % 5) * 0.1;
-                    const angle = (index * Math.PI * 2) / particles.length;
-                    const radius = 50 + (index % 3) * 20;
-
-                    particle.style.transform = `translate(
-                        ${Math.cos(angle + performance.now() * speed) * radius}px,
-                        ${Math.sin(angle + performance.now() * speed) * radius}px
-                    )`;
-                });
-            });
-        });
-    </script>
-</body>
-</html>rate" id="coherenceRate">94.2%</div>
-                        <div class="compression-graph" id="coherenceGraph"></div>
-                    </div>
-
-                    <div class="quantum-metric">
-                        <div class="optimization-label">Learning Iterations</div>
-                        <div class="compression-rate" id="iterationCount">1,432,897</div>
-                        <div class="optimization-history" id="learningHistory"></div>
-                    </div>
-                </div>
-
-                <!-- ZKP Compression Visualization -->
-                <div class="zkp-compression">
-                    <h3>Zero-Knowledge Proof Optimization</h3>
-                    <div id="zkpVisualization"></div>
-                </div>
-            </div>
-
-            <!-- Game Evolution Stats -->
-            <div class="evolution-stats">
-                <div class="stats-grid">
-                    <div class="stat-card">
-                        <h4>Initial State</h4>
-                        <ul>
-                            <li>Memory Usage: 1.2 GB</li>
-                            <li>Frame Time: 16.7ms</li>
-                            <li>State Size: 100%</li>
-                        </ul>
-                    </div>
-                    <div class="stat-card">
-                        <h4>Current State</h4>
-                        <ul>
-                            <li>Memory Usage: 284 MB</li>
-                            <li>Frame Time: 4.2ms</li>
-                            <li>State Size: 23.7%</li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <script>
-        class QuantumEvolutionSystem {
-            constructor() {
-                this.initializeSystem();
-                this.startEvolution();
-            }
-
-            initializeSystem() {
-                this.zkpCompressor = new ZKPCompressor();
-                this.quantumOptimizer = new QuantumOptimizer();
-                this.learningHistory = [];
-                this.compressionHistory = [];
-                
-                // Initialize visualization elements
-                this.initializeVisuals();
-            }
-
-            initializeVisuals() {
-                // Create quantum particles
-                const particles = document.getElementById('particles');
-                for (let i = 0; i < 50; i++) {
-                    const particle = document.createElement('div');
-                    particle.className = 'quantum-particle';
-                    particle.style.left = `${Math.random() * 100}%`;
-                    particle.style.top = `${Math.random() * 100}%`;
-                    particles.appendChild(particle);
-                }
-
-                // Initialize graphs
-                this.initializeGraphs();
-            }
-
-            startEvolution() {
-                let iterationCount = 0;
-                
-                const evolve = () => {
-                    // Update ZKP compression
-                    const compressionRate = this.zkpCompressor.compress();
-                    this.updateCompressionMetrics(compressionRate);
-
-                    // Update quantum optimization
-                    const optimizationResult = this.quantumOptimizer.optimize();
-                    this.updateOptimizationMetrics(optimizationResult);
-
-                    // Update learning history
-                    iterationCount++;
-                    this.updateLearningHistory(iterationCount, optimizationResult);
-
-                    // Schedule next evolution
-                    requestAnimationFrame(evolve);
-                };
-
-                evolve();
-            }
-
-            updateCompressionMetrics(rate) {
-                const compressionRate = document.getElementById('compressionRate');
-                compressionRate.textContent = `${(rate * 100).toFixed(1)}%`;
-
-                // Update compression graph
-                this.compressionHistory.push(rate);
-                if (this.compressionHistory.length > 50) {
-                    this.compressionHistory.shift();
-                }
-
-                const graph = document.getElementById('compressionGraph');
-                graph.innerHTML = this.compressionHistory
-                    .map(rate => `
-                        <div class="compression-bar" 
-                             style="height: ${rate * 100}%"></div>
-                    `).join('');
-            }
-
-            updateOptimizationMetrics(result) {
-                const coherenceRate = document.getElementById('coherenceRate');
-                coherenceRate.textContent = 
-                    `${(result.coherence * 100).toFixed(1)}%`;
-
-                // Update coherence graph
-                const graph = document.getElementById('coherenceGraph');
-                graph.innerHTML = `
-                    <div class="compression-bar" 
-                         style="height: ${result.coherence * 100}%"></div>
-                `;
-            }
-
-            updateLearningHistory(iterations, result) {
-                const iterationCount = document.getElementById('iterationCount');
-                iterationCount.textContent = iterations.toLocaleString();
-
-                this.learningHistory.push({
-                    iterations,
-                    performance: result.performance
-                });
-
-                // Update history visualization
-                const history = document.getElementById('learningHistory');
-                history.innerHTML = this.learningHistory
-                    .map(point => `
-                        <div class="history-point" 
-                             style="bottom: ${point.performance * 100}%; 
-                                    left: ${(point.iterations / iterations) * 100}%">
-                        </div>
-                    `).join('');
-            }
-        }
-
-        class ZKPCompressor {
-            constructor() {
-                this.compressionRatio = 0.2; // Initial compression
-                this.learningRate = 0.001;
-                this.optimizationSteps = 0;
-            }
-
-            compress() {
-                // Simulate ZKP compression optimization
-                this.optimizationSteps++;
-                const improvement = Math.exp(-this.optimizationSteps * this.learningRate);
-                this.compressionRatio = Math.max(
-                    0.05, // Minimum compression ratio
-                    this.compressionRatio * improvement
-                );
-
-                return 1 - this.compressionRatio;
-            }
-        }
-
-        class QuantumOptimizer {
-            constructor() {
-                this.coherence = 0.8; // Initial quantum coherence
-                this.learningRate = 0.0005;
-                this.optimizationSteps = 0;
-            }
-
-            optimize() {
-                // Simulate quantum optimization
-                this.optimizationSteps++;
-                const improvement = 1 - Math.exp(-this.optimizationSteps * this.learningRate);
-                this.coherence = Math.min(
-                    0.99, // Maximum coherence
-                    this.coherence + (1 - this.coherence) * improvement
-                );
-
-                return {
-                    coherence: this.coherence,
-                    performance: improvement
-                };
-            }
-        }
-
-        // Initialize the evolution system when document is loaded
-        document.addEventListener('DOMContentLoaded', () => {
-            const evolution = new QuantumEvolutionSystem();
-
-            // Add interactive particle effects
-            document.addEventListener('mousemove', (e) => {
-                const particles = document.querySelectorAll('.quantum-particle');
-                particles.forEach((particle, index) => {
-                    const speed = 0.1 + (index % 5) * 0.1;
-                    const angle = (index * Math.PI * 2) / particles.length;
-                    const radius = 50 + (index % 3) * 20;
-
-                    particle.style.transform = `translate(
-                        ${Math.cos(angle + performance.now() * speed) * radius}px,
-                        ${Math.sin(angle + performance.now() * speed) * radius}px
-                    )`;
-                });
-            });
-        });
-    </script>
-</body>
+  </body>
 </html>
