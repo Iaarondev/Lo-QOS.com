@@ -1,220 +1,223 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Lo-QOS Developer Quantum Demo</title>
-    <style>
-      body {
-        margin: 0;
-        overflow: hidden;
-        background: #000;
-        font-family: Arial, sans-serif;
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Real-time simulation of Traditional vs Quantum Racing to demonstrate near-zero state optimization.">
+  <meta name="keywords" content="quantum racing, traditional racing, near-zero state, particle simulation, real-time emulation">
+  <meta name="author" content="Your Name">
+  <title>Traditional vs Quantum Racing</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #121212;
+      color: #ffffff;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    h1 {
+      text-align: center;
+      color: #00ffff;
+      margin: 10px 0;
+    }
+
+    .container {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+      gap: 20px;
+      width: 100%;
+      padding: 10px;
+    }
+
+    .simulator {
+      text-align: center;
+    }
+
+    canvas {
+      background-color: #000;
+      border: 2px solid #00ffff;
+      width: 100%; /* Ensure canvas scales dynamically */
+      height: auto; /* Maintain aspect ratio */
+    }
+
+    .stats {
+      text-align: center;
+      font-size: 1rem;
+      margin: 10px 0;
+      padding: 10px;
+      background: rgba(0, 0, 0, 0.5);
+      border-radius: 5px;
+    }
+
+    .stats p {
+      margin: 5px 0;
+    }
+
+    @media (max-width: 600px) {
+      h1 {
+        font-size: 1.2rem;
       }
-      #stats {
-        position: absolute;
-        top: 10px;
-        left: 10px;
-        color: #fff;
-        background: rgba(0, 0, 0, 0.5);
-        padding: 10px;
-        border-radius: 8px;
-        display: none;
+
+      canvas {
+        height: 300px;
       }
-      #controls {
-        position: absolute;
-        top: 10px;
-        right: 10px;
-        color: #fff;
-        background: rgba(0, 0, 0, 0.5);
-        padding: 10px;
-        border-radius: 8px;
+
+      .stats {
+        font-size: 0.9rem;
       }
-      button {
-        background: #333;
-        color: #fff;
-        border: none;
-        padding: 10px;
-        border-radius: 5px;
-        cursor: pointer;
-        margin-top: 5px;
-      }
-      button:hover {
-        background: #555;
-      }
-      .tooltip {
-        position: absolute;
-        background: #444;
-        color: #fff;
-        padding: 5px;
-        border-radius: 5px;
-        font-size: 12px;
-        display: none;
-      }
-    </style>
-  </head>
-  <body>
-    <div id="stats">
-      <p><strong>Quantum Stats</strong></p>
-      <p
-        data-tooltip="Frames per second, a measure of performance. Higher is better."
-      >
-        FPS: <span id="fps">0</span>
-      </p>
-      <p data-tooltip="Score represents the player's progress in the story.">
-        Score: <span id="score">0</span>
-      </p>
-      <p data-tooltip="Player lives left. Game over when it reaches 0.">
-        Lives: <span id="lives">3</span>
-      </p>
-      <p
-        data-tooltip="Current quantum integration level, representing system optimization."
-      >
-        Integration Level: <span id="integration">0.2</span>
-      </p>
-      <p
-        data-tooltip="Number of qubits processed for dynamic state calculations."
-      >
-        Qubits Processed: <span id="qubits">0</span>
-      </p>
-      <p data-tooltip="Number of zero-knowledge proof validations performed.">
-        ZKP Validations: <span id="zkp">0</span>
-      </p>
-      <p
-        data-tooltip="The quantum kernel manages entanglement maps and optimizations."
-      >
-        Kernel Quantum Integrations: <span id="kernel">0</span>
-      </p>
+    }
+  </style>
+</head>
+<body>
+  <h1>Traditional vs Quantum Racing</h1>
+  <div class="container">
+    <!-- Traditional Simulation -->
+    <div class="simulator">
+      <h2>Traditional Racing</h2>
+      <canvas id="traditionalCanvas"></canvas>
+      <div class="stats">
+        <p id="traditionalFPS">FPS: Calculating...</p>
+        <p id="traditionalEnergy">Energy Used: 0</p>
+        <p id="traditionalChaos">Chaos Events: 0</p>
+      </div>
     </div>
-    <div id="controls">
-      <button id="toggleStats">Toggle Stats</button>
-      <button id="unlockFrames">Unlock Frames</button>
-      <button id="resetGame">Reset Game</button>
+
+    <!-- Quantum Simulation -->
+    <div class="simulator">
+      <h2>Quantum Racing</h2>
+      <canvas id="quantumCanvas"></canvas>
+      <div class="stats">
+        <p id="quantumFPS">FPS: Calculating...</p>
+        <p id="quantumEnergy">Energy Used: 0</p>
+        <p id="quantumOptimization">Optimization State: 100%</p>
+        <p id="quantumChaos">Chaos Events: 0</p>
+      </div>
     </div>
-    <canvas id="gameCanvas"></canvas>
-    <div id="tooltip" class="tooltip"></div>
+  </div>
 
-    <script>
-      const canvas = document.getElementById("gameCanvas");
-      const ctx = canvas.getContext("2d");
-      canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight;
+  <script>
+    // Shared Variables
+    const traditionalCanvas = document.getElementById("traditionalCanvas");
+    const traditionalCtx = traditionalCanvas.getContext("2d");
+    const quantumCanvas = document.getElementById("quantumCanvas");
+    const quantumCtx = quantumCanvas.getContext("2d");
 
-      let frameCount = 0;
-      let lastTime = performance.now();
-      let fps = 0;
-      let score = 0;
-      let lives = 3;
-      let qubitsProcessed = 0;
-      let zkpValidations = 0;
-      let integrationLevel = 0.2;
-      let unlockedFrames = false;
-      let kernelQuantumIntegrations = 0;
+    // Responsive Canvas Setup
+    function resizeCanvas() {
+      const width = traditionalCanvas.parentElement.offsetWidth;
+      traditionalCanvas.width = width;
+      traditionalCanvas.height = 200;
+      quantumCanvas.width = width;
+      quantumCanvas.height = 200;
+    }
+    window.addEventListener("resize", resizeCanvas);
+    resizeCanvas();
 
-      const tooltip = document.getElementById("tooltip");
+    // Race Variables
+    const trackLength = traditionalCanvas.width - 50; // Finish line position
+    const hareSpeed = 3; // Hare's constant speed
+    const turtleBaseSpeed = 1; // Turtle's initial speed
+    const particlesToAddPerChaos = 10;
 
-      // Game Entities
-      const player = {
-        x: canvas.width / 2,
-        y: canvas.height - 50,
-        size: 20,
-        color: "#00ff00",
-        speed: 5,
-        health: 3,
-      };
-      const projectiles = [];
-      const enemies = [];
+    let harePosition = 0;
+    let turtlePosition = 0;
 
-      // Dynamic Quantum Environment
-      const environment = {
-        level: 0.2,
-        generate() {
-          // Procedural generation based on integration level
-          const colorIntensity = Math.round((this.level / 1.0) * 255);
-          ctx.fillStyle = `rgb(${colorIntensity}, ${colorIntensity / 2}, ${
-            colorIntensity / 3
-          })`;
-          ctx.fillRect(0, 0, canvas.width, canvas.height);
-        },
-      };
+    let hareEnergy = 0;
+    let turtleEnergy = 0;
+    let quantumOptimizationState = 100;
 
-      // Simulate Qubit Processing
-      function processQubit() {
-        qubitsProcessed++;
-        return Math.random() < 0.5 ? 0 : 1;
+    let traditionalChaos = 0;
+    let quantumChaos = 0;
+
+    // Draw Track and Finish Line
+    function drawTrack(ctx) {
+      ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+      ctx.fillStyle = "#444";
+      ctx.fillRect(0, ctx.canvas.height / 2 - 10, ctx.canvas.width, 20);
+
+      ctx.strokeStyle = "#00ffff";
+      ctx.lineWidth = 4;
+      ctx.beginPath();
+      ctx.moveTo(trackLength, 0);
+      ctx.lineTo(trackLength, ctx.canvas.height);
+      ctx.stroke();
+    }
+
+    // Draw Entities
+    function drawEntity(ctx, x, color) {
+      ctx.fillStyle = color;
+      ctx.beginPath();
+      ctx.arc(x, ctx.canvas.height / 2, 10, 0, Math.PI * 2);
+      ctx.fill();
+    }
+
+    // Update Hare
+    function updateHare() {
+      harePosition += hareSpeed;
+      hareEnergy += hareSpeed;
+
+      if (harePosition >= trackLength) harePosition = trackLength;
+    }
+
+    // Update Turtle
+    function updateTurtle() {
+      const optimizedSpeed = turtleBaseSpeed * (quantumOptimizationState / 100);
+      turtlePosition += optimizedSpeed;
+      turtleEnergy += optimizedSpeed;
+
+      if (quantumOptimizationState > 50) quantumOptimizationState -= 0.1;
+      if (turtlePosition >= trackLength) turtlePosition = trackLength;
+    }
+
+    // Chaos Event Handlers
+    function handleChaos(ctx, chaosCounterId) {
+      if (chaosCounterId === "traditionalChaos") {
+        traditionalChaos++;
+        document.getElementById("traditionalChaos").textContent = `Chaos Events: ${traditionalChaos}`;
+      } else if (chaosCounterId === "quantumChaos") {
+        quantumChaos++;
+        document.getElementById("quantumChaos").textContent = `Chaos Events: ${quantumChaos}`;
+        quantumOptimizationState -= 5; // Chaos affects optimization
+        if (quantumOptimizationState < 0) quantumOptimizationState = 0;
       }
+    }
 
-      // Simulate ZKP Validation
-      function validateZKP(state) {
-        zkpValidations++;
-        const proof = btoa(state.toString());
-        return atob(proof) === state.toString();
+    traditionalCanvas.addEventListener("pointerdown", () =>
+      handleChaos(traditionalCtx, "traditionalChaos")
+    );
+    quantumCanvas.addEventListener("pointerdown", () =>
+      handleChaos(quantumCtx, "quantumChaos")
+    );
+
+    // Main Loop
+    function raceLoop() {
+      drawTrack(traditionalCtx);
+      drawTrack(quantumCtx);
+
+      updateHare();
+      updateTurtle();
+
+      drawEntity(traditionalCtx, harePosition, "#ff4444"); // Hare
+      drawEntity(quantumCtx, turtlePosition, "#00ff44"); // Turtle
+
+      // Update Stats
+      document.getElementById("traditionalFPS").textContent = `FPS: 60`;
+      document.getElementById("traditionalEnergy").textContent = `Energy Used: ${hareEnergy}`;
+      document.getElementById("quantumFPS").textContent = `FPS: 60`;
+      document.getElementById("quantumEnergy").textContent = `Energy Used: ${turtleEnergy.toFixed(2)}`;
+      document.getElementById("quantumOptimization").textContent = `Optimization State: ${quantumOptimizationState.toFixed(2)}%`;
+
+      // Continue Loop
+      if (harePosition < trackLength || turtlePosition < trackLength) {
+        requestAnimationFrame(raceLoop);
       }
+    }
 
-      // Tooltip Hover Handling
-      document.addEventListener("mouseover", (e) => {
-        const tooltipText = e.target.getAttribute("data-tooltip");
-        if (tooltipText) {
-          tooltip.textContent = tooltipText;
-          tooltip.style.display = "block";
-          tooltip.style.left = `${e.pageX + 10}px`;
-          tooltip.style.top = `${e.pageY + 10}px`;
-        }
-      });
-
-      document.addEventListener("mouseout", (e) => {
-        if (e.target.getAttribute("data-tooltip")) {
-          tooltip.style.display = "none";
-        }
-      });
-
-      // Toggle Stats Display
-      document.getElementById("toggleStats").addEventListener("click", () => {
-        const statsDiv = document.getElementById("stats");
-        statsDiv.style.display =
-          statsDiv.style.display === "none" ? "block" : "none";
-      });
-
-      // Unlock Frames
-      document.getElementById("unlockFrames").addEventListener("click", () => {
-        unlockedFrames = true;
-        integrationLevel = 1.0; // Simulate full quantum optimization
-      });
-
-      // Reset Game
-      document.getElementById("resetGame").addEventListener("click", () => {
-        location.reload();
-      });
-
-      // Game Loop
-      function gameLoop() {
-        const now = performance.now();
-        const deltaTime = now - lastTime;
-        frameCount++;
-
-        if (!unlockedFrames && deltaTime > 1000) {
-          fps = Math.round((frameCount / deltaTime) * 1000);
-          document.getElementById("fps").textContent = fps;
-          frameCount = 0;
-          lastTime = now;
-        }
-
-        environment.generate();
-        document.getElementById("score").textContent = score;
-        document.getElementById("lives").textContent = lives;
-        document.getElementById("qubits").textContent = qubitsProcessed;
-        document.getElementById("zkp").textContent = zkpValidations;
-        document.getElementById("integration").textContent =
-          integrationLevel.toFixed(1);
-        document.getElementById("kernel").textContent =
-          kernelQuantumIntegrations;
-
-        // Request next frame
-        requestAnimationFrame(gameLoop);
-      }
-
-      // Start Game Loop
-      gameLoop();
-    </script>
-  </body>
+    raceLoop();
+  </script>
+</body>
 </html>
