@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Advanced QMP4 Rendering Simulation</title>
+    <title>QMP4 Rendering Simulation with Re-Optimization</title>
     <style>
       body {
         font-family: Arial, sans-serif;
@@ -60,20 +60,16 @@
   <body>
     <h1>Advanced QMP4 Rendering Simulation</h1>
     <div class="info">
-      <p>
-        Real-time rendering simulation incorporating physics, AI, environment
-        mapping, and FPS testing.
-      </p>
+      <p>Simulating real-time rendering with re-optimization at each stage.</p>
     </div>
     <canvas id="renderCanvas" width="800" height="600"></canvas>
     <div class="stats">
       <p id="fps">FPS: Calculating...</p>
       <p id="compression">Compression: Calculating...</p>
       <p id="zkp">ZKP Validations: 0</p>
-      <p id="optimization">Optimization State: Initializing...</p>
-      <p id="physics">Physics Integration: Off</p>
-      <p id="ai">AI Mapping: Off</p>
-      <p id="environment">Environment Mapping: Off</p>
+      <p id="physics">Physics Optimization: Initializing...</p>
+      <p id="ai">AI Mapping Optimization: Not Started</p>
+      <p id="environment">Environment Mapping Optimization: Not Started</p>
       <p id="renderStatus">Rendering Status: In Progress...</p>
     </div>
     <button id="startSimulation">Start Simulation</button>
@@ -87,10 +83,9 @@
 
       let compressionLevel = 0; // Simulated compression percentage
       let zkpValidations = 0; // Count of Zero-Knowledge Proof validations
-      let optimizationLevel = 0; // Optimization tracking
-      let physicsEnabled = false;
-      let aiMapped = false;
-      let environmentMapped = false;
+      let physicsOptimization = 0; // Optimization for physics
+      let aiOptimization = 0; // Optimization for AI
+      let environmentOptimization = 0; // Optimization for environment
       let renderComplete = false;
 
       const entangleMap = []; // Array to simulate quantum entanglement map
@@ -106,15 +101,28 @@
         }
       }
 
-      // Render the entangle map
+      // Render the entangle map with advanced visualizations
       function renderEntangleMap() {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
 
+        // Draw environment background
+        if (environmentOptimization >= 100) {
+          ctx.globalAlpha = 0.2;
+          ctx.fillStyle = "rgba(0, 64, 0, 1)";
+          ctx.fillRect(0, 0, canvas.width, canvas.height);
+          ctx.globalAlpha = 1.0;
+        }
+
         // Draw connections
         entangleMap.forEach((node) => {
-          ctx.strokeStyle = renderComplete
-            ? `rgba(0, 255, 0, 0.8)`
-            : `rgba(0, 255, 255, 0.5)`;
+          ctx.strokeStyle =
+            physicsOptimization < 100
+              ? "rgba(255, 165, 0, 0.8)" // Orange for physics stage
+              : aiOptimization < 100
+              ? "rgba(255, 0, 255, 0.8)" // Magenta for AI stage
+              : renderComplete
+              ? "rgba(0, 255, 0, 0.8)" // Green for completed rendering
+              : "rgba(0, 255, 255, 0.5)"; // Cyan for initial
           ctx.beginPath();
           ctx.moveTo(node.x, node.y);
           ctx.lineTo(
@@ -126,7 +134,14 @@
 
         // Draw nodes
         entangleMap.forEach((node) => {
-          ctx.fillStyle = renderComplete ? "#00ff00" : "#00ffff";
+          ctx.fillStyle =
+            physicsOptimization < 100
+              ? "#FFA500" // Orange for physics stage
+              : aiOptimization < 100
+              ? "#FF00FF" // Magenta for AI stage
+              : renderComplete
+              ? "#00FF00" // Green for completed rendering
+              : "#00FFFF"; // Cyan for default
           ctx.beginPath();
           ctx.arc(node.x, node.y, 5, 0, Math.PI * 2);
           ctx.fill();
@@ -145,7 +160,7 @@
       // Simulate compression optimization
       function updateCompression() {
         if (compressionLevel < 100) {
-          compressionLevel = Math.min(100, compressionLevel + 0.2); // Gradual compression
+          compressionLevel = Math.min(100, compressionLevel + 0.2);
           document.getElementById(
             "compression"
           ).textContent = `Compression: ${compressionLevel.toFixed(2)}%`;
@@ -160,60 +175,52 @@
         ).textContent = `ZKP Validations: ${zkpValidations}`;
       }
 
-      // Update optimization state and unlock phases
-      function updateOptimization() {
-        if (compressionLevel >= 100 && optimizationLevel < 1) {
-          optimizationLevel += 0.01; // Gradual optimization
+      // Optimize physics
+      function optimizePhysics() {
+        if (compressionLevel >= 100 && physicsOptimization < 100) {
+          physicsOptimization = Math.min(100, physicsOptimization + 0.5);
           document.getElementById(
-            "optimization"
-          ).textContent = `Optimization State: ${(
-            optimizationLevel * 100
-          ).toFixed(2)}%`;
-
-          if (optimizationLevel >= 1 && !physicsEnabled) {
-            enablePhysics();
-          }
+            "physics"
+          ).textContent = `Physics Optimization: ${physicsOptimization.toFixed(
+            2
+          )}%`;
         }
       }
 
-      // Enable physics
-      function enablePhysics() {
-        physicsEnabled = true;
-        document.getElementById("physics").textContent =
-          "Physics Integration: Enabled";
-      }
-
-      // Map AI
-      function mapAI() {
-        if (physicsEnabled && !aiMapped) {
-          aiMapped = true;
-          document.getElementById("ai").textContent = "AI Mapping: Completed";
+      // Optimize AI mapping
+      function optimizeAI() {
+        if (physicsOptimization >= 100 && aiOptimization < 100) {
+          aiOptimization = Math.min(100, aiOptimization + 0.3);
+          document.getElementById(
+            "ai"
+          ).textContent = `AI Mapping Optimization: ${aiOptimization.toFixed(
+            2
+          )}%`;
         }
       }
 
-      // Map environment
-      function mapEnvironment() {
-        if (aiMapped && !environmentMapped) {
-          environmentMapped = true;
-          document.getElementById("environment").textContent =
-            "Environment Mapping: Completed";
+      // Optimize environment mapping
+      function optimizeEnvironment() {
+        if (aiOptimization >= 100 && environmentOptimization < 100) {
+          environmentOptimization = Math.min(
+            100,
+            environmentOptimization + 0.2
+          );
+          document.getElementById(
+            "environment"
+          ).textContent = `Environment Mapping Optimization: ${environmentOptimization.toFixed(
+            2
+          )}%`;
         }
       }
 
       // Complete rendering
       function completeRendering() {
-        if (environmentMapped && !renderComplete) {
+        if (environmentOptimization >= 100 && !renderComplete) {
           renderComplete = true;
           document.getElementById("renderStatus").textContent =
             "Rendering Status: Complete!";
-          unlockFPS();
         }
-      }
-
-      // Unlock FPS
-      function unlockFPS() {
-        fps = Infinity; // Simulate unlimited FPS
-        document.getElementById("fps").textContent = `FPS: Unlimited`;
       }
 
       // Main simulation loop
@@ -221,9 +228,9 @@
         updateFPS();
         updateCompression();
         validateZKP();
-        updateOptimization();
-        mapAI();
-        mapEnvironment();
+        optimizePhysics();
+        optimizeAI();
+        optimizeEnvironment();
         completeRendering();
         renderEntangleMap();
 
