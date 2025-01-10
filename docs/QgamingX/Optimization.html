@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>LQS Quantum Gaming Demo</title>
+    <title>Dynamic Quantum Shooter</title>
     <style>
       body {
         margin: 0;
@@ -24,11 +24,12 @@
   </head>
   <body>
     <div id="stats">
-      <p><strong>Quantum Stats</strong></p>
+      <p><strong>Game Stats</strong></p>
       <p>FPS: <span id="fps">0</span></p>
+      <p>Score: <span id="score">0</span></p>
+      <p>Lives: <span id="lives">3</span></p>
       <p>Qubits Processed: <span id="qubits">0</span></p>
       <p>ZKP Validations: <span id="zkp">0</span></p>
-      <p>AI Adaptations: <span id="ai-adaptations">0</span></p>
     </div>
     <canvas id="gameCanvas"></canvas>
 
@@ -41,9 +42,10 @@
       let frameCount = 0;
       let lastTime = performance.now();
       let fps = 0;
+      let score = 0;
+      let lives = 3;
       let qubitsProcessed = 0;
       let zkpValidations = 0;
-      let aiAdaptations = 0;
 
       const player = {
         x: canvas.width / 2,
@@ -51,11 +53,12 @@
         size: 20,
         color: "#00ff00",
         speed: 5,
+        health: 3,
       };
       const projectiles = [];
       const enemies = [];
+      const powerUps = [];
 
-      // Physics Constants
       const GRAVITY = 0.1;
 
       // Simulate Qubit Processing
@@ -71,25 +74,24 @@
         return atob(proof) === state.toString();
       }
 
-      // Generate AI Enemies
+      // Generate Enemies
       function generateEnemy() {
         const x = Math.random() * canvas.width;
         const y = 0;
         const size = Math.random() * 20 + 10;
         const speed = Math.random() * 2 + 1;
-        const behavior = Math.random() < 0.5 ? "aggressive" : "defensive";
+        const type = Math.random() < 0.5 ? "ranged" : "melee";
 
-        enemies.push({ x, y, size, speed, behavior });
+        enemies.push({ x, y, size, speed, type, health: 2 });
       }
 
-      // Update AI Behavior
-      function updateAI(enemy) {
-        aiAdaptations++;
-        if (enemy.behavior === "aggressive") {
-          enemy.x += (player.x > enemy.x ? 1 : -1) * 0.5 * enemy.speed;
-        } else {
-          enemy.x += (player.x < enemy.x ? 1 : -1) * 0.5 * enemy.speed;
-        }
+      // Generate Power-Ups
+      function generatePowerUp() {
+        const x = Math.random() * canvas.width;
+        const y = 0;
+        const size = 15;
+        const type = Math.random() < 0.5 ? "health" : "burst";
+        powerUps.push({ x, y, size, type });
       }
 
       // Update Game Logic
@@ -103,7 +105,6 @@
         // Update enemies
         for (let i = enemies.length - 1; i >= 0; i--) {
           enemies[i].y += enemies[i].speed + GRAVITY;
-          updateAI(enemies[i]);
 
           // Check collision with player
           const dx = enemies[i].x - player.x;
@@ -111,30 +112,50 @@
           const distance = Math.sqrt(dx * dx + dy * dy);
 
           if (distance < player.size + enemies[i].size) {
-            console.log("Player hit!");
+            lives--;
             enemies.splice(i, 1);
+            if (lives <= 0) {
+              alert("Game Over! Final Score: " + score);
+              resetGame();
+            }
+            continue;
           }
 
           if (enemies[i].y > canvas.height) enemies.splice(i, 1);
         }
 
-        // Add new projectiles
-        if (frameCount % 20 === 0) {
-          const qubitState = processQubit();
-          if (validateZKP(qubitState)) {
-            projectiles.push({
-              x: player.x,
-              y: player.y,
-              size: 5,
-              speed: 5,
-              color: qubitState === 0 ? "#ff0000" : "#0000ff",
-            });
-          }
-        }
-
         // Add new enemies
         if (frameCount % 100 === 0) {
           generateEnemy();
+        }
+
+        // Add new power-ups
+        if (frameCount % 300 === 0) {
+          generatePowerUp();
+        }
+
+        // Check power-up collection
+        for (let i = powerUps.length - 1; i >= 0; i--) {
+          const dx = powerUps[i].x - player.x;
+          const dy = powerUps[i].y - player.y;
+          const distance = Math.sqrt(dx * dx + dy * dy);
+
+          if (distance < player.size + powerUps[i].size) {
+            if (powerUps[i].type === "health") {
+              lives++;
+            } else if (powerUps[i].type === "burst") {
+              for (let j = 0; j < 5; j++) {
+                projectiles.push({
+                  x: player.x,
+                  y: player.y,
+                  size: 5,
+                  speed: 5,
+                  color: "#ffff00",
+                });
+              }
+            }
+            powerUps.splice(i, 1);
+          }
         }
       }
 
@@ -161,10 +182,17 @@
 
         // Draw enemies
         for (const enemy of enemies) {
-          ctx.fillStyle =
-            enemy.behavior === "aggressive" ? "#ff5555" : "#5555ff";
+          ctx.fillStyle = enemy.type === "ranged" ? "#ff5555" : "#5555ff";
           ctx.beginPath();
           ctx.arc(enemy.x, enemy.y, enemy.size, 0, Math.PI * 2);
+          ctx.fill();
+        }
+
+        // Draw power-ups
+        for (const powerUp of powerUps) {
+          ctx.fillStyle = powerUp.type === "health" ? "#00ff00" : "#ffff00";
+          ctx.beginPath();
+          ctx.arc(powerUp.x, powerUp.y, powerUp.size, 0, Math.PI * 2);
           ctx.fill();
         }
       }
@@ -175,7 +203,6 @@
         const deltaTime = now - lastTime;
         frameCount++;
 
-        // Calculate FPS
         if (deltaTime > 1000) {
           fps = Math.round((frameCount / deltaTime) * 1000);
           document.getElementById("fps").textContent = fps;
@@ -183,22 +210,34 @@
           lastTime = now;
         }
 
+        document.getElementById("score").textContent = score;
+        document.getElementById("lives").textContent = lives;
         document.getElementById("qubits").textContent = qubitsProcessed;
         document.getElementById("zkp").textContent = zkpValidations;
-        document.getElementById("ai-adaptations").textContent = aiAdaptations;
 
         update();
         draw();
         requestAnimationFrame(gameLoop);
       }
 
+      // Reset Game
+      function resetGame() {
+        score = 0;
+        lives = 3;
+        qubitsProcessed = 0;
+        zkpValidations = 0;
+        enemies.length = 0;
+        projectiles.length = 0;
+        powerUps.length = 0;
+      }
+
+      // Start Game Loop
+      gameLoop();
+
       // Handle player movement
       window.addEventListener("mousemove", (e) => {
         player.x = e.clientX;
       });
-
-      // Start Game Loop
-      gameLoop();
     </script>
   </body>
 </html>
