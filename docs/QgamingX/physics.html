@@ -3,202 +3,254 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>LQS Quantum Gaming Demo</title>
+    <title>Subatomic Particle Mapping (Mobile)</title>
     <style>
       body {
-        margin: 0;
-        overflow: hidden;
-        background: #000;
         font-family: Arial, sans-serif;
+        background-color: #121212;
+        color: #ffffff;
+        margin: 0;
+        padding: 0;
+        overflow: hidden;
       }
-      #stats {
-        position: absolute;
-        top: 10px;
-        left: 10px;
-        color: #fff;
-        background: rgba(0, 0, 0, 0.5);
-        padding: 10px;
-        border-radius: 8px;
+
+      h1 {
+        text-align: center;
+        color: #00ffff;
+        font-size: 1.5rem;
+        margin: 10px 0;
+      }
+
+      .info {
+        text-align: center;
+        font-size: 1rem;
+        margin: 10px 0;
+      }
+
+      canvas {
+        display: block;
+        margin: 0 auto;
+        background-color: #000;
+      }
+
+      .stats {
+        text-align: center;
+        font-size: 0.9rem;
+        margin: 10px 0;
+      }
+
+      .stats p {
+        margin: 5px 0;
+      }
+
+      button {
+        display: block;
+        margin: 10px auto;
+        background-color: #00ffff;
+        color: #000;
+        border: none;
+        border-radius: 5px;
+        padding: 10px 20px;
+        font-size: 1rem;
+        cursor: pointer;
+        font-weight: bold;
+      }
+
+      button:hover {
+        background-color: #00cccc;
       }
     </style>
   </head>
   <body>
-    <div id="stats">
-      <p><strong>Quantum Stats</strong></p>
-      <p>FPS: <span id="fps">0</span></p>
-      <p>Qubits Processed: <span id="qubits">0</span></p>
-      <p>ZKP Validations: <span id="zkp">0</span></p>
-      <p>AI Adaptations: <span id="ai-adaptations">0</span></p>
+    <h1>Subatomic Particle Mapping</h1>
+    <div class="info">
+      <p>From randomness to entanglement: A quantum particle simulation.</p>
     </div>
-    <canvas id="gameCanvas"></canvas>
+    <canvas id="renderCanvas"></canvas>
+    <div class="stats">
+      <p id="stage">Stage: Randomness</p>
+      <p id="progress">Progress: 0%</p>
+    </div>
+    <button id="startSimulation">Start Simulation</button>
 
     <script>
-      const canvas = document.getElementById("gameCanvas");
+      const canvas = document.getElementById("renderCanvas");
       const ctx = canvas.getContext("2d");
-      canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight;
 
-      let frameCount = 0;
-      let lastTime = performance.now();
-      let fps = 0;
-      let qubitsProcessed = 0;
-      let zkpValidations = 0;
-      let aiAdaptations = 0;
+      // Responsive canvas setup
+      function resizeCanvas() {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight * 0.7; // Take 70% of the viewport height
+      }
+      window.addEventListener("resize", resizeCanvas);
+      resizeCanvas();
 
-      const player = {
+      // Particle System
+      const particles = [];
+      const particleCount = Math.min(
+        150,
+        Math.floor((canvas.width * canvas.height) / 3000)
+      ); // Adjust for screen size
+
+      // Stages and Progress
+      const stages = [
+        "Randomness",
+        "Mapping",
+        "Entanglement Loops",
+        "Object Formation",
+      ];
+      let currentStage = 0;
+      let progress = 0;
+
+      // Target Shape (Object Formation)
+      const targetShape = {
         x: canvas.width / 2,
-        y: canvas.height - 50,
-        size: 20,
-        color: "#00ff00",
-        speed: 5,
+        y: canvas.height / 2,
+        radius: canvas.width * 0.2,
       };
-      const projectiles = [];
-      const enemies = [];
 
-      // Physics Constants
-      const GRAVITY = 0.1;
-
-      // Simulate Qubit Processing
-      function processQubit() {
-        qubitsProcessed++;
-        return Math.random() < 0.5 ? 0 : 1;
-      }
-
-      // Simulate ZKP Validation
-      function validateZKP(state) {
-        zkpValidations++;
-        const proof = btoa(state.toString());
-        return atob(proof) === state.toString();
-      }
-
-      // Generate AI Enemies
-      function generateEnemy() {
-        const x = Math.random() * canvas.width;
-        const y = 0;
-        const size = Math.random() * 20 + 10;
-        const speed = Math.random() * 2 + 1;
-        const behavior = Math.random() < 0.5 ? "aggressive" : "defensive";
-
-        enemies.push({ x, y, size, speed, behavior });
-      }
-
-      // Update AI Behavior
-      function updateAI(enemy) {
-        aiAdaptations++;
-        if (enemy.behavior === "aggressive") {
-          enemy.x += (player.x > enemy.x ? 1 : -1) * 0.5 * enemy.speed;
-        } else {
-          enemy.x += (player.x < enemy.x ? 1 : -1) * 0.5 * enemy.speed;
+      // Initialize particles with random properties
+      function initializeParticles() {
+        particles.length = 0;
+        for (let i = 0; i < particleCount; i++) {
+          particles.push({
+            x: Math.random() * canvas.width,
+            y: Math.random() * canvas.height,
+            vx: (Math.random() - 0.5) * 2,
+            vy: (Math.random() - 0.5) * 2,
+            size: Math.random() * 2 + 1,
+            color: `rgba(${Math.random() * 255}, ${Math.random() * 255}, ${
+              Math.random() * 255
+            }, 1)`,
+          });
         }
       }
 
-      // Update Game Logic
-      function update() {
-        // Move projectiles
-        for (let i = projectiles.length - 1; i >= 0; i--) {
-          projectiles[i].y -= projectiles[i].speed;
-          if (projectiles[i].y < 0) projectiles.splice(i, 1);
-        }
+      // Update particles based on the current stage
+      function updateParticles() {
+        particles.forEach((particle, index) => {
+          if (currentStage === 0) {
+            // Randomness: Particles move chaotically
+            particle.x += particle.vx;
+            particle.y += particle.vy;
 
-        // Update enemies
-        for (let i = enemies.length - 1; i >= 0; i--) {
-          enemies[i].y += enemies[i].speed + GRAVITY;
-          updateAI(enemies[i]);
+            if (particle.x < 0 || particle.x > canvas.width) particle.vx *= -1;
+            if (particle.y < 0 || particle.y > canvas.height) particle.vy *= -1;
+          } else if (currentStage === 1) {
+            // Mapping: Particles converge to a circular formation
+            const angle = (index / particleCount) * Math.PI * 2;
+            const targetX =
+              canvas.width / 2 + Math.cos(angle) * canvas.width * 0.25;
+            const targetY =
+              canvas.height / 2 + Math.sin(angle) * canvas.height * 0.25;
 
-          // Check collision with player
-          const dx = enemies[i].x - player.x;
-          const dy = enemies[i].y - player.y;
-          const distance = Math.sqrt(dx * dx + dy * dy);
-
-          if (distance < player.size + enemies[i].size) {
-            console.log("Player hit!");
-            enemies.splice(i, 1);
+            particle.vx += (targetX - particle.x) * 0.005;
+            particle.vy += (targetY - particle.y) * 0.005;
+          } else if (currentStage === 2) {
+            // Entanglement Loops: Particles form dynamic connections
+            const neighbor = particles[(index + 1) % particles.length];
+            particle.vx += (neighbor.x - particle.x) * 0.01;
+            particle.vy += (neighbor.y - particle.y) * 0.01;
+          } else if (currentStage === 3) {
+            // Object Formation: Particles converge into a unified object
+            particle.vx += (targetShape.x - particle.x) * 0.01;
+            particle.vy += (targetShape.y - particle.y) * 0.01;
           }
 
-          if (enemies[i].y > canvas.height) enemies.splice(i, 1);
-        }
-
-        // Add new projectiles
-        if (frameCount % 20 === 0) {
-          const qubitState = processQubit();
-          if (validateZKP(qubitState)) {
-            projectiles.push({
-              x: player.x,
-              y: player.y,
-              size: 5,
-              speed: 5,
-              color: qubitState === 0 ? "#ff0000" : "#0000ff",
-            });
-          }
-        }
-
-        // Add new enemies
-        if (frameCount % 100 === 0) {
-          generateEnemy();
-        }
+          // Update positions
+          particle.x += particle.vx;
+          particle.y += particle.vy;
+        });
       }
 
-      // Draw Game Objects
-      function draw() {
+      // Draw particles
+      function drawParticles() {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-        // Draw player
-        ctx.fillStyle = player.color;
-        ctx.fillRect(
-          player.x - player.size / 2,
-          player.y - player.size / 2,
-          player.size,
-          player.size
-        );
-
-        // Draw projectiles
-        for (const projectile of projectiles) {
-          ctx.fillStyle = projectile.color;
+        particles.forEach((particle) => {
+          ctx.fillStyle = particle.color;
           ctx.beginPath();
-          ctx.arc(projectile.x, projectile.y, projectile.size, 0, Math.PI * 2);
+          ctx.arc(particle.x, particle.y, particle.size, 0, Math.PI * 2);
           ctx.fill();
+        });
+
+        if (currentStage === 2) {
+          // Draw connections during Entanglement Loops stage
+          particles.forEach((particle, index) => {
+            const neighbor = particles[(index + 1) % particles.length];
+            ctx.strokeStyle = "rgba(0, 255, 255, 0.5)";
+            ctx.beginPath();
+            ctx.moveTo(particle.x, particle.y);
+            ctx.lineTo(neighbor.x, neighbor.y);
+            ctx.stroke();
+          });
         }
 
-        // Draw enemies
-        for (const enemy of enemies) {
-          ctx.fillStyle =
-            enemy.behavior === "aggressive" ? "#ff5555" : "#5555ff";
+        if (currentStage === 3) {
+          // Draw the final object during Object Formation stage
+          ctx.strokeStyle = "rgba(0, 255, 0, 1)";
+          ctx.lineWidth = 2;
           ctx.beginPath();
-          ctx.arc(enemy.x, enemy.y, enemy.size, 0, Math.PI * 2);
-          ctx.fill();
+          ctx.arc(
+            targetShape.x,
+            targetShape.y,
+            targetShape.radius,
+            0,
+            Math.PI * 2
+          );
+          ctx.stroke();
         }
       }
 
-      // Game Loop
-      function gameLoop() {
-        const now = performance.now();
-        const deltaTime = now - lastTime;
-        frameCount++;
-
-        // Calculate FPS
-        if (deltaTime > 1000) {
-          fps = Math.round((frameCount / deltaTime) * 1000);
-          document.getElementById("fps").textContent = fps;
-          frameCount = 0;
-          lastTime = now;
+      // Transition to the next stage
+      function nextStage() {
+        if (currentStage < stages.length - 1) {
+          currentStage++;
+          progress = 0; // Reset progress for the new stage
+          document.getElementById(
+            "stage"
+          ).textContent = `Stage: ${stages[currentStage]}`;
+        } else {
+          document.getElementById("stage").textContent = "Stage: Completed!";
         }
-
-        document.getElementById("qubits").textContent = qubitsProcessed;
-        document.getElementById("zkp").textContent = zkpValidations;
-        document.getElementById("ai-adaptations").textContent = aiAdaptations;
-
-        update();
-        draw();
-        requestAnimationFrame(gameLoop);
       }
 
-      // Handle player movement
-      window.addEventListener("mousemove", (e) => {
-        player.x = e.clientX;
-      });
+      // Main simulation loop
+      function simulationLoop() {
+        if (progress < 100) {
+          progress += 0.5; // Increment progress
+          document.getElementById(
+            "progress"
+          ).textContent = `Progress: ${progress.toFixed(1)}%`;
 
-      // Start Game Loop
-      gameLoop();
+          if (progress >= 100) {
+            nextStage(); // Move to the next stage once progress completes
+          }
+        }
+
+        updateParticles();
+        drawParticles();
+
+        if (currentStage < stages.length) {
+          requestAnimationFrame(simulationLoop);
+        }
+      }
+
+      // Start the simulation
+      document
+        .getElementById("startSimulation")
+        .addEventListener("click", () => {
+          currentStage = 0;
+          progress = 0;
+          document.getElementById(
+            "stage"
+          ).textContent = `Stage: ${stages[currentStage]}`;
+          document.getElementById(
+            "progress"
+          ).textContent = `Progress: ${progress.toFixed(1)}%`;
+          initializeParticles();
+          simulationLoop();
+        });
     </script>
   </body>
 </html>
