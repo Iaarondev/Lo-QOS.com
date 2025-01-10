@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>QMP4 Rendering Simulation with Re-Optimization</title>
+    <title>Subatomic Particle Mapping</title>
     <style>
       body {
         font-family: Arial, sans-serif;
@@ -11,6 +11,7 @@
         color: #ffffff;
         margin: 0;
         padding: 20px;
+        overflow: hidden;
       }
 
       h1 {
@@ -58,19 +59,17 @@
     </style>
   </head>
   <body>
-    <h1>Advanced QMP4 Rendering Simulation</h1>
+    <h1>Subatomic Particle Mapping Simulation</h1>
     <div class="info">
-      <p>Simulating real-time rendering with re-optimization at each stage.</p>
+      <p>
+        Visualizing the evolution from randomness to structured entanglement and
+        object formation.
+      </p>
     </div>
     <canvas id="renderCanvas" width="800" height="600"></canvas>
     <div class="stats">
-      <p id="fps">FPS: Calculating...</p>
-      <p id="compression">Compression: Calculating...</p>
-      <p id="zkp">ZKP Validations: 0</p>
-      <p id="physics">Physics Optimization: Initializing...</p>
-      <p id="ai">AI Mapping Optimization: Not Started</p>
-      <p id="environment">Environment Mapping Optimization: Not Started</p>
-      <p id="renderStatus">Rendering Status: In Progress...</p>
+      <p id="stage">Stage: Randomness</p>
+      <p id="progress">Progress: 0%</p>
     </div>
     <button id="startSimulation">Start Simulation</button>
 
@@ -78,170 +77,171 @@
       const canvas = document.getElementById("renderCanvas");
       const ctx = canvas.getContext("2d");
 
-      let lastFrameTime = performance.now();
-      let fps = 0;
+      // Particle System
+      const particles = [];
+      const particleCount = 150;
 
-      let compressionLevel = 0; // Simulated compression percentage
-      let zkpValidations = 0; // Count of Zero-Knowledge Proof validations
-      let physicsOptimization = 0; // Optimization for physics
-      let aiOptimization = 0; // Optimization for AI
-      let environmentOptimization = 0; // Optimization for environment
-      let renderComplete = false;
+      // Stages and Progress
+      const stages = [
+        "Randomness",
+        "Mapping",
+        "Entanglement Loops",
+        "Object Formation",
+      ];
+      let currentStage = 0;
+      let progress = 0;
 
-      const entangleMap = []; // Array to simulate quantum entanglement map
+      // Target Shape (Object Formation)
+      const targetShape = {
+        x: canvas.width / 2,
+        y: canvas.height / 2,
+        radius: 150,
+      };
 
-      // Initialize entangle map with random data
-      function initializeEntangleMap(size) {
-        for (let i = 0; i < size; i++) {
-          entangleMap.push({
+      // Initialize particles with random properties
+      function initializeParticles() {
+        particles.length = 0;
+        for (let i = 0; i < particleCount; i++) {
+          particles.push({
             x: Math.random() * canvas.width,
             y: Math.random() * canvas.height,
-            connectedTo: Math.floor(Math.random() * size),
+            vx: (Math.random() - 0.5) * 2,
+            vy: (Math.random() - 0.5) * 2,
+            size: Math.random() * 3 + 1,
+            color: `rgba(${Math.random() * 255}, ${Math.random() * 255}, ${
+              Math.random() * 255
+            }, 1)`,
           });
         }
       }
 
-      // Render the entangle map with advanced visualizations
-      function renderEntangleMap() {
+      // Update particles based on the current stage
+      function updateParticles() {
+        particles.forEach((particle, index) => {
+          // Randomness: Particles move chaotically
+          if (currentStage === 0) {
+            particle.x += particle.vx;
+            particle.y += particle.vy;
+
+            if (particle.x < 0 || particle.x > canvas.width) particle.vx *= -1;
+            if (particle.y < 0 || particle.y > canvas.height) particle.vy *= -1;
+          }
+
+          // Mapping: Particles converge to a circular formation
+          if (currentStage === 1) {
+            const angle = (index / particleCount) * Math.PI * 2;
+            const targetX = canvas.width / 2 + Math.cos(angle) * 200;
+            const targetY = canvas.height / 2 + Math.sin(angle) * 200;
+
+            particle.vx += (targetX - particle.x) * 0.005;
+            particle.vy += (targetY - particle.y) * 0.005;
+          }
+
+          // Entanglement Loops: Particles form dynamic connections
+          if (currentStage === 2) {
+            const neighbor = particles[(index + 1) % particles.length];
+            particle.vx += (neighbor.x - particle.x) * 0.01;
+            particle.vy += (neighbor.y - particle.y) * 0.01;
+          }
+
+          // Object Formation: Particles converge into a unified object
+          if (currentStage === 3) {
+            particle.vx += (targetShape.x - particle.x) * 0.01;
+            particle.vy += (targetShape.y - particle.y) * 0.01;
+          }
+
+          // Update positions
+          particle.x += particle.vx;
+          particle.y += particle.vy;
+        });
+      }
+
+      // Draw particles
+      function drawParticles() {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-        // Draw environment background
-        if (environmentOptimization >= 100) {
-          ctx.globalAlpha = 0.2;
-          ctx.fillStyle = "rgba(0, 64, 0, 1)";
-          ctx.fillRect(0, 0, canvas.width, canvas.height);
-          ctx.globalAlpha = 1.0;
-        }
-
-        // Draw connections
-        entangleMap.forEach((node) => {
-          ctx.strokeStyle =
-            physicsOptimization < 100
-              ? "rgba(255, 165, 0, 0.8)" // Orange for physics stage
-              : aiOptimization < 100
-              ? "rgba(255, 0, 255, 0.8)" // Magenta for AI stage
-              : renderComplete
-              ? "rgba(0, 255, 0, 0.8)" // Green for completed rendering
-              : "rgba(0, 255, 255, 0.5)"; // Cyan for initial
+        particles.forEach((particle) => {
+          ctx.fillStyle = particle.color;
           ctx.beginPath();
-          ctx.moveTo(node.x, node.y);
-          ctx.lineTo(
-            entangleMap[node.connectedTo].x,
-            entangleMap[node.connectedTo].y
-          );
-          ctx.stroke();
-        });
-
-        // Draw nodes
-        entangleMap.forEach((node) => {
-          ctx.fillStyle =
-            physicsOptimization < 100
-              ? "#FFA500" // Orange for physics stage
-              : aiOptimization < 100
-              ? "#FF00FF" // Magenta for AI stage
-              : renderComplete
-              ? "#00FF00" // Green for completed rendering
-              : "#00FFFF"; // Cyan for default
-          ctx.beginPath();
-          ctx.arc(node.x, node.y, 5, 0, Math.PI * 2);
+          ctx.arc(particle.x, particle.y, particle.size, 0, Math.PI * 2);
           ctx.fill();
         });
-      }
 
-      // Simulate FPS measurement
-      function updateFPS() {
-        const now = performance.now();
-        const delta = now - lastFrameTime;
-        fps = Math.round(1000 / delta);
-        lastFrameTime = now;
-        document.getElementById("fps").textContent = `FPS: ${fps}`;
-      }
-
-      // Simulate compression optimization
-      function updateCompression() {
-        if (compressionLevel < 100) {
-          compressionLevel = Math.min(100, compressionLevel + 0.2);
-          document.getElementById(
-            "compression"
-          ).textContent = `Compression: ${compressionLevel.toFixed(2)}%`;
+        // Draw connections during Entanglement Loops stage
+        if (currentStage === 2) {
+          particles.forEach((particle, index) => {
+            const neighbor = particles[(index + 1) % particles.length];
+            ctx.strokeStyle = "rgba(0, 255, 255, 0.5)";
+            ctx.beginPath();
+            ctx.moveTo(particle.x, particle.y);
+            ctx.lineTo(neighbor.x, neighbor.y);
+            ctx.stroke();
+          });
         }
-      }
 
-      // Simulate ZKP validation
-      function validateZKP() {
-        zkpValidations++;
-        document.getElementById(
-          "zkp"
-        ).textContent = `ZKP Validations: ${zkpValidations}`;
-      }
-
-      // Optimize physics
-      function optimizePhysics() {
-        if (compressionLevel >= 100 && physicsOptimization < 100) {
-          physicsOptimization = Math.min(100, physicsOptimization + 0.5);
-          document.getElementById(
-            "physics"
-          ).textContent = `Physics Optimization: ${physicsOptimization.toFixed(
-            2
-          )}%`;
-        }
-      }
-
-      // Optimize AI mapping
-      function optimizeAI() {
-        if (physicsOptimization >= 100 && aiOptimization < 100) {
-          aiOptimization = Math.min(100, aiOptimization + 0.3);
-          document.getElementById(
-            "ai"
-          ).textContent = `AI Mapping Optimization: ${aiOptimization.toFixed(
-            2
-          )}%`;
-        }
-      }
-
-      // Optimize environment mapping
-      function optimizeEnvironment() {
-        if (aiOptimization >= 100 && environmentOptimization < 100) {
-          environmentOptimization = Math.min(
-            100,
-            environmentOptimization + 0.2
+        // Draw the final object during Object Formation stage
+        if (currentStage === 3) {
+          ctx.strokeStyle = "rgba(0, 255, 0, 1)";
+          ctx.lineWidth = 2;
+          ctx.beginPath();
+          ctx.arc(
+            targetShape.x,
+            targetShape.y,
+            targetShape.radius,
+            0,
+            Math.PI * 2
           );
-          document.getElementById(
-            "environment"
-          ).textContent = `Environment Mapping Optimization: ${environmentOptimization.toFixed(
-            2
-          )}%`;
+          ctx.stroke();
         }
       }
 
-      // Complete rendering
-      function completeRendering() {
-        if (environmentOptimization >= 100 && !renderComplete) {
-          renderComplete = true;
-          document.getElementById("renderStatus").textContent =
-            "Rendering Status: Complete!";
+      // Transition to the next stage
+      function nextStage() {
+        if (currentStage < stages.length - 1) {
+          currentStage++;
+          progress = 0; // Reset progress for the new stage
+          document.getElementById(
+            "stage"
+          ).textContent = `Stage: ${stages[currentStage]}`;
+        } else {
+          document.getElementById("stage").textContent = "Stage: Completed!";
         }
       }
 
       // Main simulation loop
       function simulationLoop() {
-        updateFPS();
-        updateCompression();
-        validateZKP();
-        optimizePhysics();
-        optimizeAI();
-        optimizeEnvironment();
-        completeRendering();
-        renderEntangleMap();
+        if (progress < 100) {
+          progress += 0.2; // Increment progress
+          document.getElementById(
+            "progress"
+          ).textContent = `Progress: ${progress.toFixed(1)}%`;
 
-        requestAnimationFrame(simulationLoop);
+          if (progress >= 100) {
+            nextStage(); // Move to the next stage once progress completes
+          }
+        }
+
+        updateParticles();
+        drawParticles();
+
+        if (currentStage < stages.length) {
+          requestAnimationFrame(simulationLoop);
+        }
       }
 
-      // Start simulation
+      // Start the simulation
       document
         .getElementById("startSimulation")
         .addEventListener("click", () => {
-          initializeEntangleMap(50); // Initialize with 50 nodes
+          currentStage = 0;
+          progress = 0;
+          document.getElementById(
+            "stage"
+          ).textContent = `Stage: ${stages[currentStage]}`;
+          document.getElementById(
+            "progress"
+          ).textContent = `Progress: ${progress.toFixed(1)}%`;
+          initializeParticles();
           simulationLoop();
         });
     </script>
