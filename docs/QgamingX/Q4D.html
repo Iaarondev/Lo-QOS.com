@@ -119,13 +119,23 @@
 
     // Rendering Variables
     const targetImage = new Image();
-    targetImage.src = "https://via.placeholder.com/400x400.png"; // Replace with your target image
+    targetImage.src = "https://placekitten.com/400/400"; // Replace with a valid image URL
     let traditionalProgress = 0;
     let quantumProgress = 0;
 
     let traditionalEnergy = 0;
     let quantumEnergy = 0;
     let quantumOptimizationState = 100;
+
+    // Debugging Logs
+    targetImage.onload = () => {
+      console.log("Target image loaded successfully.");
+      renderingLoop();
+    };
+
+    targetImage.onerror = () => {
+      console.error("Failed to load target image. Please check the URL.");
+    };
 
     // Draw Target Image on Both Canvases
     function drawImage(ctx, progress) {
@@ -158,59 +168,17 @@
       }
     }
 
-    // Living Animation
-    function animateImage(ctx) {
-      const particles = Array.from({ length: 50 }, () => ({
-        x: Math.random() * ctx.canvas.width,
-        y: Math.random() * ctx.canvas.height,
-        size: Math.random() * 5 + 1,
-        vx: (Math.random() - 0.5) * 2,
-        vy: (Math.random() - 0.5) * 2,
-      }));
-
-      function updateParticles() {
-        particles.forEach((p) => {
-          p.x += p.vx;
-          p.y += p.vy;
-
-          if (p.x < 0 || p.x > ctx.canvas.width) p.vx *= -1;
-          if (p.y < 0 || p.y > ctx.canvas.height) p.vy *= -1;
-        });
-      }
-
-      function drawParticles() {
-        ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
-        ctx.drawImage(targetImage, 0, 0, ctx.canvas.width, ctx.canvas.height);
-        particles.forEach((p) => {
-          ctx.fillStyle = "#00ffff";
-          ctx.beginPath();
-          ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
-          ctx.fill();
-        });
-      }
-
-      function animate() {
-        updateParticles();
-        drawParticles();
-        requestAnimationFrame(animate);
-      }
-      animate();
-    }
-
     // Main Loop
     function renderingLoop() {
       traditionalRender();
       quantumRender();
 
-      if (traditionalProgress >= 100 && quantumProgress >= 100) {
-        animateImage(traditionalCtx);
-        animateImage(quantumCtx);
-      } else {
+      if (traditionalProgress < 100 || quantumProgress < 100) {
         requestAnimationFrame(renderingLoop);
+      } else {
+        console.log("Rendering complete.");
       }
     }
-
-    targetImage.onload = renderingLoop;
   </script>
 </body>
 </html>
