@@ -1,256 +1,237 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Subatomic Particle Mapping (Mobile)</title>
-    <style>
-      body {
-        font-family: Arial, sans-serif;
-        background-color: #121212;
-        color: #ffffff;
-        margin: 0;
-        padding: 0;
-        overflow: hidden;
-      }
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Side-by-side comparison of traditional and quantum ZKP particle simulations, showing performance and optimization differences.">
+  <meta name="keywords" content="quantum ZKP, traditional methods, simulation comparison, real-time visualization, particle simulation">
+  <meta name="author" content="Your Name">
+  <title>Traditional vs Quantum ZKP Comparison</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #121212;
+      color: #ffffff;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
 
-      h1 {
-        text-align: center;
-        color: #00ffff;
-        font-size: 1.5rem;
-        margin: 10px 0;
-      }
+    h1 {
+      text-align: center;
+      color: #00ffff;
+      font-size: 1.5rem;
+      margin: 10px 0;
+    }
 
-      .info {
-        text-align: center;
-        font-size: 1rem;
-        margin: 10px 0;
-      }
+    .container {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      margin: 10px;
+    }
 
-      canvas {
-        display: block;
-        margin: 0 auto;
-        background-color: #000;
-      }
+    canvas {
+      background-color: #000;
+      border: 2px solid #00ffff;
+    }
 
-      .stats {
-        text-align: center;
-        font-size: 0.9rem;
-        margin: 10px 0;
-      }
+    .stats {
+      text-align: center;
+      font-size: 1rem;
+      margin: 10px 0;
+      color: #ffffff;
+      padding: 10px;
+      background: rgba(0, 0, 0, 0.5);
+      border-radius: 5px;
+    }
 
-      .stats p {
-        margin: 5px 0;
-      }
-
-      button {
-        display: block;
-        margin: 10px auto;
-        background-color: #00ffff;
-        color: #000;
-        border: none;
-        border-radius: 5px;
-        padding: 10px 20px;
-        font-size: 1rem;
-        cursor: pointer;
-        font-weight: bold;
-      }
-
-      button:hover {
-        background-color: #00cccc;
-      }
-    </style>
-  </head>
-  <body>
-    <h1>Subatomic Particle Mapping</h1>
-    <div class="info">
-      <p>From randomness to entanglement: A quantum particle simulation.</p>
+    .stats p {
+      margin: 5px 0;
+    }
+  </style>
+</head>
+<body>
+  <h1>Traditional vs Quantum ZKP Simulation</h1>
+  <div class="container">
+    <div>
+      <h2>Traditional Simulation</h2>
+      <canvas id="traditionalCanvas" width="400" height="400"></canvas>
+      <div class="stats">
+        <p id="traditionalFPS">FPS: Calculating...</p>
+        <p id="traditionalParticleCount">Particles: 0</p>
+        <p id="traditionalConnections">Connections: 0</p>
+        <p id="traditionalChaos">Chaos Events: 0</p>
+      </div>
     </div>
-    <canvas id="renderCanvas"></canvas>
-    <div class="stats">
-      <p id="stage">Stage: Randomness</p>
-      <p id="progress">Progress: 0%</p>
+    <div>
+      <h2>Quantum ZKP Simulation</h2>
+      <canvas id="quantumCanvas" width="400" height="400"></canvas>
+      <div class="stats">
+        <p id="quantumFPS">FPS: Calculating...</p>
+        <p id="quantumParticleCount">Particles: 0</p>
+        <p id="quantumConnections">Connections: 0</p>
+        <p id="quantumChaos">Chaos Events: 0</p>
+        <p id="quantumOptimization">Optimization State: 100%</p>
+        <p id="quantumZKP">ZKP Validations: 0</p>
+      </div>
     </div>
-    <button id="startSimulation">Start Simulation</button>
+  </div>
 
-    <script>
-      const canvas = document.getElementById("renderCanvas");
-      const ctx = canvas.getContext("2d");
+  <script>
+    // Shared Variables
+    const traditionalCanvas = document.getElementById("traditionalCanvas");
+    const traditionalCtx = traditionalCanvas.getContext("2d");
+    const quantumCanvas = document.getElementById("quantumCanvas");
+    const quantumCtx = quantumCanvas.getContext("2d");
 
-      // Responsive canvas setup
-      function resizeCanvas() {
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight * 0.7; // Take 70% of the viewport height
-      }
-      window.addEventListener("resize", resizeCanvas);
-      resizeCanvas();
+    // Metrics
+    let traditionalFPS = 0, quantumFPS = 0;
+    let traditionalLastFrameTime = performance.now();
+    let quantumLastFrameTime = performance.now();
 
-      // Particle System
-      const particles = [];
-      const particleCount = Math.min(
-        150,
-        Math.floor((canvas.width * canvas.height) / 3000)
-      ); // Adjust for screen size
+    // Particle Systems
+    const traditionalParticles = [];
+    const quantumParticles = [];
+    const particleCount = 200;
 
-      // Stages and Progress
-      const stages = [
-        "Randomness",
-        "Mapping",
-        "Entanglement Loops",
-        "Object Formation",
-      ];
-      let currentStage = 0;
-      let progress = 0;
+    let traditionalChaos = 0;
+    let quantumChaos = 0;
+    let quantumZKPValidations = 0;
+    let quantumOptimizationState = 100;
 
-      // Target Shape (Object Formation)
-      const targetShape = {
-        x: canvas.width / 2,
-        y: canvas.height / 2,
-        radius: canvas.width * 0.2,
-      };
-
-      // Initialize particles with random properties
-      function initializeParticles() {
-        particles.length = 0;
-        for (let i = 0; i < particleCount; i++) {
-          particles.push({
-            x: Math.random() * canvas.width,
-            y: Math.random() * canvas.height,
-            vx: (Math.random() - 0.5) * 2,
-            vy: (Math.random() - 0.5) * 2,
-            size: Math.random() * 2 + 1,
-            color: `rgba(${Math.random() * 255}, ${Math.random() * 255}, ${
-              Math.random() * 255
-            }, 1)`,
-          });
-        }
-      }
-
-      // Update particles based on the current stage
-      function updateParticles() {
-        particles.forEach((particle, index) => {
-          if (currentStage === 0) {
-            // Randomness: Particles move chaotically
-            particle.x += particle.vx;
-            particle.y += particle.vy;
-
-            if (particle.x < 0 || particle.x > canvas.width) particle.vx *= -1;
-            if (particle.y < 0 || particle.y > canvas.height) particle.vy *= -1;
-          } else if (currentStage === 1) {
-            // Mapping: Particles converge to a circular formation
-            const angle = (index / particleCount) * Math.PI * 2;
-            const targetX =
-              canvas.width / 2 + Math.cos(angle) * canvas.width * 0.25;
-            const targetY =
-              canvas.height / 2 + Math.sin(angle) * canvas.height * 0.25;
-
-            particle.vx += (targetX - particle.x) * 0.005;
-            particle.vy += (targetY - particle.y) * 0.005;
-          } else if (currentStage === 2) {
-            // Entanglement Loops: Particles form dynamic connections
-            const neighbor = particles[(index + 1) % particles.length];
-            particle.vx += (neighbor.x - particle.x) * 0.01;
-            particle.vy += (neighbor.y - particle.y) * 0.01;
-          } else if (currentStage === 3) {
-            // Object Formation: Particles converge into a unified object
-            particle.vx += (targetShape.x - particle.x) * 0.01;
-            particle.vy += (targetShape.y - particle.y) * 0.01;
-          }
-
-          // Update positions
-          particle.x += particle.vx;
-          particle.y += particle.vy;
+    // Initialize Particles
+    function initializeParticles(particles, canvas) {
+      for (let i = 0; i < particleCount; i++) {
+        particles.push({
+          x: Math.random() * canvas.width,
+          y: Math.random() * canvas.height,
+          vx: (Math.random() - 0.5) * 2,
+          vy: (Math.random() - 0.5) * 2,
+          size: Math.random() * 2 + 1,
+          color: `rgba(${Math.random() * 255}, ${Math.random() * 255}, ${Math.random() * 255}, 1)`,
+          connections: [],
         });
       }
+    }
 
-      // Draw particles
-      function drawParticles() {
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
+    initializeParticles(traditionalParticles, traditionalCanvas);
+    initializeParticles(quantumParticles, quantumCanvas);
 
-        particles.forEach((particle) => {
-          ctx.fillStyle = particle.color;
-          ctx.beginPath();
-          ctx.arc(particle.x, particle.y, particle.size, 0, Math.PI * 2);
-          ctx.fill();
-        });
+    // Traditional Particle Update
+    function updateTraditionalParticles() {
+      traditionalParticles.forEach((particle) => {
+        particle.x += particle.vx;
+        particle.y += particle.vy;
 
-        if (currentStage === 2) {
-          // Draw connections during Entanglement Loops stage
-          particles.forEach((particle, index) => {
-            const neighbor = particles[(index + 1) % particles.length];
-            ctx.strokeStyle = "rgba(0, 255, 255, 0.5)";
-            ctx.beginPath();
-            ctx.moveTo(particle.x, particle.y);
-            ctx.lineTo(neighbor.x, neighbor.y);
-            ctx.stroke();
-          });
+        // Wrap around edges
+        if (particle.x < 0) particle.x = traditionalCanvas.width;
+        if (particle.x > traditionalCanvas.width) particle.x = 0;
+        if (particle.y < 0) particle.y = traditionalCanvas.height;
+        if (particle.y > traditionalCanvas.height) particle.y = 0;
+      });
+    }
+
+    // Quantum ZKP Particle Update
+    function updateQuantumParticles() {
+      quantumParticles.forEach((particle) => {
+        quantumZKPValidations++;
+
+        // Simplified ZKP Optimization
+        if (Math.random() > 0.95) {
+          particle.vx *= 0.9;
+          particle.vy *= 0.9;
         }
 
-        if (currentStage === 3) {
-          // Draw the final object during Object Formation stage
-          ctx.strokeStyle = "rgba(0, 255, 0, 1)";
-          ctx.lineWidth = 2;
-          ctx.beginPath();
-          ctx.arc(
-            targetShape.x,
-            targetShape.y,
-            targetShape.radius,
-            0,
-            Math.PI * 2
-          );
-          ctx.stroke();
-        }
+        particle.x += particle.vx;
+        particle.y += particle.vy;
+
+        // Wrap around edges
+        if (particle.x < 0) particle.x = quantumCanvas.width;
+        if (particle.x > quantumCanvas.width) particle.x = 0;
+        if (particle.y < 0) particle.y = quantumCanvas.height;
+        if (particle.y > quantumCanvas.height) particle.y = 0;
+      });
+
+      // Dynamic Optimization
+      if (quantumOptimizationState > 50) quantumOptimizationState -= 0.01;
+    }
+
+    // Draw Particles
+    function drawParticles(ctx, particles) {
+      ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+
+      particles.forEach((particle) => {
+        ctx.fillStyle = particle.color;
+        ctx.beginPath();
+        ctx.arc(particle.x, particle.y, particle.size, 0, Math.PI * 2);
+        ctx.fill();
+      });
+    }
+
+    // FPS Calculation
+    function calculateFPS(lastFrameTime, callback) {
+      const now = performance.now();
+      const fps = Math.round(1000 / (now - lastFrameTime));
+      callback(fps);
+      return now;
+    }
+
+    // Simulation Loops
+    function traditionalSimulation() {
+      traditionalLastFrameTime = calculateFPS(traditionalLastFrameTime, (fps) => {
+        traditionalFPS = fps;
+        document.getElementById("traditionalFPS").textContent = `FPS: ${fps}`;
+      });
+
+      updateTraditionalParticles();
+      drawParticles(traditionalCtx, traditionalParticles);
+
+      document.getElementById("traditionalParticleCount").textContent = `Particles: ${traditionalParticles.length}`;
+      document.getElementById("traditionalConnections").textContent = `Connections: ${traditionalParticles.length * 2}`;
+    }
+
+    function quantumSimulation() {
+      quantumLastFrameTime = calculateFPS(quantumLastFrameTime, (fps) => {
+        quantumFPS = fps;
+        document.getElementById("quantumFPS").textContent = `FPS: ${fps}`;
+      });
+
+      updateQuantumParticles();
+      drawParticles(quantumCtx, quantumParticles);
+
+      document.getElementById("quantumParticleCount").textContent = `Particles: ${quantumParticles.length}`;
+      document.getElementById("quantumConnections").textContent = `Connections: ${quantumParticles.length * 2}`;
+      document.getElementById("quantumChaos").textContent = `Chaos Events: ${quantumChaos}`;
+      document.getElementById("quantumZKP").textContent = `ZKP Validations: ${quantumZKPValidations}`;
+      document.getElementById("quantumOptimization").textContent = `Optimization State: ${quantumOptimizationState.toFixed(2)}%`;
+    }
+
+    // Main Loop
+    function simulationLoop() {
+      traditionalSimulation();
+      quantumSimulation();
+      requestAnimationFrame(simulationLoop);
+    }
+
+    // Chaos Event Handlers
+    traditionalCanvas.addEventListener("mousedown", () => {
+      traditionalChaos++;
+      document.getElementById("traditionalChaos").textContent = `Chaos Events: ${traditionalChaos}`;
+    });
+
+    quantumCanvas.addEventListener("mousedown", () => {
+      quantumChaos++;
+      for (let i = 0; i < particlesToAddPerChaos; i++) {
+        quantumParticles.push(createParticle());
       }
+      document.getElementById("quantumChaos").textContent = `Chaos Events: ${quantumChaos}`;
+    });
 
-      // Transition to the next stage
-      function nextStage() {
-        if (currentStage < stages.length - 1) {
-          currentStage++;
-          progress = 0; // Reset progress for the new stage
-          document.getElementById(
-            "stage"
-          ).textContent = `Stage: ${stages[currentStage]}`;
-        } else {
-          document.getElementById("stage").textContent = "Stage: Completed!";
-        }
-      }
-
-      // Main simulation loop
-      function simulationLoop() {
-        if (progress < 100) {
-          progress += 0.5; // Increment progress
-          document.getElementById(
-            "progress"
-          ).textContent = `Progress: ${progress.toFixed(1)}%`;
-
-          if (progress >= 100) {
-            nextStage(); // Move to the next stage once progress completes
-          }
-        }
-
-        updateParticles();
-        drawParticles();
-
-        if (currentStage < stages.length) {
-          requestAnimationFrame(simulationLoop);
-        }
-      }
-
-      // Start the simulation
-      document
-        .getElementById("startSimulation")
-        .addEventListener("click", () => {
-          currentStage = 0;
-          progress = 0;
-          document.getElementById(
-            "stage"
-          ).textContent = `Stage: ${stages[currentStage]}`;
-          document.getElementById(
-            "progress"
-          ).textContent = `Progress: ${progress.toFixed(1)}%`;
-          initializeParticles();
-          simulationLoop();
-        });
-    </script>
-  </body>
+    // Start Simulation
+    simulationLoop();
+  </script>
+</body>
 </html>
