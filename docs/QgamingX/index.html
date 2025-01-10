@@ -292,6 +292,45 @@
             <canvas id="demoCanvas" class="demo-canvas"></canvas>
         </div>
     </section>
+<section id="docs" class="features">
+    <div class="features-grid">
+        <div id="markdown-content" class="feature-card">
+            <h3>Documentation</h3>
+            <div id="docs-container">
+                Loading documentation...
+            </div>
+        </div>
+    </div>
+</section>
+
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+<script>
+    async function fetchMarkdownFile(url) {
+        try {
+            const response = await fetch(url);
+            if (!response.ok) {
+                throw new Error('Failed to load markdown file');
+            }
+            const markdown = await response.text();
+            return markdown;
+        } catch (error) {
+            console.error(error);
+            return '# Error loading documentation';
+        }
+    }
+
+    async function loadDocs() {
+        const mdContainer = document.getElementById('docs-container');
+        const markdownUrl = 'https://raw.githubusercontent.com/Iaarondev/Lo-QOS.com/main/docs/QgamingX/README.md';
+        const markdown = await fetchMarkdownFile(markdownUrl);
+
+        // Parse and render Markdown
+        mdContainer.innerHTML = marked.parse(markdown);
+    }
+
+    window.addEventListener('load', loadDocs);
+</script>
+
 
     <!-- Footer -->
     <footer class="footer">
