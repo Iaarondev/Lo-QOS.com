@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>LQS Gaming Demo</title>
+    <title>LQS Quantum Gaming Demo</title>
     <style>
       body {
         margin: 0;
@@ -20,13 +20,32 @@
         padding: 10px;
         border-radius: 8px;
       }
+      #entanglement-map {
+        position: absolute;
+        bottom: 10px;
+        left: 10px;
+        color: #fff;
+        background: rgba(0, 0, 0, 0.5);
+        padding: 10px;
+        border-radius: 8px;
+        max-height: 200px;
+        overflow-y: auto;
+        font-size: 12px;
+      }
     </style>
   </head>
   <body>
     <div id="stats">
+      <p><strong>Quantum Stats</strong></p>
       <p>FPS: <span id="fps">0</span></p>
       <p>Qubits Processed: <span id="qubits">0</span></p>
       <p>ZKP Validations: <span id="zkp">0</span></p>
+      <p>Entangled States: <span id="entangled">0</span></p>
+      <p>Optimizations: <span id="optimizations">0</span></p>
+    </div>
+    <div id="entanglement-map">
+      <strong>Entanglement Map</strong>
+      <ul id="map-list"></ul>
     </div>
     <canvas id="gameCanvas"></canvas>
 
@@ -41,8 +60,10 @@
       let fps = 0;
       let qubitsProcessed = 0;
       let zkpValidations = 0;
+      let entangledStates = 0;
+      let optimizations = 0;
 
-      // Game objects
+      const entanglementMap = [];
       const player = {
         x: canvas.width / 2,
         y: canvas.height - 30,
@@ -51,10 +72,43 @@
       };
       const projectiles = [];
 
+      // Quantum Class as Gate
+      class QuantumGate {
+        constructor(name) {
+          this.name = name;
+          this.qubits = [];
+        }
+
+        addQubit(state) {
+          qubitsProcessed++;
+          this.qubits.push(state);
+        }
+
+        entangle(targetGate) {
+          const entanglement = { source: this.name, target: targetGate.name };
+          entanglementMap.push(entanglement);
+          entangledStates++;
+          this.renderEntanglementMap();
+        }
+
+        renderEntanglementMap() {
+          const mapList = document.getElementById("map-list");
+          mapList.innerHTML = entanglementMap
+            .map((ent) => `<li>${ent.source} ⟷ ${ent.target}</li>`)
+            .join("");
+        }
+      }
+
+      // Initialize Quantum Gates
+      const gateA = new QuantumGate("Gate A");
+      const gateB = new QuantumGate("Gate B");
+
       // Simulate Qubit Processing
       function processQubit() {
-        qubitsProcessed++;
-        return Math.random() < 0.5 ? 0 : 1;
+        const state = Math.random() < 0.5 ? 0 : 1;
+        gateA.addQubit(state);
+        if (Math.random() < 0.3) gateA.entangle(gateB);
+        return state;
       }
 
       // Simulate ZKP Validation
@@ -64,18 +118,22 @@
         return atob(proof) === state.toString();
       }
 
-      // Update game objects
+      // Optimize by Reducing Redundant States
+      function optimize() {
+        optimizations++;
+        return Math.random() < 0.7; // 70% chance to reduce redundant processing
+      }
+
+      // Update Game Logic
       function update() {
-        // Move projectiles
         for (let i = projectiles.length - 1; i >= 0; i--) {
           projectiles[i].y -= projectiles[i].speed;
           if (projectiles[i].y < 0) projectiles.splice(i, 1);
         }
 
-        // Add new projectiles based on qubit processing
         if (frameCount % 10 === 0) {
           const qubitState = processQubit();
-          if (validateZKP(qubitState)) {
+          if (validateZKP(qubitState) && optimize()) {
             projectiles.push({
               x: Math.random() * canvas.width,
               y: canvas.height,
@@ -87,11 +145,10 @@
         }
       }
 
-      // Draw game objects
+      // Draw Game Objects
       function draw() {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-        // Draw player
         ctx.fillStyle = player.color;
         ctx.fillRect(
           player.x - player.size / 2,
@@ -100,7 +157,6 @@
           player.size
         );
 
-        // Draw projectiles
         for (const projectile of projectiles) {
           ctx.fillStyle = projectile.color;
           ctx.beginPath();
@@ -109,13 +165,12 @@
         }
       }
 
-      // Main game loop
+      // Game Loop
       function gameLoop() {
         const now = performance.now();
         const deltaTime = now - lastTime;
         frameCount++;
 
-        // Calculate FPS
         if (deltaTime > 1000) {
           fps = Math.round((frameCount / deltaTime) * 1000);
           document.getElementById("fps").textContent = fps;
@@ -123,22 +178,18 @@
           lastTime = now;
         }
 
-        // Update game stats
         document.getElementById("qubits").textContent = qubitsProcessed;
         document.getElementById("zkp").textContent = zkpValidations;
+        document.getElementById("entangled").textContent = entangledStates;
+        document.getElementById("optimizations").textContent = optimizations;
 
-        // Update and draw
         update();
         draw();
-
-        // Increase FPS over time
-        setTimeout(gameLoop, Math.max(16 - qubitsProcessed * 0.1, 5)); // Adaptive frame timing
+        setTimeout(gameLoop, Math.max(16 - qubitsProcessed * 0.1, 5));
       }
 
-      // Start game loop
       gameLoop();
 
-      // Handle player movement
       window.addEventListener("mousemove", (e) => {
         player.x = e.clientX;
       });
