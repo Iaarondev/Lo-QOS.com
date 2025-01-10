@@ -3,38 +3,40 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Subatomic Particle Mapping</title>
+    <title>Subatomic Particle Mapping (Mobile)</title>
     <style>
       body {
         font-family: Arial, sans-serif;
         background-color: #121212;
         color: #ffffff;
         margin: 0;
-        padding: 20px;
+        padding: 0;
         overflow: hidden;
       }
 
       h1 {
         text-align: center;
         color: #00ffff;
+        font-size: 1.5rem;
+        margin: 10px 0;
       }
 
       .info {
         text-align: center;
-        margin-bottom: 20px;
+        font-size: 1rem;
+        margin: 10px 0;
       }
 
       canvas {
         display: block;
         margin: 0 auto;
-        border: 2px solid #00ffff;
         background-color: #000;
       }
 
       .stats {
-        margin-top: 20px;
         text-align: center;
-        font-size: 16px;
+        font-size: 0.9rem;
+        margin: 10px 0;
       }
 
       .stats p {
@@ -42,13 +44,14 @@
       }
 
       button {
-        margin: 20px auto;
         display: block;
+        margin: 10px auto;
         background-color: #00ffff;
         color: #000;
         border: none;
         border-radius: 5px;
         padding: 10px 20px;
+        font-size: 1rem;
         cursor: pointer;
         font-weight: bold;
       }
@@ -59,14 +62,11 @@
     </style>
   </head>
   <body>
-    <h1>Subatomic Particle Mapping Simulation</h1>
+    <h1>Subatomic Particle Mapping</h1>
     <div class="info">
-      <p>
-        Visualizing the evolution from randomness to structured entanglement and
-        object formation.
-      </p>
+      <p>From randomness to entanglement: A quantum particle simulation.</p>
     </div>
-    <canvas id="renderCanvas" width="800" height="600"></canvas>
+    <canvas id="renderCanvas"></canvas>
     <div class="stats">
       <p id="stage">Stage: Randomness</p>
       <p id="progress">Progress: 0%</p>
@@ -77,9 +77,20 @@
       const canvas = document.getElementById("renderCanvas");
       const ctx = canvas.getContext("2d");
 
+      // Responsive canvas setup
+      function resizeCanvas() {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight * 0.7; // Take 70% of the viewport height
+      }
+      window.addEventListener("resize", resizeCanvas);
+      resizeCanvas();
+
       // Particle System
       const particles = [];
-      const particleCount = 150;
+      const particleCount = Math.min(
+        150,
+        Math.floor((canvas.width * canvas.height) / 3000)
+      ); // Adjust for screen size
 
       // Stages and Progress
       const stages = [
@@ -95,7 +106,7 @@
       const targetShape = {
         x: canvas.width / 2,
         y: canvas.height / 2,
-        radius: 150,
+        radius: canvas.width * 0.2,
       };
 
       // Initialize particles with random properties
@@ -107,7 +118,7 @@
             y: Math.random() * canvas.height,
             vx: (Math.random() - 0.5) * 2,
             vy: (Math.random() - 0.5) * 2,
-            size: Math.random() * 3 + 1,
+            size: Math.random() * 2 + 1,
             color: `rgba(${Math.random() * 255}, ${Math.random() * 255}, ${
               Math.random() * 255
             }, 1)`,
@@ -118,34 +129,30 @@
       // Update particles based on the current stage
       function updateParticles() {
         particles.forEach((particle, index) => {
-          // Randomness: Particles move chaotically
           if (currentStage === 0) {
+            // Randomness: Particles move chaotically
             particle.x += particle.vx;
             particle.y += particle.vy;
 
             if (particle.x < 0 || particle.x > canvas.width) particle.vx *= -1;
             if (particle.y < 0 || particle.y > canvas.height) particle.vy *= -1;
-          }
-
-          // Mapping: Particles converge to a circular formation
-          if (currentStage === 1) {
+          } else if (currentStage === 1) {
+            // Mapping: Particles converge to a circular formation
             const angle = (index / particleCount) * Math.PI * 2;
-            const targetX = canvas.width / 2 + Math.cos(angle) * 200;
-            const targetY = canvas.height / 2 + Math.sin(angle) * 200;
+            const targetX =
+              canvas.width / 2 + Math.cos(angle) * canvas.width * 0.25;
+            const targetY =
+              canvas.height / 2 + Math.sin(angle) * canvas.height * 0.25;
 
             particle.vx += (targetX - particle.x) * 0.005;
             particle.vy += (targetY - particle.y) * 0.005;
-          }
-
-          // Entanglement Loops: Particles form dynamic connections
-          if (currentStage === 2) {
+          } else if (currentStage === 2) {
+            // Entanglement Loops: Particles form dynamic connections
             const neighbor = particles[(index + 1) % particles.length];
             particle.vx += (neighbor.x - particle.x) * 0.01;
             particle.vy += (neighbor.y - particle.y) * 0.01;
-          }
-
-          // Object Formation: Particles converge into a unified object
-          if (currentStage === 3) {
+          } else if (currentStage === 3) {
+            // Object Formation: Particles converge into a unified object
             particle.vx += (targetShape.x - particle.x) * 0.01;
             particle.vy += (targetShape.y - particle.y) * 0.01;
           }
@@ -167,8 +174,8 @@
           ctx.fill();
         });
 
-        // Draw connections during Entanglement Loops stage
         if (currentStage === 2) {
+          // Draw connections during Entanglement Loops stage
           particles.forEach((particle, index) => {
             const neighbor = particles[(index + 1) % particles.length];
             ctx.strokeStyle = "rgba(0, 255, 255, 0.5)";
@@ -179,8 +186,8 @@
           });
         }
 
-        // Draw the final object during Object Formation stage
         if (currentStage === 3) {
+          // Draw the final object during Object Formation stage
           ctx.strokeStyle = "rgba(0, 255, 0, 1)";
           ctx.lineWidth = 2;
           ctx.beginPath();
@@ -211,7 +218,7 @@
       // Main simulation loop
       function simulationLoop() {
         if (progress < 100) {
-          progress += 0.2; // Increment progress
+          progress += 0.5; // Increment progress
           document.getElementById(
             "progress"
           ).textContent = `Progress: ${progress.toFixed(1)}%`;
