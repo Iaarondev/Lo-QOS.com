@@ -168,6 +168,17 @@
           <!-- Stats will be dynamically populated -->
         </div>
       </section>
+      <section id="quantum-game">
+        <h2>Quantum Dodge Game</h2>
+        <p>
+          Use your arrow keys to move the quantum particle (`|ψ⟩`) between
+          states (0, 0.5, 1) on the Y-axis. Avoid the incoming entangled
+          obstacles!
+        </p>
+        <canvas id="gameCanvas" width="600" height="400"></canvas>
+        <p id="game-status">Press "Start" to begin!</p>
+        <button id="start-game" onclick="startGame()">Start Game</button>
+      </section>
     </main>
 
     <!-- Footer -->
@@ -185,6 +196,7 @@
     <script type="module" src="assets/js/media-manager.js" defer></script>
     <script type="module" src="assets/js/theme-manager.js" defer></script>
     <script type="module" src="assets/js/quantum-system.js" defer></script>
+    <script type="module" src="assets/js/game.js" defer></script>
     <script type="module" src="assets/js/loqos-core.js" defer></script>
     <!-- Scripts -->
     <script>

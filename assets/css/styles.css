@@ -7,16 +7,20 @@
   --quantum-accent: #90e0ef;
   --quantum-dark: #03045e;
   --quantum-light: #caf0f8;
-  --quantum-background: linear-gradient(135deg, var(--quantum-dark), var(--quantum-secondary));
+  --quantum-background: linear-gradient(
+    135deg,
+    var(--quantum-dark),
+    var(--quantum-secondary)
+  );
   --quantum-text: #ffffff;
-  --quantum-success: #4CAF50;
+  --quantum-success: #4caf50;
   --quantum-warning: #ff9800;
   --quantum-error: #f44336;
-  
+
   /* Animation Timings */
   --quantum-transition: 0.3s ease;
   --quantum-animation: 1s cubic-bezier(0.4, 0, 0.2, 1);
-  
+
   /* Spacing */
   --space-xs: 0.25rem;
   --space-sm: 0.5rem;
@@ -25,9 +29,9 @@
   --space-xl: 4rem;
 
   /* Shadows */
-  --shadow-sm: 0 2px 4px rgba(0,0,0,0.1);
-  --shadow-md: 0 4px 8px rgba(0,0,0,0.2);
-  --shadow-lg: 0 8px 16px rgba(0,0,0,0.3);
+  --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.1);
+  --shadow-md: 0 4px 8px rgba(0, 0, 0, 0.2);
+  --shadow-lg: 0 8px 16px rgba(0, 0, 0, 0.3);
 }
 
 /* Reset & Base Styles */
@@ -38,7 +42,7 @@
 }
 
 body {
-  font-family: 'Arial', sans-serif;
+  font-family: "Arial", sans-serif;
   background: var(--quantum-background);
   color: var(--quantum-text);
   line-height: 1.6;
@@ -47,16 +51,29 @@ body {
 }
 
 /* Typography */
-h1, h2, h3, h4, h5, h6 {
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
   font-weight: 600;
   line-height: 1.2;
   margin-bottom: var(--space-md);
 }
 
-h1 { font-size: 2.5rem; }
-h2 { font-size: 2rem; }
-h3 { font-size: 1.75rem; }
-h4 { font-size: 1.5rem; }
+h1 {
+  font-size: 2.5rem;
+}
+h2 {
+  font-size: 2rem;
+}
+h3 {
+  font-size: 1.75rem;
+}
+h4 {
+  font-size: 1.5rem;
+}
 
 /* Header & Navigation */
 header {
@@ -128,7 +145,11 @@ section:hover {
   transform: translate(-50%, -50%);
   width: 100px;
   height: 100px;
-  background: radial-gradient(circle at 30% 30%, var(--quantum-accent), var(--quantum-primary));
+  background: radial-gradient(
+    circle at 30% 30%,
+    var(--quantum-accent),
+    var(--quantum-primary)
+  );
   border-radius: 50%;
   animation: pulse var(--quantum-animation) infinite;
 }
@@ -245,9 +266,18 @@ button:active {
 
 /* Animations */
 @keyframes pulse {
-  0% { transform: translate(-50%, -50%) scale(1); opacity: 0.8; }
-  50% { transform: translate(-50%, -50%) scale(1.1); opacity: 1; }
-  100% { transform: translate(-50%, -50%) scale(1); opacity: 0.8; }
+  0% {
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 0.8;
+  }
+  50% {
+    transform: translate(-50%, -50%) scale(1.1);
+    opacity: 1;
+  }
+  100% {
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 0.8;
+  }
 }
 
 /* Floating UI */
@@ -262,8 +292,12 @@ button:active {
   box-shadow: var(--shadow-lg);
 }
 
-.visualization-panel { top: var(--space-lg); }
-.metrics-panel { bottom: var(--space-lg); }
+.visualization-panel {
+  top: var(--space-lg);
+}
+.metrics-panel {
+  bottom: var(--space-lg);
+}
 
 /* Matrix Overlay */
 .matrix-overlay {
@@ -274,10 +308,7 @@ button:active {
   height: 100%;
   pointer-events: none;
   z-index: 1000;
-  background: linear-gradient(
-    rgba(0, 180, 216, 0.05),
-    rgba(0, 119, 182, 0.05)
-  );
+  background: linear-gradient(rgba(0, 180, 216, 0.05), rgba(0, 119, 182, 0.05));
 }
 
 /* Responsive Design */
@@ -306,4 +337,15 @@ button:active {
     --quantum-text: #ffffff;
     --quantum-background: linear-gradient(135deg, #020224, #004466);
   }
+}
+
+#gameCanvas {
+  border: 1px solid #000;
+  display: block;
+  margin: 20px auto;
+  background-color: #f4f4f4;
+}
+#game-status {
+  text-align: center;
+  font-weight: bold;
 }
