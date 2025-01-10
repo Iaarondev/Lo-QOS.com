@@ -3,10 +3,10 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Real-time simulation of Traditional vs Quantum Racing to demonstrate near-zero state optimization.">
-  <meta name="keywords" content="quantum racing, traditional racing, near-zero state, particle simulation, real-time emulation">
+  <meta name="description" content="Traditional vs Quantum Rendering Simulation, mapping and animating a target image.">
+  <meta name="keywords" content="quantum rendering, traditional rendering, living animation, dynamic mapping">
   <meta name="author" content="Your Name">
-  <title>Traditional vs Quantum Racing</title>
+  <title>Rendering to Living Animation</title>
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -73,28 +73,28 @@
   </style>
 </head>
 <body>
-  <h1>Traditional vs Quantum Racing</h1>
+  <h1>Rendering to Living Animation</h1>
   <div class="container">
-    <!-- Traditional Simulation -->
+    <!-- Traditional Rendering -->
     <div class="simulator">
-      <h2>Traditional Racing</h2>
+      <h2>Traditional Rendering</h2>
       <canvas id="traditionalCanvas"></canvas>
       <div class="stats">
+        <p id="traditionalProgress">Rendering Progress: 0%</p>
         <p id="traditionalFPS">FPS: Calculating...</p>
         <p id="traditionalEnergy">Energy Used: 0</p>
-        <p id="traditionalChaos">Chaos Events: 0</p>
       </div>
     </div>
 
-    <!-- Quantum Simulation -->
+    <!-- Quantum Rendering -->
     <div class="simulator">
-      <h2>Quantum Racing</h2>
+      <h2>Quantum Rendering</h2>
       <canvas id="quantumCanvas"></canvas>
       <div class="stats">
+        <p id="quantumProgress">Rendering Progress: 0%</p>
         <p id="quantumFPS">FPS: Calculating...</p>
-        <p id="quantumEnergy">Energy Used: 0</p>
         <p id="quantumOptimization">Optimization State: 100%</p>
-        <p id="quantumChaos">Chaos Events: 0</p>
+        <p id="quantumEnergy">Energy Used: 0</p>
       </div>
     </div>
   </div>
@@ -110,114 +110,107 @@
     function resizeCanvas() {
       const width = traditionalCanvas.parentElement.offsetWidth;
       traditionalCanvas.width = width;
-      traditionalCanvas.height = 200;
+      traditionalCanvas.height = width;
       quantumCanvas.width = width;
-      quantumCanvas.height = 200;
+      quantumCanvas.height = width;
     }
     window.addEventListener("resize", resizeCanvas);
     resizeCanvas();
 
-    // Race Variables
-    const trackLength = traditionalCanvas.width - 50; // Finish line position
-    const hareSpeed = 3; // Hare's constant speed
-    const turtleBaseSpeed = 1; // Turtle's initial speed
-    const particlesToAddPerChaos = 10;
+    // Rendering Variables
+    const targetImage = new Image();
+    targetImage.src = "https://via.placeholder.com/400x400.png"; // Replace with your target image
+    let traditionalProgress = 0;
+    let quantumProgress = 0;
 
-    let harePosition = 0;
-    let turtlePosition = 0;
-
-    let hareEnergy = 0;
-    let turtleEnergy = 0;
+    let traditionalEnergy = 0;
+    let quantumEnergy = 0;
     let quantumOptimizationState = 100;
 
-    let traditionalChaos = 0;
-    let quantumChaos = 0;
-
-    // Draw Track and Finish Line
-    function drawTrack(ctx) {
-      ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
-      ctx.fillStyle = "#444";
-      ctx.fillRect(0, ctx.canvas.height / 2 - 10, ctx.canvas.width, 20);
-
-      ctx.strokeStyle = "#00ffff";
-      ctx.lineWidth = 4;
-      ctx.beginPath();
-      ctx.moveTo(trackLength, 0);
-      ctx.lineTo(trackLength, ctx.canvas.height);
-      ctx.stroke();
+    // Draw Target Image on Both Canvases
+    function drawImage(ctx, progress) {
+      const sliceHeight = targetImage.height * (progress / 100);
+      ctx.drawImage(targetImage, 0, 0, targetImage.width, sliceHeight, 0, 0, ctx.canvas.width, sliceHeight);
     }
 
-    // Draw Entities
-    function drawEntity(ctx, x, color) {
-      ctx.fillStyle = color;
-      ctx.beginPath();
-      ctx.arc(x, ctx.canvas.height / 2, 10, 0, Math.PI * 2);
-      ctx.fill();
-    }
-
-    // Update Hare
-    function updateHare() {
-      harePosition += hareSpeed;
-      hareEnergy += hareSpeed;
-
-      if (harePosition >= trackLength) harePosition = trackLength;
-    }
-
-    // Update Turtle
-    function updateTurtle() {
-      const optimizedSpeed = turtleBaseSpeed * (quantumOptimizationState / 100);
-      turtlePosition += optimizedSpeed;
-      turtleEnergy += optimizedSpeed;
-
-      if (quantumOptimizationState > 50) quantumOptimizationState -= 0.1;
-      if (turtlePosition >= trackLength) turtlePosition = trackLength;
-    }
-
-    // Chaos Event Handlers
-    function handleChaos(ctx, chaosCounterId) {
-      if (chaosCounterId === "traditionalChaos") {
-        traditionalChaos++;
-        document.getElementById("traditionalChaos").textContent = `Chaos Events: ${traditionalChaos}`;
-      } else if (chaosCounterId === "quantumChaos") {
-        quantumChaos++;
-        document.getElementById("quantumChaos").textContent = `Chaos Events: ${quantumChaos}`;
-        quantumOptimizationState -= 5; // Chaos affects optimization
-        if (quantumOptimizationState < 0) quantumOptimizationState = 0;
+    // Traditional Rendering
+    function traditionalRender() {
+      if (traditionalProgress < 100) {
+        traditionalProgress += 1; // Increment rendering progress
+        traditionalEnergy += 5; // Energy cost for brute force rendering
+        drawImage(traditionalCtx, traditionalProgress);
+        document.getElementById("traditionalProgress").textContent = `Rendering Progress: ${traditionalProgress}%`;
+        document.getElementById("traditionalEnergy").textContent = `Energy Used: ${traditionalEnergy}`;
       }
     }
 
-    traditionalCanvas.addEventListener("pointerdown", () =>
-      handleChaos(traditionalCtx, "traditionalChaos")
-    );
-    quantumCanvas.addEventListener("pointerdown", () =>
-      handleChaos(quantumCtx, "quantumChaos")
-    );
+    // Quantum Rendering
+    function quantumRender() {
+      if (quantumProgress < 100) {
+        const optimizedProgress = 1 + (quantumOptimizationState / 100);
+        quantumProgress += optimizedProgress; // Increment rendering progress faster with optimization
+        quantumEnergy += 2; // Energy cost for optimized rendering
+        drawImage(quantumCtx, quantumProgress);
+        document.getElementById("quantumProgress").textContent = `Rendering Progress: ${quantumProgress.toFixed(2)}%`;
+        document.getElementById("quantumEnergy").textContent = `Energy Used: ${quantumEnergy.toFixed(2)}`;
+        document.getElementById("quantumOptimization").textContent = `Optimization State: ${quantumOptimizationState.toFixed(2)}%`;
+        if (quantumOptimizationState > 50) quantumOptimizationState -= 0.5; // Gradual optimization reduction
+      }
+    }
+
+    // Living Animation
+    function animateImage(ctx) {
+      const particles = Array.from({ length: 50 }, () => ({
+        x: Math.random() * ctx.canvas.width,
+        y: Math.random() * ctx.canvas.height,
+        size: Math.random() * 5 + 1,
+        vx: (Math.random() - 0.5) * 2,
+        vy: (Math.random() - 0.5) * 2,
+      }));
+
+      function updateParticles() {
+        particles.forEach((p) => {
+          p.x += p.vx;
+          p.y += p.vy;
+
+          if (p.x < 0 || p.x > ctx.canvas.width) p.vx *= -1;
+          if (p.y < 0 || p.y > ctx.canvas.height) p.vy *= -1;
+        });
+      }
+
+      function drawParticles() {
+        ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+        ctx.drawImage(targetImage, 0, 0, ctx.canvas.width, ctx.canvas.height);
+        particles.forEach((p) => {
+          ctx.fillStyle = "#00ffff";
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+          ctx.fill();
+        });
+      }
+
+      function animate() {
+        updateParticles();
+        drawParticles();
+        requestAnimationFrame(animate);
+      }
+      animate();
+    }
 
     // Main Loop
-    function raceLoop() {
-      drawTrack(traditionalCtx);
-      drawTrack(quantumCtx);
+    function renderingLoop() {
+      traditionalRender();
+      quantumRender();
 
-      updateHare();
-      updateTurtle();
-
-      drawEntity(traditionalCtx, harePosition, "#ff4444"); // Hare
-      drawEntity(quantumCtx, turtlePosition, "#00ff44"); // Turtle
-
-      // Update Stats
-      document.getElementById("traditionalFPS").textContent = `FPS: 60`;
-      document.getElementById("traditionalEnergy").textContent = `Energy Used: ${hareEnergy}`;
-      document.getElementById("quantumFPS").textContent = `FPS: 60`;
-      document.getElementById("quantumEnergy").textContent = `Energy Used: ${turtleEnergy.toFixed(2)}`;
-      document.getElementById("quantumOptimization").textContent = `Optimization State: ${quantumOptimizationState.toFixed(2)}%`;
-
-      // Continue Loop
-      if (harePosition < trackLength || turtlePosition < trackLength) {
-        requestAnimationFrame(raceLoop);
+      if (traditionalProgress >= 100 && quantumProgress >= 100) {
+        animateImage(traditionalCtx);
+        animateImage(quantumCtx);
+      } else {
+        requestAnimationFrame(renderingLoop);
       }
     }
 
-    raceLoop();
+    targetImage.onload = renderingLoop;
   </script>
 </body>
 </html>
