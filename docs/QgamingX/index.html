@@ -3,226 +3,92 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="QgamingX - Experience the future of gaming with quantum-optimized performance, offering advanced AI, reduced memory usage, and unmatched speed.">
+    <meta name="keywords" content="Quantum Gaming, Quantum Optimization, AI Gaming, QgamingX, Future Gaming, Quantum AI, Advanced Gaming Technology">
+    <meta name="author" content="QgamingX Development Team">
     <title>QgamingX - Quantum Gaming Evolution</title>
     <link rel="stylesheet" href="assets/css/style.css">
+
+    <!-- Open Graph Metadata for Social Sharing -->
+    <meta property="og:title" content="QgamingX - Quantum Gaming Evolution">
+    <meta property="og:description" content="Explore the future of gaming with quantum performance.">
+    <meta property="og:image" content="assets/images/qgamingx-preview.png">
+    <meta property="og:url" content="https://qgamingx.com">
+    <meta name="twitter:card" content="summary_large_image">
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="assets/images/favicon.png">
+
     <style>
-        /* Base Styles */
-        :root {
-            --quantum-primary: #3B82F6;
-            --quantum-secondary: #1F2937;
-            --quantum-accent: #4CAF50;
-            --text-light: #F3F4F6;
-        }
-        
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        
-        body {
-            font-family: 'Inter', system-ui, sans-serif;
-            background: linear-gradient(135deg, #111827, #1F2937);
-            color: var(--text-light);
-            line-height: 1.5;
-            overflow-x: hidden;
+        /* Extra animations for enhanced display */
+        .quantum-highlight {
+            animation: glow 3s infinite alternate;
         }
 
-        /* Navigation */
-        .nav {
-            position: fixed;
-            top: 0;
-            width: 100%;
-            padding: 1rem;
-            z-index: 100;
-            backdrop-filter: blur(8px);
-            background: rgba(17, 24, 39, 0.8);
+        @keyframes glow {
+            from {
+                text-shadow: 0 0 10px var(--quantum-primary), 0 0 20px var(--quantum-primary);
+            }
+            to {
+                text-shadow: 0 0 20px var(--quantum-accent), 0 0 40px var(--quantum-accent);
+            }
         }
 
-        .nav-content {
-            max-width: 1200px;
-            margin: 0 auto;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .logo {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            text-decoration: none;
-            color: var(--text-light);
-        }
-
-        .logo-icon {
-            width: 32px;
-            height: 32px;
-            background: var(--quantum-primary);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .nav-links {
-            display: flex;
-            gap: 2rem;
-        }
-
-        .nav-links a {
-            color: #9CA3AF;
-            text-decoration: none;
-            transition: color 0.3s;
-        }
-
-        .nav-links a:hover {
-            color: var(--text-light);
-        }
-
-        /* Hero Section */
-        .hero {
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            position: relative;
-            padding: 2rem;
-            overflow: hidden;
-        }
-
-        .hero-content {
-            max-width: 800px;
-            text-align: center;
-            z-index: 1;
-        }
-
-        .hero h1 {
-            font-size: 4rem;
-            margin-bottom: 1.5rem;
-            background: linear-gradient(135deg, var(--quantum-primary), var(--quantum-accent));
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
-        }
-
-        .hero p {
-            font-size: 1.25rem;
-            color: #9CA3AF;
-            margin-bottom: 2rem;
-        }
-
-        .quantum-canvas {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: 0;
-        }
-
-        /* Buttons */
-        .button {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-            padding: 0.75rem 1.5rem;
-            border-radius: 0.5rem;
-            text-decoration: none;
-            font-weight: 500;
-            transition: all 0.3s;
+        .feature-card:hover {
+            transform: scale(1.05);
+            transition: transform 0.3s ease;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.5);
         }
 
         .button-primary {
-            background: var(--quantum-primary);
-            color: white;
+            position: relative;
+            overflow: hidden;
+            z-index: 1;
         }
 
-        .button-primary:hover {
-            background: #2563EB;
+        .button-primary::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 200%;
+            height: 100%;
+            background: linear-gradient(90deg, rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0.1));
+            z-index: 0;
+            transform: skewX(-45deg);
+            transition: left 0.5s ease;
         }
 
-        .button-secondary {
-            background: var(--quantum-secondary);
-            color: white;
+        .button-primary:hover::before {
+            left: 100%;
         }
 
-        .button-secondary:hover {
-            background: #374151;
-        }
-
-        /* Features Section */
-        .features {
-            padding: 6rem 2rem;
-            background: #111827;
-        }
-
-        .features-grid {
-            max-width: 1200px;
-            margin: 0 auto;
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 2rem;
-            padding: 2rem 0;
-        }
-
-        .feature-card {
-            background: rgba(31, 41, 55, 0.5);
-            border: 1px solid rgba(59, 130, 246, 0.2);
-            padding: 2rem;
-            border-radius: 1rem;
-            backdrop-filter: blur(8px);
-        }
-
-        .feature-icon {
-            width: 48px;
-            height: 48px;
-            border-radius: 0.5rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-bottom: 1rem;
-        }
-
-        /* Demo Section */
-        .demo {
-            padding: 6rem 2rem;
-            background: var(--quantum-secondary);
-        }
-
-        .demo-content {
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-
-        .demo-canvas {
-            width: 100%;
-            aspect-ratio: 16/9;
-            background: #000;
-            border-radius: 1rem;
+        /* Markdown Content Animation */
+        #markdown-content {
+            position: relative;
             overflow: hidden;
         }
 
-        /* Footer */
-        .footer {
-            padding: 3rem 2rem;
-            background: #111827;
-            text-align: center;
-            color: #9CA3AF;
+        #markdown-content:hover::after {
+            content: "Explore the depths of quantum-powered documentation.";
+            position: absolute;
+            bottom: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(255, 255, 255, 0.1);
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            color: var(--text-light);
+            font-size: 0.9rem;
+            animation: fadeIn 1s ease;
         }
 
-        /* Responsive Design */
-        @media (max-width: 768px) {
-            .nav-links {
-                display: none;
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
             }
-
-            .hero h1 {
-                font-size: 2.5rem;
-            }
-
-            .features-grid {
-                grid-template-columns: 1fr;
+            to {
+                opacity: 1;
             }
         }
     </style>
@@ -233,7 +99,7 @@
         <div class="nav-content">
             <a href="#" class="logo">
                 <div class="logo-icon">Q</div>
-                <span>QgamingX</span>
+                <span class="quantum-highlight">QgamingX</span>
             </a>
             <div class="nav-links">
                 <a href="#features">Features</a>
@@ -248,7 +114,7 @@
     <section class="hero">
         <canvas class="quantum-canvas" id="heroCanvas"></canvas>
         <div class="hero-content">
-            <h1>Quantum Gaming Evolution</h1>
+            <h1 class="quantum-highlight">Quantum Gaming Evolution</h1>
             <p>Experience the future of gaming with quantum-optimized performance. 
                Up to 3x faster processing and 50% less memory usage.</p>
             <div class="button-group">
@@ -288,165 +154,44 @@
     <!-- Demo Section -->
     <section id="demo" class="demo">
         <div class="demo-content">
-            <h2>See it in Action</h2>
+            <h2 class="quantum-highlight">See it in Action</h2>
             <canvas id="demoCanvas" class="demo-canvas"></canvas>
         </div>
     </section>
-<section id="docs" class="features">
-    <div class="features-grid">
-        <div id="markdown-content" class="feature-card">
-            <h3>Documentation</h3>
-            <div id="docs-container">
-                Loading documentation...
+
+    <!-- Documentation Section -->
+    <section id="docs" class="features">
+        <div class="features-grid">
+            <div id="markdown-content" class="feature-card">
+                <h3>Documentation</h3>
+                <div id="docs-container">
+                    Loading documentation...
+                </div>
             </div>
         </div>
-    </div>
-</section>
-
-<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
-<script>
-    async function fetchMarkdownFile(url) {
-        try {
-            const response = await fetch(url);
-            if (!response.ok) {
-                throw new Error('Failed to load markdown file');
-            }
-            const markdown = await response.text();
-            return markdown;
-        } catch (error) {
-            console.error(error);
-            return '# Error loading documentation';
-        }
-    }
-
-    async function loadDocs() {
-        const mdContainer = document.getElementById('docs-container');
-        const markdownUrl = 'https://raw.githubusercontent.com/Iaarondev/Lo-QOS.com/main/docs/QgamingX/README.md';
-        const markdown = await fetchMarkdownFile(markdownUrl);
-
-        // Parse and render Markdown
-        mdContainer.innerHTML = marked.parse(markdown);
-    }
-
-    window.addEventListener('load', loadDocs);
-</script>
-
+    </section>
 
     <!-- Footer -->
     <footer class="footer">
         <p>&copy; 2025 QgamingX. All rights reserved.</p>
     </footer>
 
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <script src="assets/js/quantumMarkdown.js"></script>
     <script>
-        // Quantum Animation System
-        class QuantumAnimationSystem {
-            constructor(canvas) {
-                this.canvas = canvas;
-                this.ctx = canvas.getContext('2d');
-                this.quantumState = 0;
-                this.particles = [];
-                this.resize();
-                this.init();
-            }
+        // Initialize Markdown and Quantum Animations
+        window.addEventListener('load', async () => {
+            const markdownFiles = await fetchMarkdownFiles(); // Fetch .md files dynamically
 
-            resize() {
-                this.canvas.width = this.canvas.offsetWidth;
-                this.canvas.height = this.canvas.offsetHeight;
-            }
-
-            init() {
-                // Create particles
-                for(let i = 0; i < 100; i++) {
-                    this.particles.push({
-                        x: Math.random() * this.canvas.width,
-                        y: Math.random() * this.canvas.height,
-                        size: Math.random() * 2 + 1,
-                        speed: Math.random() * 2 + 1
-                    });
-                }
-
-                // Start animation
-                this.animate();
-            }
-
-            animate() {
-                // Update quantum state
-                this.quantumState = (this.quantumState + 0.01) % 1;
-
-                // Clear canvas
-                this.ctx.fillStyle = 'rgba(17, 24, 39, 0.1)';
-                this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
-
-                // Update and draw particles
-                this.particles.forEach(particle => {
-                    // Update position with quantum influence
-                    particle.x += Math.cos(this.quantumState * Math.PI * 2) * particle.speed;
-                    particle.y += Math.sin(this.quantumState * Math.PI * 2) * particle.speed;
-
-                    // Wrap around edges
-                    if(particle.x < 0) particle.x = this.canvas.width;
-                    if(particle.x > this.canvas.width) particle.x = 0;
-                    if(particle.y < 0) particle.y = this.canvas.height;
-                    if(particle.y > this.canvas.height) particle.y = 0;
-
-                    // Draw particle
-                    this.ctx.beginPath();
-                    this.ctx.arc(particle.x, particle.y, particle.size, 0, Math.PI * 2);
-                    this.ctx.fillStyle = `rgba(59, 130, 246, ${0.5 + Math.sin(this.quantumState * Math.PI * 2) * 0.5})`;
-                    this.ctx.fill();
-                });
-
-                // Draw quantum field effect
-                const gradient = this.ctx.createRadialGradient(
-                    this.canvas.width / 2, this.canvas.height / 2, 0,
-                    this.canvas.width / 2, this.canvas.height / 2, this.canvas.width / 2
-                );
-
-                gradient.addColorStop(0, 'rgba(59, 130, 246, 0)');
-                gradient.addColorStop(0.5, `rgba(59, 130, 246, ${0.1 * Math.sin(this.quantumState * Math.PI * 2)})`);
-                gradient.addColorStop(1, 'rgba(59, 130, 246, 0)');
-
-                this.ctx.fillStyle = gradient;
-                this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
-
-                // Continue animation
-                requestAnimationFrame(() => this.animate());
-            }
-        }
-
-        // Initialize animations
-        window.addEventListener('load', () => {
-            // Hero animation
+            // Hero and Demo Quantum Animations
             const heroCanvas = document.getElementById('heroCanvas');
-            new QuantumAnimationSystem(heroCanvas);
-
-            // Demo animation
             const demoCanvas = document.getElementById('demoCanvas');
-            new QuantumAnimationSystem(demoCanvas);
+            new QuantumMarkdownSystem(heroCanvas, markdownFiles);
+            new QuantumMarkdownSystem(demoCanvas, markdownFiles);
 
-            // Handle window resize
-            window.addEventListener('resize', () => {
-                heroCanvas.width = heroCanvas.offsetWidth;
-                heroCanvas.height = heroCanvas.offsetHeight;
-                demoCanvas.width = demoCanvas.offsetWidth;
-                demoCanvas.height = demoCanvas.offsetHeight;
-            });
-        });
-
-        // Smooth scroll for navigation
-        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-            anchor.addEventListener('click', function(e) {
-                e.preventDefault();
-                const target = document.querySelector(this.getAttribute('href'));
-                if(target) {
-                    target.scrollIntoView({
-                        behavior: 'smooth',
-                        block: 'start'
-                    });
-                }
-            });
+            // Load Markdown Documentation
+            loadDocs();
         });
     </script>
-    <script src="assets/js/quantumMarkdown.js"></script>
 </body>
 </html>
