@@ -5,11 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta
       name="description"
-      content="Experience an interactive particle simulation where your input dynamically changes the system, showcasing randomness, reoptimization, and adaptability."
+      content="Interactive particle simulation with user-driven chaos, dynamic particle creation, and unlimited particle toggle."
     />
     <meta
       name="keywords"
-      content="interactive simulation, particle system, chaos theory, mobile friendly, SEO optimized, dynamic particles"
+      content="interactive simulation, particle system, chaos theory, responsive design, SEO optimized, dynamic particles"
     />
     <meta name="author" content="Your Name" />
     <title>Interactive Particle Simulation</title>
@@ -45,6 +45,23 @@
       .stats p {
         margin: 5px 0;
       }
+
+      button {
+        display: block;
+        margin: 10px auto;
+        background-color: #00ffff;
+        color: #000;
+        border: none;
+        border-radius: 5px;
+        padding: 10px 20px;
+        font-size: 1rem;
+        cursor: pointer;
+        font-weight: bold;
+      }
+
+      button:hover {
+        background-color: #00cccc;
+      }
     </style>
   </head>
   <body>
@@ -56,10 +73,12 @@
       <p id="particleCount">Particles: 0</p>
       <p id="totalConnections">Connections: 0</p>
     </div>
+    <button id="toggleMaxParticles">Unlock Max Particles</button>
 
     <script>
       const canvas = document.getElementById("renderCanvas");
       const ctx = canvas.getContext("2d");
+      const toggleButton = document.getElementById("toggleMaxParticles");
 
       // Responsive canvas setup
       function resizeCanvas() {
@@ -71,12 +90,13 @@
 
       // Particle System
       const particles = [];
-      const maxParticles = 500; // Maximum number of particles allowed
+      let maxParticles = 500; // Default maximum number of particles allowed
       const particlesToAddPerChaos = 20; // Number of particles added per chaos event
       let chaosEvents = 0; // Count of chaos events introduced by the user
       let totalConnections = 0; // Total number of connections
       let fps = 0; // Frames per second
       let lastFrameTime = performance.now();
+      let unlimitedParticles = false; // Toggle for unlimited particles
 
       // Initialize particles with random properties
       function initializeParticles() {
@@ -106,7 +126,7 @@
       // Function to create new particles near a specific point
       function createNewParticles(x, y) {
         for (let i = 0; i < particlesToAddPerChaos; i++) {
-          if (particles.length >= maxParticles) {
+          if (!unlimitedParticles && particles.length >= maxParticles) {
             particles.shift(); // Remove the oldest particle if we exceed the limit
           }
           particles.push({
@@ -233,6 +253,14 @@
         document.getElementById("fps").textContent = `FPS: ${fps}`;
       }
 
+      // Toggle particle limit
+      function toggleParticleLimit() {
+        unlimitedParticles = !unlimitedParticles;
+        toggleButton.textContent = unlimitedParticles
+          ? "Limit Particles"
+          : "Unlock Max Particles";
+      }
+
       // Main simulation loop
       function simulationLoop() {
         updateFPS();
@@ -247,6 +275,7 @@
       // Start the simulation
       canvas.addEventListener("mousedown", handleChaos); // For desktop
       canvas.addEventListener("touchstart", handleChaos); // For mobile
+      toggleButton.addEventListener("click", toggleParticleLimit);
       initializeParticles();
       simulationLoop();
     </script>
