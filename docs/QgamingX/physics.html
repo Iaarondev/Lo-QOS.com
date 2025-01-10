@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Subatomic Particle Mapping (Mobile)</title>
+    <title>Interactive Particle Simulation</title>
     <style>
       body {
         font-family: Arial, sans-serif;
@@ -21,12 +21,6 @@
         margin: 10px 0;
       }
 
-      .info {
-        text-align: center;
-        font-size: 1rem;
-        margin: 10px 0;
-      }
-
       canvas {
         display: block;
         margin: 0 auto;
@@ -35,43 +29,24 @@
 
       .stats {
         text-align: center;
-        font-size: 0.9rem;
+        font-size: 1rem;
         margin: 10px 0;
       }
 
       .stats p {
         margin: 5px 0;
       }
-
-      button {
-        display: block;
-        margin: 10px auto;
-        background-color: #00ffff;
-        color: #000;
-        border: none;
-        border-radius: 5px;
-        padding: 10px 20px;
-        font-size: 1rem;
-        cursor: pointer;
-        font-weight: bold;
-      }
-
-      button:hover {
-        background-color: #00cccc;
-      }
     </style>
   </head>
   <body>
-    <h1>Subatomic Particle Mapping</h1>
-    <div class="info">
-      <p>From randomness to entanglement: A quantum particle simulation.</p>
-    </div>
+    <h1>Interactive Particle Simulation</h1>
     <canvas id="renderCanvas"></canvas>
     <div class="stats">
-      <p id="stage">Stage: Randomness</p>
-      <p id="progress">Progress: 0%</p>
+      <p id="fps">FPS: Calculating...</p>
+      <p id="chaosCount">Chaos Events: 0</p>
+      <p id="particleCount">Particles: 0</p>
+      <p id="totalConnections">Connections: 0</p>
     </div>
-    <button id="startSimulation">Start Simulation</button>
 
     <script>
       const canvas = document.getElementById("renderCanvas");
@@ -80,7 +55,7 @@
       // Responsive canvas setup
       function resizeCanvas() {
         canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight * 0.7; // Take 70% of the viewport height
+        canvas.height = window.innerHeight * 0.8; // Take 80% of the viewport height
       }
       window.addEventListener("resize", resizeCanvas);
       resizeCanvas();
@@ -88,26 +63,13 @@
       // Particle System
       const particles = [];
       const particleCount = Math.min(
-        150,
-        Math.floor((canvas.width * canvas.height) / 3000)
+        200,
+        Math.floor((canvas.width * canvas.height) / 2000)
       ); // Adjust for screen size
-
-      // Stages and Progress
-      const stages = [
-        "Randomness",
-        "Mapping",
-        "Entanglement Loops",
-        "Object Formation",
-      ];
-      let currentStage = 0;
-      let progress = 0;
-
-      // Target Shape (Object Formation)
-      const targetShape = {
-        x: canvas.width / 2,
-        y: canvas.height / 2,
-        radius: canvas.width * 0.2,
-      };
+      let chaosEvents = 0; // Count of chaos events introduced by the user
+      let totalConnections = 0; // Total number of connections
+      let fps = 0; // Frames per second
+      let lastFrameTime = performance.now();
 
       // Initialize particles with random properties
       function initializeParticles() {
@@ -122,135 +84,134 @@
             color: `rgba(${Math.random() * 255}, ${Math.random() * 255}, ${
               Math.random() * 255
             }, 1)`,
+            connections: [], // To store connected particles
           });
         }
+        document.getElementById(
+          "particleCount"
+        ).textContent = `Particles: ${particles.length}`;
       }
 
-      // Update particles based on the current stage
+      // Update particles
       function updateParticles() {
+        totalConnections = 0; // Reset connection count
         particles.forEach((particle, index) => {
-          if (currentStage === 0) {
-            // Randomness: Particles move chaotically
-            particle.x += particle.vx;
-            particle.y += particle.vy;
+          // Random fluctuation in movement (quantum randomness)
+          particle.vx += (Math.random() - 0.5) * 0.1;
+          particle.vy += (Math.random() - 0.5) * 0.1;
 
-            if (particle.x < 0 || particle.x > canvas.width) particle.vx *= -1;
-            if (particle.y < 0 || particle.y > canvas.height) particle.vy *= -1;
-          } else if (currentStage === 1) {
-            // Mapping: Particles converge to a circular formation
-            const angle = (index / particleCount) * Math.PI * 2;
-            const targetX =
-              canvas.width / 2 + Math.cos(angle) * canvas.width * 0.25;
-            const targetY =
-              canvas.height / 2 + Math.sin(angle) * canvas.height * 0.25;
+          // Gradual slowing (simulating "absolute zero")
+          particle.vx *= 0.99;
+          particle.vy *= 0.99;
 
-            particle.vx += (targetX - particle.x) * 0.005;
-            particle.vy += (targetY - particle.y) * 0.005;
-          } else if (currentStage === 2) {
-            // Entanglement Loops: Particles form dynamic connections
-            const neighbor = particles[(index + 1) % particles.length];
-            particle.vx += (neighbor.x - particle.x) * 0.01;
-            particle.vy += (neighbor.y - particle.y) * 0.01;
-          } else if (currentStage === 3) {
-            // Object Formation: Particles converge into a unified object
-            particle.vx += (targetShape.x - particle.x) * 0.01;
-            particle.vy += (targetShape.y - particle.y) * 0.01;
+          // If velocity approaches 0, give a random kick (quantum fluctuation)
+          if (Math.abs(particle.vx) < 0.01 && Math.abs(particle.vy) < 0.01) {
+            particle.vx = (Math.random() - 0.5) * 0.5;
+            particle.vy = (Math.random() - 0.5) * 0.5;
           }
 
-          // Update positions
+          // Update position
           particle.x += particle.vx;
           particle.y += particle.vy;
+
+          // Wrap particles around edges (infinite space)
+          if (particle.x < 0) particle.x = canvas.width;
+          if (particle.x > canvas.width) particle.x = 0;
+          if (particle.y < 0) particle.y = canvas.height;
+          if (particle.y > canvas.height) particle.y = 0;
+
+          // Create connections (entanglement)
+          particle.connections = [];
+          particles.forEach((other, otherIndex) => {
+            if (index !== otherIndex) {
+              const dist = Math.hypot(
+                particle.x - other.x,
+                particle.y - other.y
+              );
+              if (dist < 100) {
+                particle.connections.push(other);
+                totalConnections++;
+              }
+            }
+          });
         });
       }
 
-      // Draw particles
+      // Draw particles and connections
       function drawParticles() {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
 
+        // Draw connections
+        particles.forEach((particle) => {
+          particle.connections.forEach((connection) => {
+            ctx.strokeStyle = "rgba(0, 255, 255, 0.2)";
+            ctx.beginPath();
+            ctx.moveTo(particle.x, particle.y);
+            ctx.lineTo(connection.x, connection.y);
+            ctx.stroke();
+          });
+        });
+
+        // Draw particles
         particles.forEach((particle) => {
           ctx.fillStyle = particle.color;
           ctx.beginPath();
           ctx.arc(particle.x, particle.y, particle.size, 0, Math.PI * 2);
           ctx.fill();
         });
-
-        if (currentStage === 2) {
-          // Draw connections during Entanglement Loops stage
-          particles.forEach((particle, index) => {
-            const neighbor = particles[(index + 1) % particles.length];
-            ctx.strokeStyle = "rgba(0, 255, 255, 0.5)";
-            ctx.beginPath();
-            ctx.moveTo(particle.x, particle.y);
-            ctx.lineTo(neighbor.x, neighbor.y);
-            ctx.stroke();
-          });
-        }
-
-        if (currentStage === 3) {
-          // Draw the final object during Object Formation stage
-          ctx.strokeStyle = "rgba(0, 255, 0, 1)";
-          ctx.lineWidth = 2;
-          ctx.beginPath();
-          ctx.arc(
-            targetShape.x,
-            targetShape.y,
-            targetShape.radius,
-            0,
-            Math.PI * 2
-          );
-          ctx.stroke();
-        }
       }
 
-      // Transition to the next stage
-      function nextStage() {
-        if (currentStage < stages.length - 1) {
-          currentStage++;
-          progress = 0; // Reset progress for the new stage
-          document.getElementById(
-            "stage"
-          ).textContent = `Stage: ${stages[currentStage]}`;
-        } else {
-          document.getElementById("stage").textContent = "Stage: Completed!";
-        }
+      // Handle chaos events (user input)
+      function handleChaos(event) {
+        const rect = canvas.getBoundingClientRect();
+        const inputX = event.touches ? event.touches[0].clientX : event.clientX;
+        const inputY = event.touches ? event.touches[0].clientY : event.clientY;
+        const chaosX = inputX - rect.left;
+        const chaosY = inputY - rect.top;
+
+        // Add a chaos force to nearby particles
+        particles.forEach((particle) => {
+          const dist = Math.hypot(particle.x - chaosX, particle.y - chaosY);
+          if (dist < 150) {
+            particle.vx += (particle.x - chaosX) * 0.1;
+            particle.vy += (particle.y - chaosY) * 0.1;
+            particle.color = `rgba(255, ${Math.random() * 255}, ${
+              Math.random() * 255
+            }, 1)`; // Change color on chaos
+          }
+        });
+
+        // Increment chaos event count
+        chaosEvents++;
+        document.getElementById(
+          "chaosCount"
+        ).textContent = `Chaos Events: ${chaosEvents}`;
+      }
+
+      // Update FPS
+      function updateFPS() {
+        const now = performance.now();
+        fps = Math.round(1000 / (now - lastFrameTime));
+        lastFrameTime = now;
+        document.getElementById("fps").textContent = `FPS: ${fps}`;
       }
 
       // Main simulation loop
       function simulationLoop() {
-        if (progress < 100) {
-          progress += 0.5; // Increment progress
-          document.getElementById(
-            "progress"
-          ).textContent = `Progress: ${progress.toFixed(1)}%`;
-
-          if (progress >= 100) {
-            nextStage(); // Move to the next stage once progress completes
-          }
-        }
-
+        updateFPS();
         updateParticles();
         drawParticles();
-
-        if (currentStage < stages.length) {
-          requestAnimationFrame(simulationLoop);
-        }
+        document.getElementById(
+          "totalConnections"
+        ).textContent = `Connections: ${totalConnections}`;
+        requestAnimationFrame(simulationLoop);
       }
 
       // Start the simulation
-      document
-        .getElementById("startSimulation")
-        .addEventListener("click", () => {
-          currentStage = 0;
-          progress = 0;
-          document.getElementById(
-            "stage"
-          ).textContent = `Stage: ${stages[currentStage]}`;
-          document.getElementById(
-            "progress"
-          ).textContent = `Progress: ${progress.toFixed(1)}%`;
-          initializeParticles();
-          simulationLoop();
-        });
+      canvas.addEventListener("mousedown", handleChaos); // For desktop
+      canvas.addEventListener("touchstart", handleChaos); // For mobile
+      initializeParticles();
+      simulationLoop();
     </script>
   </body>
 </html>
