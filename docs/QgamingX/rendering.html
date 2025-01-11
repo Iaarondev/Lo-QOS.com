@@ -105,11 +105,9 @@
     const quantumCanvas = document.getElementById("quantumCanvas");
     const quantumCtx = quantumCanvas.getContext("2d");
 
-    // Canvas dimensions
     traditionalCanvas.width = quantumCanvas.width = 800;
     traditionalCanvas.height = quantumCanvas.height = 450;
 
-    // Video element
     const video = document.createElement("video");
     video.crossOrigin = "anonymous"; // For cross-origin video support
 
@@ -127,18 +125,16 @@
     let chaosTraditional = false;
     let chaosQuantum = false;
 
-    // Video frame rendering
+    // Video rendering
     function renderFrameTraditional() {
       if (video.readyState >= 2) {
         traditionalCtx.clearRect(0, 0, traditionalCanvas.width, traditionalCanvas.height);
         traditionalCtx.drawImage(video, 0, 0, traditionalCanvas.width, traditionalCanvas.height);
 
-        // Add chaos effect if active
         if (chaosTraditional) {
           traditionalCtx.fillStyle = "rgba(255, 0, 0, 0.2)";
           traditionalCtx.fillRect(0, 0, traditionalCanvas.width, traditionalCanvas.height);
         }
-
         frameCountTraditional++;
       }
     }
@@ -148,15 +144,15 @@
         quantumCtx.clearRect(0, 0, quantumCanvas.width, quantumCanvas.height);
         quantumCtx.drawImage(video, 0, 0, quantumCanvas.width, quantumCanvas.height);
 
-        // Add quantum enhancement effects
-        quantumCtx.filter = chaosQuantum ? "blur(5px) hue-rotate(90deg)" : "hue-rotate(45deg)";
-        quantumCtx.globalAlpha = chaosQuantum ? 0.9 : 1.0;
-
+        if (chaosQuantum) {
+          quantumCtx.filter = "blur(5px) hue-rotate(90deg)";
+        } else {
+          quantumCtx.filter = "none";
+        }
         frameCountQuantum++;
       }
     }
 
-    // FPS calculation
     function updateFPS(elementId, frameCount, lastTimestamp) {
       const now = performance.now();
       if (now - lastTimestamp > 1000) {
@@ -168,7 +164,6 @@
       return { frameCount, lastTimestamp };
     }
 
-    // Main render loop
     function renderLoop() {
       renderFrameTraditional();
       renderFrameQuantum();
@@ -184,7 +179,7 @@
       requestAnimationFrame(renderLoop);
     }
 
-    // Chaos Event Listeners
+    // Chaos Events
     traditionalCanvas.addEventListener("click", () => {
       chaosTraditional = !chaosTraditional;
       chaosEventsTraditional++;
@@ -204,14 +199,14 @@
       document.getElementById("quantumChaos").textContent = "Chaos Events: 0";
     });
 
-    // Handle Video Upload
+    // Handle video upload
     document.getElementById("uploadVideo").addEventListener("change", (event) => {
       const file = event.target.files[0];
       if (file) {
         const url = URL.createObjectURL(file);
         video.src = url;
         video.play();
-        renderLoop(); // Start rendering when video starts
+        video.onplay = () => renderLoop(); // Start rendering when video starts
       }
     });
   </script>
