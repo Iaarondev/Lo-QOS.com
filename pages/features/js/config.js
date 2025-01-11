@@ -111,5 +111,3 @@ const QUANTUM_CLOCK_CONFIG = {
     },
   },
 };
-
-export default QUANTUM_CLOCK_CONFIG;
