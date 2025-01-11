@@ -3,112 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Q Spades - Quantum Gaming</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background: #1e1e2f;
-            color: #f1f1f1;
-            margin: 0;
-            padding: 0;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            height: 100vh;
-        }
-
-        header {
-            text-align: center;
-            padding: 1rem;
-            background: #3b82f6;
-            color: #fff;
-            width: 100%;
-        }
-
-        .game-area {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            background: #282a36;
-            padding: 1rem;
-            border-radius: 10px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
-        }
-
-        .player {
-            margin: 1rem;
-            text-align: center;
-        }
-
-        .cards {
-            display: flex;
-            justify-content: center;
-            gap: 0.5rem;
-        }
-
-        .card {
-            width: 80px;
-            height: 120px;
-            background: #fff;
-            border-radius: 8px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            color: #000;
-            font-size: 1.5rem;
-            font-weight: bold;
-            transition: transform 0.3s;
-        }
-
-        .card:hover {
-            transform: scale(1.1);
-            cursor: pointer;
-        }
-
-        .info {
-            margin-top: 1rem;
-            color: #4caf50;
-            text-align: center;
-        }
-
-        .buttons {
-            margin-top: 1rem;
-        }
-
-        .btn {
-            padding: 0.75rem 1.5rem;
-            margin: 0.5rem;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 1rem;
-        }
-
-        .btn-start {
-            background: #4caf50;
-            color: white;
-        }
-
-        .btn-mode {
-            background: #3b82f6;
-            color: white;
-        }
-
-        .btn-difficulty {
-            background: #9333ea;
-            color: white;
-        }
-    </style>
+    <title>Q Spades - Quantum Vegas</title>
+    <link rel="stylesheet" href="assets/css/style.css">
 </head>
 <body>
     <header>
-        <h1>Q Spades - Quantum Gaming</h1>
-        <p>Experience traditional Spades with quantum visual enhancements!</p>
+        <h1>Q Spades - Quantum Vegas</h1>
+        <p>Step into a neon quantum world of Spades with Vegas-style visuals!</p>
     </header>
 
     <div class="game-area" id="game-area">
-        <div class="info" id="info">Select a game mode and start playing!</div>
+        <div class="info" id="info">Select a game mode and difficulty, then start playing!</div>
 
         <div class="buttons">
             <button class="btn btn-mode" onclick="setMode('team')">Team Mode</button>
@@ -119,119 +24,6 @@
         </div>
     </div>
 
-    <script>
-        // Game Variables
-        const players = ["You", "AI Player 1", "AI Player 2", "AI Player 3"];
-        let deck = [];
-        let hands = [[], [], [], []]; // Player hands
-        let mode = "team"; // Default mode: 'team' or 'solo'
-        let difficulty = "easy"; // AI difficulty
-
-        // Initialize Deck
-        function initializeDeck() {
-            const suits = ["♠", "♥", "♦", "♣"];
-            const values = ["A", "2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K"];
-            deck = [];
-            for (let suit of suits) {
-                for (let value of values) {
-                    deck.push(`${value}${suit}`);
-                }
-            }
-        }
-
-        // Shuffle Deck (Quantum Visuals)
-        function shuffleDeck() {
-            for (let i = deck.length - 1; i > 0; i--) {
-                const j = Math.floor(Math.random() * (i + 1));
-                [deck[i], deck[j]] = [deck[j], deck[i]];
-            }
-        }
-
-        // Deal Cards
-        function dealCards() {
-            for (let i = 0; i < 52; i++) {
-                hands[i % 4].push(deck[i]);
-            }
-        }
-
-        // Set Game Mode
-        function setMode(selectedMode) {
-            mode = selectedMode;
-            document.getElementById("info").textContent = `Mode selected: ${mode === "team" ? "Team Mode" : "Solo Mode"}`;
-        }
-
-        // Set AI Difficulty
-        function setDifficulty(selectedDifficulty) {
-            difficulty = selectedDifficulty;
-            document.getElementById("info").textContent = `AI Difficulty set to: ${difficulty}`;
-        }
-
-        // Start Game
-        function startGame() {
-            initializeDeck();
-            shuffleDeck();
-            dealCards();
-            renderHands();
-            document.getElementById("info").textContent = "Game started! Your turn.";
-        }
-
-        // Render Hands
-        function renderHands() {
-            const gameArea = document.getElementById("game-area");
-            gameArea.innerHTML = "";
-
-            players.forEach((player, index) => {
-                const playerDiv = document.createElement("div");
-                playerDiv.className = "player";
-
-                const playerName = document.createElement("h3");
-                playerName.textContent = player;
-
-                const cardsDiv = document.createElement("div");
-                cardsDiv.className = "cards";
-
-                hands[index].forEach((card, cardIndex) => {
-                    const cardDiv = document.createElement("div");
-                    cardDiv.className = "card";
-                    cardDiv.textContent = card;
-
-                    // Player cards are clickable
-                    if (index === 0) {
-                        cardDiv.addEventListener("click", () => playCard(index, cardIndex));
-                    }
-
-                    cardsDiv.appendChild(cardDiv);
-                });
-
-                playerDiv.appendChild(playerName);
-                playerDiv.appendChild(cardsDiv);
-                gameArea.appendChild(playerDiv);
-            });
-        }
-
-        // Play a Card
-        function playCard(playerIndex, cardIndex) {
-            const playedCard = hands[playerIndex].splice(cardIndex, 1)[0];
-            document.getElementById("info").textContent = `${players[playerIndex]} played ${playedCard}`;
-            renderHands();
-            aiTurn(); // Trigger AI turns
-        }
-
-        // AI Turn
-        function aiTurn() {
-            for (let i = 1; i < players.length; i++) {
-                if (hands[i].length > 0) {
-                    const aiCardIndex = Math.floor(Math.random() * hands[i].length); // Random selection for now
-                    const playedCard = hands[i].splice(aiCardIndex, 1)[0];
-                    document.getElementById("info").textContent = `${players[i]} played ${playedCard}`;
-                    renderHands();
-                    break; // AI plays one card per turn
-                }
-            }
-        }
-
-        // Initialize Deck on Load
-        initializeDeck();
-    </script>
+    <script src="assets/js/scripts.js"></script>
 </body>
 </html>
