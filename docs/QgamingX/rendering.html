@@ -3,10 +3,10 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Custom image rendering with Traditional vs Quantum processing.">
-  <meta name="keywords" content="custom image rendering, quantum rendering, chaos simulation, interactive canvas">
+  <meta name="description" content="Custom video rendering with Traditional vs Quantum processing.">
+  <meta name="keywords" content="video rendering, quantum rendering, chaos simulation, interactive canvas">
   <meta name="author" content="Your Name">
-  <title>Custom Image Rendering</title>
+  <title>Video Rendering: Traditional vs Quantum</title>
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -58,7 +58,7 @@
       margin: 5px 0;
     }
 
-    button, input[type="file"] {
+    input[type="file"], button {
       background: #00ffff;
       color: #000;
       border: none;
@@ -74,9 +74,9 @@
   </style>
 </head>
 <body>
-  <h1>Custom Image Rendering: Traditional vs Quantum</h1>
+  <h1>Video Rendering: Traditional vs Quantum</h1>
   <div>
-    <input type="file" id="uploadImage" accept="image/*">
+    <input type="file" id="uploadVideo" accept="video/*">
     <button id="resetChaos">Reset Chaos</button>
   </div>
   <div class="container">
@@ -107,7 +107,11 @@
 
     // Canvas dimensions
     traditionalCanvas.width = quantumCanvas.width = 800;
-    traditionalCanvas.height = quantumCanvas.height = 800;
+    traditionalCanvas.height = quantumCanvas.height = 450;
+
+    // Video element
+    const video = document.createElement("video");
+    video.crossOrigin = "anonymous"; // For cross-origin video support
 
     // Chaos counters
     let chaosEventsTraditional = 0;
@@ -123,22 +127,36 @@
     let chaosTraditional = false;
     let chaosQuantum = false;
 
-    // Uploaded image
-    let uploadedImage = new Image();
+    // Video frame rendering
+    function renderFrameTraditional() {
+      if (video.readyState >= 2) {
+        traditionalCtx.clearRect(0, 0, traditionalCanvas.width, traditionalCanvas.height);
+        traditionalCtx.drawImage(video, 0, 0, traditionalCanvas.width, traditionalCanvas.height);
 
-    // Render functions
-    function renderImage(ctx, image, chaos) {
-      if (!image.src) return;
-      ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
-
-      const cellSize = chaos ? 50 : 20;
-      for (let y = 0; y < ctx.canvas.height; y += cellSize) {
-        for (let x = 0; x < ctx.canvas.width; x += cellSize) {
-          ctx.drawImage(image, x, y, cellSize, cellSize, x, y, cellSize, cellSize);
+        // Add chaos effect if active
+        if (chaosTraditional) {
+          traditionalCtx.fillStyle = "rgba(255, 0, 0, 0.2)";
+          traditionalCtx.fillRect(0, 0, traditionalCanvas.width, traditionalCanvas.height);
         }
+
+        frameCountTraditional++;
       }
     }
 
+    function renderFrameQuantum() {
+      if (video.readyState >= 2) {
+        quantumCtx.clearRect(0, 0, quantumCanvas.width, quantumCanvas.height);
+        quantumCtx.drawImage(video, 0, 0, quantumCanvas.width, quantumCanvas.height);
+
+        // Add quantum enhancement effects
+        quantumCtx.filter = chaosQuantum ? "blur(5px) hue-rotate(90deg)" : "hue-rotate(45deg)";
+        quantumCtx.globalAlpha = chaosQuantum ? 0.9 : 1.0;
+
+        frameCountQuantum++;
+      }
+    }
+
+    // FPS calculation
     function updateFPS(elementId, frameCount, lastTimestamp) {
       const now = performance.now();
       if (now - lastTimestamp > 1000) {
@@ -150,30 +168,20 @@
       return { frameCount, lastTimestamp };
     }
 
-    // Traditional Rendering Loop
-    function traditionalLoop() {
-      renderImage(traditionalCtx, uploadedImage, chaosTraditional);
-      const fpsData = updateFPS(
-        "traditionalFPS",
-        frameCountTraditional,
-        lastTimestampTraditional
-      );
-      frameCountTraditional = fpsData.frameCount;
-      lastTimestampTraditional = fpsData.lastTimestamp;
-      requestAnimationFrame(traditionalLoop);
-    }
+    // Main render loop
+    function renderLoop() {
+      renderFrameTraditional();
+      renderFrameQuantum();
 
-    // Quantum Rendering Loop
-    function quantumLoop() {
-      renderImage(quantumCtx, uploadedImage, chaosQuantum);
-      const fpsData = updateFPS(
-        "quantumFPS",
-        frameCountQuantum,
-        lastTimestampQuantum
-      );
-      frameCountQuantum = fpsData.frameCount;
-      lastTimestampQuantum = fpsData.lastTimestamp;
-      requestAnimationFrame(quantumLoop);
+      const fpsTraditional = updateFPS("traditionalFPS", frameCountTraditional, lastTimestampTraditional);
+      frameCountTraditional = fpsTraditional.frameCount;
+      lastTimestampTraditional = fpsTraditional.lastTimestamp;
+
+      const fpsQuantum = updateFPS("quantumFPS", frameCountQuantum, lastTimestampQuantum);
+      frameCountQuantum = fpsQuantum.frameCount;
+      lastTimestampQuantum = fpsQuantum.lastTimestamp;
+
+      requestAnimationFrame(renderLoop);
     }
 
     // Chaos Event Listeners
@@ -196,21 +204,16 @@
       document.getElementById("quantumChaos").textContent = "Chaos Events: 0";
     });
 
-    // Handle Image Upload
-    document.getElementById("uploadImage").addEventListener("change", (event) => {
+    // Handle Video Upload
+    document.getElementById("uploadVideo").addEventListener("change", (event) => {
       const file = event.target.files[0];
       if (file) {
-        const reader = new FileReader();
-        reader.onload = (e) => {
-          uploadedImage.src = e.target.result;
-        };
-        reader.readAsDataURL(file);
+        const url = URL.createObjectURL(file);
+        video.src = url;
+        video.play();
+        renderLoop(); // Start rendering when video starts
       }
     });
-
-    // Start rendering
-    traditionalLoop();
-    quantumLoop();
   </script>
 </body>
 </html>
