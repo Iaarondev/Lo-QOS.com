@@ -1,1 +1,175 @@
-hello
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QgamingX - Quantum Game Collection</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --quantum-primary: #00ffff;
+            --quantum-secondary: #6a0dad;
+            --background-dark: #0a0a1a;
+        }
+
+        body {
+            font-family: 'Orbitron', sans-serif;
+            background-color: var(--background-dark);
+            color: var(--quantum-primary);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .quantum-card {
+            transition: all 0.3s ease;
+            border: 2px solid rgba(0, 255, 255, 0.2);
+            background: rgba(15, 15, 40, 0.8);
+            backdrop-filter: blur(10px);
+        }
+
+        .quantum-card:hover {
+            transform: scale(1.05);
+            border-color: var(--quantum-primary);
+            box-shadow: 0 0 20px rgba(0, 255, 255, 0.3);
+        }
+
+        .quantum-btn {
+            background-color: var(--quantum-primary);
+            color: var(--background-dark);
+            transition: all 0.3s ease;
+        }
+
+        .quantum-btn:hover {
+            background-color: var(--quantum-secondary);
+            transform: scale(1.05);
+        }
+
+        #quantumParticles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        .quantum-particle {
+            position: absolute;
+            width: 3px;
+            height: 3px;
+            background-color: rgba(0, 255, 255, 0.5);
+            border-radius: 50%;
+            animation: quantum-drift 5s ease-in-out infinite;
+        }
+
+        @keyframes quantum-drift {
+            0%, 100% { transform: translate(0, 0) rotate(0deg); }
+            50% { transform: translate(20px, -20px) rotate(180deg); }
+        }
+    </style>
+</head>
+<body class="bg-gray-900">
+    <!-- Quantum Particles Background -->
+    <div id="quantumParticles"></div>
+
+    <!-- Header -->
+    <header class="text-center py-12">
+        <h1 class="text-4xl font-bold mb-4 text-quantum-primary">QgamingX Quantum Game Collection</h1>
+        <p class="text-xl text-gray-300">Explore Quantum-Inspired Gaming Experiences</p>
+    </header>
+
+    <!-- Game Collection -->
+    <main class="container mx-auto px-4 py-8 flex-grow">
+        <div id="gameGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <!-- Games will be dynamically loaded here -->
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="text-center py-6 text-gray-500">
+        <p>&copy; 2025 QgamingX. Quantum Gaming Reimagined.</p>
+    </footer>
+
+    <script>
+        // Quantum Particles Generation
+        function createQuantumParticles() {
+            const particlesContainer = document.getElementById('quantumParticles');
+            const particleCount = 100;
+
+            for (let i = 0; i < particleCount; i++) {
+                const particle = document.createElement('div');
+                particle.classList.add('quantum-particle');
+                
+                // Random positioning
+                particle.style.left = `${Math.random() * 100}%`;
+                particle.style.top = `${Math.random() * 100}%`;
+                
+                // Random opacity and size
+                particle.style.opacity = Math.random();
+                particle.style.width = `${Math.random() * 5}px`;
+                particle.style.height = particle.style.width;
+
+                particlesContainer.appendChild(particle);
+            }
+        }
+
+        // Dynamic Game Loading
+        async function loadGameManifests() {
+            const gameGrid = document.getElementById('gameGrid');
+
+            try {
+                // Fetch list of game directories
+                const response = await fetch('games.json');
+                const games = await response.json();
+
+                // Create game cards
+                games.forEach(game => {
+                    // Create game card
+                    const gameCard = document.createElement('div');
+                    gameCard.classList.add('quantum-card', 'p-6', 'rounded-lg');
+                    
+                    // Game card content
+                    gameCard.innerHTML = `
+                        <div class="flex items-center mb-4">
+                            <div class="w-12 h-12 mr-4 text-quantum-primary">
+                                ${game.icon || '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>'}
+                            </div>
+                            <h2 class="text-2xl font-semibold">${game.name}</h2>
+                        </div>
+                        <p class="mb-4 text-gray-300">${game.description}</p>
+                        <div class="flex space-x-4">
+                            <a href="/docs/QgamingX/QgamesX/${game.slug}" class="quantum-btn px-4 py-2 rounded">
+                                Play Game
+                            </a>
+                            ${game.additionalLink ? `
+                                <a href="${game.additionalLink.url}" class="border border-quantum-primary text-quantum-primary px-4 py-2 rounded hover:bg-quantum-primary hover:text-background-dark transition">
+                                    ${game.additionalLink.text}
+                                </a>
+                            ` : ''}
+                        </div>
+                    `;
+
+                    // Add to grid
+                    gameGrid.appendChild(gameCard);
+                });
+            } catch (error) {
+                console.error('Failed to load game manifests:', error);
+                gameGrid.innerHTML = `
+                    <div class="col-span-full text-center text-red-500">
+                        <p>Failed to load games. Please try again later.</p>
+                    </div>
+                `;
+            }
+        }
+
+        // Initialize page
+        window.addEventListener('load', () => {
+            createQuantumParticles();
+            loadGameManifests();
+        });
+    </script>
+</body>
+</html>
