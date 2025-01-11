@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Q Spades - Quantum Gaming</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #1e1e2f;
+            color: #f1f1f1;
+            margin: 0;
+            padding: 0;
+        }
+
+        header {
+            text-align: center;
+            padding: 1rem;
+            background: #3b82f6;
+            color: #fff;
+        }
+
+        .game-area {
+            max-width: 800px;
+            margin: 2rem auto;
+            padding: 1rem;
+            background: #282a36;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+        }
+
+        .cards {
+            display: flex;
+            justify-content: center;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        .card {
+            width: 80px;
+            height: 120px;
+            background: #fff;
+            border-radius: 8px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #000;
+            font-size: 1.5rem;
+            font-weight: bold;
+            transition: transform 0.3s;
+        }
+
+        .card:hover {
+            transform: scale(1.1);
+        }
+
+        .buttons {
+            text-align: center;
+            margin-top: 1rem;
+        }
+
+        .btn {
+            padding: 0.75rem 1.5rem;
+            margin: 0.5rem;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+
+        .btn-shuffle {
+            background: #4caf50;
+            color: white;
+        }
+
+        .btn-play {
+            background: #3b82f6;
+            color: white;
+        }
+
+        .winner {
+            text-align: center;
+            font-size: 1.5rem;
+            color: #4caf50;
+            margin-top: 1rem;
+        }
+
+        .quantum-animation {
+            width: 100px;
+            height: 100px;
+            background: radial-gradient(circle, rgba(59,130,246,1) 0%, rgba(255,255,255,0) 70%);
+            border-radius: 50%;
+            position: absolute;
+            animation: pulse 1s infinite;
+        }
+
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+                opacity: 1;
+            }
+            100% {
+                transform: scale(2);
+                opacity: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Q Spades - Quantum Gaming</h1>
+        <p>Experience the future of Spades with quantum enhancements!</p>
+    </header>
+
+    <div class="game-area">
+        <div class="cards" id="cards-container">
+            <!-- Cards will be dynamically inserted here -->
+        </div>
+
+        <div class="buttons">
+            <button class="btn btn-shuffle" onclick="quantumShuffle()">Quantum Shuffle</button>
+            <button class="btn btn-play" onclick="playRound()">Play Round</button>
+        </div>
+
+        <div class="winner" id="winner-text"></div>
+    </div>
+
+    <script>
+        // Initialize the deck
+        let deck = [
+            "A♠", "2♠", "3♠", "4♠", "5♠", "6♠", "7♠", "8♠", "9♠", "10♠", "J♠", "Q♠", "K♠",
+            "A♥", "2♥", "3♥", "4♥", "5♥", "6♥", "7♥", "8♥", "9♥", "10♥", "J♥", "Q♥", "K♥"
+        ];
+
+        const cardsContainer = document.getElementById("cards-container");
+        const winnerText = document.getElementById("winner-text");
+
+        // Render cards in the UI
+        function renderDeck(deck) {
+            cardsContainer.innerHTML = "";
+            deck.forEach(card => {
+                const cardElement = document.createElement("div");
+                cardElement.className = "card";
+                cardElement.textContent = card;
+                cardsContainer.appendChild(cardElement);
+            });
+        }
+
+        // Quantum shuffle using Fisher-Yates + pseudo-random quantum behavior
+        function quantumShuffle() {
+            for (let i = deck.length - 1; i > 0; i--) {
+                const randomIndex = Math.floor(Math.random() * (i + 1));
+                [deck[i], deck[randomIndex]] = [deck[randomIndex], deck[i]];
+            }
+            renderDeck(deck);
+            winnerText.textContent = "Deck shuffled with quantum randomness!";
+        }
+
+        // Play a round (select random winner)
+        function playRound() {
+            const winnerIndex = Math.floor(Math.random() * deck.length);
+            const winningCard = deck[winnerIndex];
+
+            // Display winner and animate
+            winnerText.textContent = `Winning Card: ${winningCard}`;
+            showQuantumAnimation(cardsContainer.children[winnerIndex]);
+        }
+
+        // Quantum animation effect
+        function showQuantumAnimation(cardElement) {
+            const animation = document.createElement("div");
+            animation.className = "quantum-animation";
+            animation.style.left = `${cardElement.offsetLeft + 40}px`;
+            animation.style.top = `${cardElement.offsetTop + 60}px`;
+
+            cardsContainer.appendChild(animation);
+
+            setTimeout(() => {
+                animation.remove();
+            }, 1000);
+        }
+
+        // Initial render
+        renderDeck(deck);
+    </script>
+</body>
+</html>
