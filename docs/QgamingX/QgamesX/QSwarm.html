@@ -2,403 +2,217 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Quantum Swarm Commander</title>
+    
+    <!-- Quantum-Inspired Styling -->
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="src/css/quantum-animations.css">
+    <link rel="stylesheet" href="src/css/game-styles.css">
+    <link rel="stylesheet" href="src/css/responsive.css">
+
+    <!-- Preload Critical Assets -->
+    <link rel="preload" href="assets/fonts/quantum-font.ttf" as="font" type="font/ttf" crossorigin>
+    
+    <!-- Meta Tags for SEO and Social Sharing -->
+    <meta name="description" content="Quantum-inspired strategy game exploring swarm intelligence and quantum computing principles">
+    <meta name="keywords" content="quantum computing, strategy game, swarm intelligence, AI, game">
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Quantum Swarm Commander">
+    <meta property="og:description" content="A quantum-inspired strategy game that challenges your understanding of computational intelligence">
+    
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Quantum Swarm Commander">
+    <meta name="twitter:description" content="Explore the quantum realm through an innovative strategy game">
+
     <style>
-        :root {
-            --quantum-primary: #00ffff;
-            --quantum-secondary: #6a0dad;
-            --background-dark: #121212;
-            --text-light: #ffffff;
-        }
-
-        body {
-            font-family: 'Arial', sans-serif;
-            background-color: var(--background-dark);
-            color: var(--text-light);
-            margin: 0;
-            padding: 0;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            overflow: hidden;
-        }
-
-        #gameCanvas {
-            border: 2px solid var(--quantum-primary);
-            box-shadow: 0 0 20px rgba(0, 255, 255, 0.3);
-        }
-
-        .game-ui {
-            display: flex;
-            justify-content: space-between;
-            width: 100%;
-            max-width: 800px;
-            margin: 10px 0;
-        }
-
-        .stat-panel {
-            background: rgba(255, 255, 255, 0.1);
-            padding: 10px;
-            border-radius: 8px;
-            text-align: center;
-        }
-
-        .button {
-            background-color: var(--quantum-primary);
-            color: var(--background-dark);
-            border: none;
-            padding: 10px 20px;
-            margin: 0 10px;
-            border-radius: 5px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        .button:hover {
-            background-color: var(--quantum-secondary);
-            transform: scale(1.05);
-        }
-
-        #quantumStateDisplay {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            background: rgba(0, 255, 255, 0.2);
-            padding: 5px 10px;
-            border-radius: 5px;
-        }
-
-        #gameOverlay {
-            position: absolute;
+        /* Quantum Overlay Styles */
+        #quantumOverlay {
+            position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0.7);
-            display: none;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            z-index: 1000;
+            background: linear-gradient(
+                135deg, 
+                rgba(0, 255, 255, 0.1), 
+                rgba(106, 0, 213, 0.1)
+            );
+            pointer-events: none;
+            z-index: 9999;
+            animation: quantum-state-transition 10s ease-in-out infinite;
+            mix-blend-mode: overlay;
         }
 
-        #gameOverlay.active {
-            display: flex;
+        #quantumParticles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 9998;
+        }
+
+        .quantum-particle {
+            position: absolute;
+            width: 3px;
+            height: 3px;
+            background-color: rgba(0, 255, 255, 0.5);
+            border-radius: 50%;
+            pointer-events: none;
+            animation: quantum-particle-drift 5s ease-in-out infinite;
         }
     </style>
 </head>
-<body>
-    <div id="quantumStateDisplay">Quantum State: 0.0</div>
-    <canvas id="gameCanvas"></canvas>
-    <div class="game-ui">
-        <div class="stat-panel">
-            <h3>Swarm Units</h3>
-            <p id="unitCountDisplay">0</p>
+<body class="quantum-background">
+    <!-- Quantum Visual Overlay -->
+    <div id="quantumOverlay"></div>
+    <div id="quantumParticles"></div>
+
+    <!-- Main Game Container -->
+    <div id="gameContainer" class="quantum-container">
+        <!-- Start Screen -->
+        <div id="startScreen" class="quantum-screen active">
+            <div class="quantum-title">
+                <h1>Quantum Swarm Commander</h1>
+                <p>Explore the Quantum Realm of Strategy</p>
+            </div>
+
+            <div class="quantum-menu">
+                <button id="startGameBtn" class="quantum-btn">
+                    Begin Quantum Campaign
+                </button>
+                <button id="settingsBtn" class="quantum-btn">
+                    Quantum Settings
+                </button>
+                <button id="tutorialBtn" class="quantum-btn">
+                    Quantum Tutorial
+                </button>
+            </div>
         </div>
-        <div class="stat-panel">
-            <h3>Resource Points</h3>
-            <p id="resourcePointsDisplay">1000</p>
+
+        <!-- Game Canvas -->
+        <canvas id="gameCanvas" class="quantum-canvas"></canvas>
+
+        <!-- UI Overlay -->
+        <div id="gameUI" class="quantum-ui">
+            <!-- Quantum State Indicator -->
+            <div id="quantumStateDisplay" class="quantum-indicator">
+                <span>Quantum State:</span>
+                <div class="quantum-meter"></div>
+            </div>
+
+            <!-- Resource and Performance Monitors -->
+            <div class="quantum-stats">
+                <div id="resourceDisplay" class="quantum-stat">
+                    <icon>⚡</icon>
+                    <span id="resourceValue">1000</span>
+                </div>
+                <div id="performanceDisplay" class="quantum-stat">
+                    <icon>🚀</icon>
+                    <span id="performanceValue">100%</span>
+                </div>
+            </div>
+
+            <!-- Mobile Controls -->
+            <div id="mobileControls" class="quantum-mobile-controls">
+                <button id="spawnUnitBtn" class="quantum-mobile-btn">
+                    Spawn
+                </button>
+                <button id="formationBtn" class="quantum-mobile-btn">
+                    Formation
+                </button>
+            </div>
         </div>
-        <div class="stat-panel">
-            <h3>Performance</h3>
-            <p id="performanceDisplay">100%</p>
+
+        <!-- AI Companion Panel -->
+        <div id="aiCompanionPanel" class="quantum-ai-panel">
+            <div class="ai-header">
+                <h3>Q-STRAT: Quantum Strategist</h3>
+            </div>
+            <div id="aiRecommendation" class="ai-recommendation">
+                Analyzing quantum dynamics...
+            </div>
         </div>
-    </div>
-    <div>
-        <button class="button" id="spawnUnitBtn">Spawn Unit</button>
-        <button class="button" id="formationBtn">Change Formation</button>
+
+        <!-- Settings Modal -->
+        <div id="settingsModal" class="quantum-modal">
+            <div class="modal-content">
+                <h2>Quantum Configuration</h2>
+                
+                <div class="settings-group">
+                    <label>Difficulty</label>
+                    <input type="range" 
+                           id="difficultySlider" 
+                           min="1" 
+                           max="5" 
+                           value="3" 
+                           class="quantum-slider">
+                </div>
+
+                <div class="settings-group">
+                    <label>AI Companion Aggression</label>
+                    <input type="range" 
+                           id="companionAggressionSlider" 
+                           min="1" 
+                           max="5" 
+                           value="3" 
+                           class="quantum-slider">
+                </div>
+
+                <div class="settings-group">
+                    <label>Sound</label>
+                    <input type="checkbox" 
+                           id="soundToggle" 
+                           class="quantum-toggle">
+                </div>
+
+                <div class="modal-actions">
+                    <button id="saveSettingsBtn" class="quantum-btn">
+                        Save Quantum Config
+                    </button>
+                    <button id="closeSettingsBtn" class="quantum-btn quantum-btn-secondary">
+                        Close
+                    </button>
+                </div>
+            </div>
+        </div>
     </div>
 
-    <div id="gameOverlay">
-        <h2 id="gameOverTitle">Game Over</h2>
-        <p id="gameOverMessage">Your quantum swarm has been depleted.</p>
-        <button class="button" id="restartBtn">Restart Game</button>
-    </div>
-
+    <!-- Quantum Background Script -->
     <script>
-        class QuantumSwarmCommander {
-            constructor(canvas) {
-                this.canvas = canvas;
-                this.ctx = canvas.getContext('2d');
-                this.units = [];
-                this.quantumState = 0;
-                this.resourcePoints = 1000;
-                this.performanceLevel = 100;
-                this.entanglementMap = new Map();
-                this.maxUnits = 50; // Limit total units
-                this.enemySwarm = []; // Enemy units to add challenge
-                this.isGameOver = false;
+        function createQuantumParticles() {
+            const particlesContainer = document.getElementById('quantumParticles');
+            const particleCount = 50;
 
-                this.formations = [
-                    this.circleFormation,
-                    this.hexFormation,
-                    this.spiralFormation,
-                    this.fracturedFormation
-                ];
-                this.currentFormationIndex = 0;
+            for (let i = 0; i < particleCount; i++) {
+                const particle = document.createElement('div');
+                particle.classList.add('quantum-particle');
+                
+                // Random positioning
+                particle.style.left = `${Math.random() * 100}%`;
+                particle.style.top = `${Math.random() * 100}%`;
+                
+                // Random opacity and size
+                particle.style.opacity = Math.random();
+                particle.style.width = `${Math.random() * 5}px`;
+                particle.style.height = particle.style.width;
 
-                // Initialize some enemy units
-                this.initializeEnemySwarm();
+                particlesContainer.appendChild(particle);
             }
-
-            // Initialize enemy swarm
-            initializeEnemySwarm() {
-                for (let i = 0; i < 10; i++) {
-                    this.enemySwarm.push({
-                        position: {
-                            x: Math.random() * this.canvas.width,
-                            y: Math.random() * this.canvas.height
-                        },
-                        velocity: {
-                            x: (Math.random() - 0.5) * 3,
-                            y: (Math.random() - 0.5) * 3
-                        },
-                        size: Math.random() * 15 + 10,
-                        color: 'rgba(255, 0, 0, 0.7)'
-                    });
-                }
-            }
-
-            // Rest of the previous implementation remains the same...
-            
-            // New method to detect collisions
-            checkCollisions() {
-                // Check collisions between player units and enemy units
-                for (let playerUnit of this.units) {
-                    for (let enemyUnit of this.enemySwarm) {
-                        const dx = playerUnit.position.x - enemyUnit.position.x;
-                        const dy = playerUnit.position.y - enemyUnit.position.y;
-                        const distance = Math.sqrt(dx * dx + dy * dy);
-
-                        // Collision detection
-                        if (distance < (playerUnit.size + enemyUnit.size)) {
-                            // Reduce unit size or remove unit
-                            playerUnit.size *= 0.9;
-                            
-                            // If unit becomes too small, remove it
-                            if (playerUnit.size < 1) {
-                                this.units = this.units.filter(u => u !== playerUnit);
-                            }
-                        }
-                    }
-                }
-
-                // Check if all units are destroyed
-                if (this.units.length === 0) {
-                    this.gameOver();
-                }
-            }
-
-            // Game over method
-            gameOver() {
-                this.isGameOver = true;
-                document.getElementById('gameOverlay').classList.add('active');
-            }
-
-            // Restart game method
-            restart() {
-                // Reset all game state
-                this.units = [];
-                this.quantumState = 0;
-                this.resourcePoints = 1000;
-                this.performanceLevel = 100;
-                this.entanglementMap.clear();
-                this.enemySwarm = [];
-                this.isGameOver = false;
-
-                // Reinitialize enemy swarm
-                this.initializeEnemySwarm();
-
-                // Hide game over overlay
-                document.getElementById('gameOverlay').classList.remove('active');
-            }
-
-            // Update enemy movement
-            updateEnemies() {
-                this.enemySwarm.forEach(enemy => {
-                    // Simple movement logic for enemies
-                    enemy.position.x += enemy.velocity.x;
-                    enemy.position.y += enemy.velocity.y;
-
-                    // Wrap around canvas
-                    enemy.position.x = (enemy.position.x + this.canvas.width) % this.canvas.width;
-                    enemy.position.y = (enemy.position.y + this.canvas.height) % this.canvas.height;
-
-                    // Slight random velocity changes
-                    enemy.velocity.x += (Math.random() - 0.5) * 0.2;
-                    enemy.velocity.y += (Math.random() - 0.5) * 0.2;
-
-                    // Limit velocity
-                    const speed = Math.sqrt(
-                        enemy.velocity.x * enemy.velocity.x + 
-                        enemy.velocity.y * enemy.velocity.y
-                    );
-                    if (speed > 3) {
-                        enemy.velocity.x *= 3 / speed;
-                        enemy.velocity.y *= 3 / speed;
-                    }
-                });
-            }
-
-            // Render enemies
-            renderEnemies() {
-                this.enemySwarm.forEach(enemy => {
-                    this.ctx.beginPath();
-                    this.ctx.fillStyle = enemy.color;
-                    this.ctx.arc(
-                        enemy.position.x, 
-                        enemy.position.y, 
-                        enemy.size, 
-                        0, 
-                        Math.PI * 2
-                    );
-                    this.ctx.fill();
-                });
-            }
-
-            // Override update method to include enemy updates and collision checks
-            update() {
-                // Prevent updates if game is over
-                if (this.isGameOver) return;
-
-                // Progress quantum state
-                this.quantumState = (this.quantumState + 0.01) % 1;
-
-                // Update enemy units
-                this.updateEnemies();
-
-                // Recreate entanglement map periodically
-                if (Math.random() < 0.05) {
-                    this.createEntanglementMap();
-                }
-
-                // Update units
-                this.units.forEach(unit => {
-                    // Optimize movement through entanglement
-                    this.optimizeUnitMovement(unit);
-
-                    // Update position
-                    unit.position.x += unit.velocity.x;
-                    unit.position.y += unit.velocity.y;
-
-                    // Wrap around canvas
-                    unit.position.x = (unit.position.x + this.canvas.width) % this.canvas.width;
-                    unit.position.y = (unit.position.y + this.canvas.height) % this.canvas.height;
-                });
-
-                // Check for collisions
-                this.checkCollisions();
-
-                // Dynamically adjust performance
-                this.updatePerformance();
-            }
-
-            // Override render to include enemy rendering
-            render() {
-                this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-
-                // Render entanglement connections
-                this.units.forEach(unit => {
-                    if (unit.entangledUnits) {
-                        unit.entangledUnits.forEach(connection => {
-                            this.ctx.beginPath();
-                            this.ctx.strokeStyle = `rgba(0, 255, 255, ${connection.strength * 0.5})`;
-                            this.ctx.moveTo(unit.position.x, unit.position.y);
-                            this.ctx.lineTo(
-                                connection.unit.position.x, 
-                                connection.unit.position.y
-                            );
-                            this.ctx.stroke();
-                        });
-                    }
-                });
-
-                // Render units
-                this.units.forEach(unit => {
-                    this.ctx.beginPath();
-                    this.ctx.fillStyle = unit.color;
-                    this.ctx.arc(
-                        unit.position.x, 
-                        unit.position.y, 
-                        unit.size, 
-                        0, 
-                        Math.PI * 2
-                    );
-                    this.ctx.fill();
-                });
-
-                // Render enemies
-                this.renderEnemies();
-            }
-
-            // Spawn a new unit (modified to respect max units)
-            spawnUnit() {
-                if (this.units.length >= this.maxUnits) return;
-                if (this.resourcePoints < 10) return;
-
-                const unit = {
-                    position: {
-                        x: this.canvas.width / 2,
-                        y: this.canvas.height / 2
-                    },
-                    velocity: {
-                        x: (Math.random() - 0.5) * 2,
-                        y: (Math.random() - 0.5) * 2
-                    },
-                    size: Math.random() * 10 + 5,
-                    color: this.generateQuantumColor(),
-                    entangledUnits: []
-                };
-
-                this.units.push(unit);
-                this.resourcePoints -= 10;
-                this.resourcePoints += Math.floor(this.quantumState * 5);
-            }
-
-            // Rest of the previous methods remain the same...
         }
 
-        // Game Setup
-        const canvas = document.getElementById('gameCanvas');
-        const unitCountDisplay = document.getElementById('unitCountDisplay');
-        const resourcePointsDisplay = document.getElementById('resourcePointsDisplay');
-        const performanceDisplay = document.getElementById('performanceDisplay');
-        const quantumStateDisplay = document.getElementById('quantumStateDisplay');
-        const spawnUnitBtn = document.getElementById('spawnUnitBtn');
-        const formationBtn = document.getElementById('formationBtn');
-        const restartBtn = document.getElementById('restartBtn');
-
-        function resizeCanvas() {
-            canvas.width = window.innerWidth * 0.95;
-            canvas.height = window.innerHeight * 0.8;
-        }
-        window.addEventListener('resize', resizeCanvas);
-        resizeCanvas();
-
-        const game = new QuantumSwarmCommander(canvas);
-
-        // Game Loop
-        function gameLoop() {
-            game.update();
-            game.render();
-
-            // Update UI
-            unitCountDisplay.textContent = game.units.length;
-            resourcePointsDisplay.textContent = Math.floor(game.resourcePoints);
-            performanceDisplay.textContent = `${game.performanceLevel.toFixed(2)}%`;
-            quantumStateDisplay.textContent = `Quantum State: ${game.quantumState.toFixed(2)}`;
-
-            requestAnimationFrame(gameLoop);
-        }
-
-        // Event Listeners
-        spawnUnitBtn.addEventListener('click', () => game.spawnUnit());
-        formationBtn.addEventListener('click', () => game.changeFormation());
-        restartBtn.addEventListener('click', () => game.restart());
-
-        // Start Game Loop
-        gameLoop();
+        // Initialize quantum particles on page load
+        window.addEventListener('load', createQuantumParticles);
     </script>
+
+    <!-- Game Core Scripts -->
+    <script type="module" src="src/js/core/game-engine.js"></script>
+    <script type="module" src="src/js/core/quantum-system.js"></script>
+    <script type="module" src="src/js/core/ai-companion.js"></script>
 </body>
 </html>
