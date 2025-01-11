@@ -9,21 +9,27 @@
       font-family: Arial, sans-serif;
       margin: 0;
       padding: 0;
+      background: url('A_futuristic_4K_background_design_that_represents_.png') no-repeat center center fixed;
+      background-size: cover;
+      color: white;
       line-height: 1.6;
     }
     header {
-      background: #4CAF50;
-      color: white;
+      background: rgba(0, 0, 0, 0.8);
       padding: 20px 10px;
       text-align: center;
+      border-bottom: 1px solid #4CAF50;
     }
     main {
       padding: 20px;
       max-width: 800px;
       margin: auto;
+      background: rgba(0, 0, 0, 0.85);
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
     }
     h1, h2, h3 {
-      color: #333;
+      color: #00FFCC;
     }
     .btn {
       display: inline-block;
@@ -33,31 +39,42 @@
       text-decoration: none;
       border-radius: 5px;
       margin-top: 10px;
+      box-shadow: 0 5px 15px rgba(0, 255, 128, 0.4);
     }
     .btn:hover {
       background: #45a049;
+      box-shadow: 0 10px 20px rgba(0, 255, 128, 0.6);
     }
     .scenario {
-      background: #f9f9f9;
-      border: 1px solid #ddd;
+      background: rgba(0, 0, 0, 0.9);
+      border: 1px solid #00FFCC;
       padding: 15px;
       margin: 15px 0;
-      border-radius: 5px;
+      border-radius: 10px;
+      box-shadow: 0 0 15px rgba(0, 255, 255, 0.3);
     }
     .output {
       margin-top: 10px;
       padding: 10px;
-      border: 1px solid #ccc;
-      background: #f9f9f9;
+      border: 1px solid #00FFCC;
+      background: rgba(0, 0, 0, 0.7);
       border-radius: 5px;
       white-space: pre-wrap;
+      color: #00FFCC;
     }
     footer {
-      background: #333;
-      color: white;
+      background: rgba(0, 0, 0, 0.8);
+      color: #00FFCC;
       text-align: center;
       padding: 10px 0;
-      position: relative;
+      border-top: 1px solid #4CAF50;
+    }
+    a {
+      color: #00FFCC;
+      text-decoration: underline;
+    }
+    a:hover {
+      color: #4CAF50;
     }
   </style>
 </head>
@@ -71,10 +88,10 @@
 <main>
   <h2>Overview</h2>
   <p>
-    The Prozone GD and Lo-QOS integration unlocks next-generation capabilities in event management through quantum computing, blockchain, and AI. 
+    The Prozone GD and Lo-QOS integration brings quantum, blockchain, and AI capabilities to event management. Explore a seamless blend of advanced technology and user-friendly features.
   </p>
 
-  <h2>Scenarios</h2>
+  <h2>Interactive Scenarios</h2>
 
   <div class="scenario">
     <h3>1. Quantum Session Optimization</h3>
@@ -100,6 +117,7 @@
 
 <footer>
   <p>&copy; 2025 Lo-QOS. All rights reserved.</p>
+  <p>Contact us at <a href="mailto:partners@lo-qos.com">partners@lo-qos.com</a></p>
 </footer>
 
 <script>
@@ -112,7 +130,6 @@
     ];
     const userPreferences = { interest: "AI", timePreference: "morning" };
 
-    // Simulate quantum entanglement logic
     const optimizedSchedule = sessions
       .filter(session => session.name.includes(userPreferences.interest) || session.popularity > 80)
       .sort((a, b) => b.popularity - a.popularity);
@@ -129,7 +146,6 @@
       issuedAt: new Date().toISOString()
     };
 
-    // Simulate a blockchain transaction
     const txHash = `tx_${Math.random().toString(36).substr(2, 16)}`;
     document.getElementById("blockchainOutput").innerText = 
       `Ticket Issued!\nSession: ${ticket.session}\nAttendee: ${ticket.attendee}\nTransaction Hash: ${txHash}`;
