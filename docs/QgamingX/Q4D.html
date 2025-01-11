@@ -1,184 +1,395 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Traditional vs Quantum Rendering Simulation, mapping and animating a target image.">
-  <meta name="keywords" content="quantum rendering, traditional rendering, living animation, dynamic mapping">
-  <meta name="author" content="Your Name">
-  <title>Rendering to Living Animation</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      background-color: #121212;
-      color: #ffffff;
-      margin: 0;
-      padding: 0;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-    }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advanced Quantum vs Traditional Rendering</title>
+    <style>
+        :root {
+            --primary: #00ffff;
+            --secondary: #ff00ff;
+            --background: #121212;
+            --text: #ffffff;
+            --accent: #50fa7b;
+        }
 
-    h1 {
-      text-align: center;
-      color: #00ffff;
-      margin: 10px 0;
-    }
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--background);
+            color: var(--text);
+            margin: 0;
+            padding: 20px;
+            min-height: 100vh;
+        }
 
-    .container {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
-      gap: 20px;
-      width: 100%;
-      padding: 10px;
-    }
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
 
-    .simulator {
-      text-align: center;
-    }
+        h1 {
+            font-size: 2.5em;
+            color: var(--primary);
+            text-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
+            margin: 0;
+            padding: 20px;
+        }
 
-    canvas {
-      background-color: #000;
-      border: 2px solid #00ffff;
-      width: 100%; /* Ensure canvas scales dynamically */
-      height: auto; /* Maintain aspect ratio */
-    }
+        .container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(450px, 1fr));
+            gap: 30px;
+            max-width: 1800px;
+            margin: 0 auto;
+        }
 
-    .stats {
-      text-align: center;
-      font-size: 1rem;
-      margin: 10px 0;
-      padding: 10px;
-      background: rgba(0, 0, 0, 0.5);
-      border-radius: 5px;
-    }
+        .render-panel {
+            background: rgba(0, 0, 0, 0.5);
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 0 20px rgba(0, 255, 255, 0.2);
+            transition: transform 0.3s ease;
+        }
 
-    .stats p {
-      margin: 5px 0;
-    }
+        .render-panel:hover {
+            transform: scale(1.02);
+        }
 
-    @media (max-width: 600px) {
-      h1 {
-        font-size: 1.2rem;
-      }
+        .render-panel h2 {
+            color: var(--primary);
+            text-align: center;
+            margin-top: 0;
+        }
 
-      canvas {
-        height: 300px;
-      }
+        .canvas-container {
+            position: relative;
+            width: 100%;
+            aspect-ratio: 1;
+            margin-bottom: 20px;
+        }
 
-      .stats {
-        font-size: 0.9rem;
-      }
-    }
-  </style>
+        canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border-radius: 10px;
+            border: 2px solid var(--primary);
+        }
+
+        .quantum canvas {
+            border-color: var(--secondary);
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            padding: 15px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 10px;
+        }
+
+        .stat-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 10px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+        }
+
+        .stat-label {
+            font-size: 0.9em;
+            color: var(--accent);
+            margin-bottom: 5px;
+        }
+
+        .stat-value {
+            font-size: 1.2em;
+            font-weight: bold;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 10px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 5px;
+            margin-top: 10px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: var(--primary);
+            transition: width 0.3s ease;
+        }
+
+        .quantum .progress-fill {
+            background: var(--secondary);
+            box-shadow: 0 0 10px var(--secondary);
+        }
+
+        .controls {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        button {
+            background: var(--primary);
+            color: var(--background);
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 255, 255, 0.3);
+        }
+
+        .quantum button {
+            background: var(--secondary);
+        }
+
+        .particles {
+            position: absolute;
+            pointer-events: none;
+            width: 100%;
+            height: 100%;
+        }
+
+        @keyframes float {
+            0% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(180deg); }
+            100% { transform: translateY(0px) rotate(360deg); }
+        }
+
+        .particle {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: var(--primary);
+            border-radius: 50%;
+            animation: float 3s infinite ease-in-out;
+        }
+
+        .quantum .particle {
+            background: var(--secondary);
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
 </head>
 <body>
-  <h1>Rendering to Living Animation</h1>
-  <div class="container">
-    <!-- Traditional Rendering -->
-    <div class="simulator">
-      <h2>Traditional Rendering</h2>
-      <canvas id="traditionalCanvas"></canvas>
-      <div class="stats">
-        <p id="traditionalProgress">Rendering Progress: 0%</p>
-        <p id="traditionalFPS">FPS: Calculating...</p>
-        <p id="traditionalEnergy">Energy Used: 0</p>
-      </div>
+    <div class="header">
+        <h1>Quantum vs Traditional Rendering</h1>
     </div>
 
-    <!-- Quantum Rendering -->
-    <div class="simulator">
-      <h2>Quantum Rendering</h2>
-      <canvas id="quantumCanvas"></canvas>
-      <div class="stats">
-        <p id="quantumProgress">Rendering Progress: 0%</p>
-        <p id="quantumFPS">FPS: Calculating...</p>
-        <p id="quantumOptimization">Optimization State: 100%</p>
-        <p id="quantumEnergy">Energy Used: 0</p>
-      </div>
+    <div class="container">
+        <div class="render-panel traditional">
+            <h2>Traditional Rendering</h2>
+            <div class="canvas-container">
+                <canvas id="traditionalCanvas"></canvas>
+                <div class="particles" id="traditionalParticles"></div>
+            </div>
+            <div class="stats">
+                <div class="stat-item">
+                    <span class="stat-label">Progress</span>
+                    <span class="stat-value" id="traditionalProgress">0%</span>
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="traditionalProgressBar"></div>
+                    </div>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">FPS</span>
+                    <span class="stat-value" id="traditionalFPS">0</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">Energy Used</span>
+                    <span class="stat-value" id="traditionalEnergy">0</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">Efficiency</span>
+                    <span class="stat-value" id="traditionalEfficiency">100%</span>
+                </div>
+            </div>
+            <div class="controls">
+                <button onclick="resetSimulation('traditional')">Reset</button>
+                <button onclick="toggleSimulation('traditional')">Start/Pause</button>
+            </div>
+        </div>
+
+        <div class="render-panel quantum">
+            <h2>Quantum Rendering</h2>
+            <div class="canvas-container">
+                <canvas id="quantumCanvas"></canvas>
+                <div class="particles" id="quantumParticles"></div>
+            </div>
+            <div class="stats">
+                <div class="stat-item">
+                    <span class="stat-label">Progress</span>
+                    <span class="stat-value" id="quantumProgress">0%</span>
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="quantumProgressBar"></div>
+                    </div>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">FPS</span>
+                    <span class="stat-value" id="quantumFPS">0</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">Energy Used</span>
+                    <span class="stat-value" id="quantumEnergy">0</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">Optimization</span>
+                    <span class="stat-value" id="quantumOptimization">100%</span>
+                </div>
+            </div>
+            <div class="controls">
+                <button onclick="resetSimulation('quantum')">Reset</button>
+                <button onclick="toggleSimulation('quantum')">Start/Pause</button>
+            </div>
+        </div>
     </div>
-  </div>
 
-  <script>
-    // Shared Variables
-    const traditionalCanvas = document.getElementById("traditionalCanvas");
-    const traditionalCtx = traditionalCanvas.getContext("2d");
-    const quantumCanvas = document.getElementById("quantumCanvas");
-    const quantumCtx = quantumCanvas.getContext("2d");
+    <script>
+        class RenderSimulation {
+            constructor(type) {
+                this.type = type;
+                this.canvas = document.getElementById(`${type}Canvas`);
+                this.ctx = this.canvas.getContext('2d');
+                this.progress = 0;
+                this.energy = 0;
+                this.fps = 0;
+                this.lastFrameTime = performance.now();
+                this.frameCount = 0;
+                this.active = false;
+                this.optimization = type === 'quantum' ? 100 : 70;
+                this.particles = [];
+                this.setupParticles();
+            }
 
-    // Responsive Canvas Setup
-    function resizeCanvas() {
-      const width = traditionalCanvas.parentElement.offsetWidth;
-      traditionalCanvas.width = width;
-      traditionalCanvas.height = width;
-      quantumCanvas.width = width;
-      quantumCanvas.height = width;
-    }
-    window.addEventListener("resize", resizeCanvas);
-    resizeCanvas();
+            setupParticles() {
+                const container = document.getElementById(`${this.type}Particles`);
+                for (let i = 0; i < 20; i++) {
+                    const particle = document.createElement('div');
+                    particle.className = 'particle';
+                    particle.style.left = `${Math.random() * 100}%`;
+                    particle.style.top = `${Math.random() * 100}%`;
+                    particle.style.animationDelay = `${Math.random() * 2}s`;
+                    container.appendChild(particle);
+                    this.particles.push(particle);
+                }
+            }
 
-    // Rendering Variables
-    const targetImage = new Image();
-    targetImage.src = "https://placekitten.com/400/400"; // Replace with a valid image URL
-    let traditionalProgress = 0;
-    let quantumProgress = 0;
+            render() {
+                if (!this.active || this.progress >= 100) return;
 
-    let traditionalEnergy = 0;
-    let quantumEnergy = 0;
-    let quantumOptimizationState = 100;
+                const now = performance.now();
+                const delta = now - this.lastFrameTime;
 
-    // Debugging Logs
-    targetImage.onload = () => {
-      console.log("Target image loaded successfully.");
-      renderingLoop();
-    };
+                if (delta > 1000) {
+                    this.fps = Math.round((this.frameCount * 1000) / delta);
+                    this.frameCount = 0;
+                    this.lastFrameTime = now;
+                }
 
-    targetImage.onerror = () => {
-      console.error("Failed to load target image. Please check the URL.");
-    };
+                this.frameCount++;
 
-    // Draw Target Image on Both Canvases
-    function drawImage(ctx, progress) {
-      const sliceHeight = targetImage.height * (progress / 100);
-      ctx.drawImage(targetImage, 0, 0, targetImage.width, sliceHeight, 0, 0, ctx.canvas.width, sliceHeight);
-    }
+                // Simulate rendering progress
+                const increment = this.type === 'quantum' ? 
+                    (0.5 + (this.optimization / 100)) : 
+                    0.3;
+                
+                this.progress = Math.min(100, this.progress + increment);
+                this.energy += this.type === 'quantum' ? 0.2 : 0.5;
 
-    // Traditional Rendering
-    function traditionalRender() {
-      if (traditionalProgress < 100) {
-        traditionalProgress += 1; // Increment rendering progress
-        traditionalEnergy += 5; // Energy cost for brute force rendering
-        drawImage(traditionalCtx, traditionalProgress);
-        document.getElementById("traditionalProgress").textContent = `Rendering Progress: ${traditionalProgress}%`;
-        document.getElementById("traditionalEnergy").textContent = `Energy Used: ${traditionalEnergy}`;
-      }
-    }
+                // Update optimization
+                if (this.type === 'quantum' && this.optimization > 50) {
+                    this.optimization -= 0.1;
+                }
 
-    // Quantum Rendering
-    function quantumRender() {
-      if (quantumProgress < 100) {
-        const optimizedProgress = 1 + (quantumOptimizationState / 100);
-        quantumProgress += optimizedProgress; // Increment rendering progress faster with optimization
-        quantumEnergy += 2; // Energy cost for optimized rendering
-        drawImage(quantumCtx, quantumProgress);
-        document.getElementById("quantumProgress").textContent = `Rendering Progress: ${quantumProgress.toFixed(2)}%`;
-        document.getElementById("quantumEnergy").textContent = `Energy Used: ${quantumEnergy.toFixed(2)}`;
-        document.getElementById("quantumOptimization").textContent = `Optimization State: ${quantumOptimizationState.toFixed(2)}%`;
-        if (quantumOptimizationState > 50) quantumOptimizationState -= 0.5; // Gradual optimization reduction
-      }
-    }
+                // Draw rendering effect
+                const height = (this.canvas.height * this.progress) / 100;
+                this.ctx.fillStyle = this.type === 'quantum' ? '#ff00ff33' : '#00ffff33';
+                this.ctx.fillRect(0, 0, this.canvas.width, height);
 
-    // Main Loop
-    function renderingLoop() {
-      traditionalRender();
-      quantumRender();
+                // Update stats
+                this.updateStats();
 
-      if (traditionalProgress < 100 || quantumProgress < 100) {
-        requestAnimationFrame(renderingLoop);
-      } else {
-        console.log("Rendering complete.");
-      }
-    }
-  </script>
+                if (this.progress < 100) {
+                    requestAnimationFrame(() => this.render());
+                }
+            }
+
+            updateStats() {
+                document.getElementById(`${this.type}Progress`).textContent = `${Math.round(this.progress)}%`;
+                document.getElementById(`${this.type}ProgressBar`).style.width = `${this.progress}%`;
+                document.getElementById(`${this.type}FPS`).textContent = this.fps;
+                document.getElementById(`${this.type}Energy`).textContent = Math.round(this.energy);
+                
+                if (this.type === 'quantum') {
+                    document.getElementById('quantumOptimization').textContent = `${Math.round(this.optimization)}%`;
+                } else {
+                    document.getElementById('traditionalEfficiency').textContent = `${Math.round(70 - (this.progress / 2))}%`;
+                }
+            }
+
+            reset() {
+                this.progress = 0;
+                this.energy = 0;
+                this.frameCount = 0;
+                this.lastFrameTime = performance.now();
+                this.optimization = this.type === 'quantum' ? 100 : 70;
+                this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+                this.updateStats();
+            }
+
+            toggle() {
+                this.active = !this.active;
+                if (this.active) this.render();
+            }
+        }
+
+        // Initialize simulations
+        const traditionalSim = new RenderSimulation('traditional');
+        const quantumSim = new RenderSimulation('quantum');
+
+        // Setup canvas sizes
+        function resizeCanvas() {
+            const canvases = document.querySelectorAll('canvas');
+            canvases.forEach(canvas => {
+                const container = canvas.parentElement;
+                canvas.width = container.offsetWidth;
+                canvas.height = container.offsetHeight;
+            });
+        }
+
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+
+        // Control functions
+        function resetSimulation(type) {
+            if (type === 'traditional') traditionalSim.reset();
+            else quantumSim.reset();
+        }
+
+        function toggleSimulation(type) {
+            if (type === 'traditional') traditionalSim.toggle();
+            else quantumSim.toggle();
+        }
+    </script>
 </body>
 </html>
