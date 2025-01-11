@@ -11,6 +11,11 @@
             color: #f1f1f1;
             margin: 0;
             padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
         }
 
         header {
@@ -18,22 +23,28 @@
             padding: 1rem;
             background: #3b82f6;
             color: #fff;
+            width: 100%;
         }
 
         .game-area {
-            max-width: 800px;
-            margin: 2rem auto;
-            padding: 1rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
             background: #282a36;
+            padding: 1rem;
             border-radius: 10px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+        }
+
+        .player {
+            margin: 1rem;
+            text-align: center;
         }
 
         .cards {
             display: flex;
             justify-content: center;
             gap: 0.5rem;
-            flex-wrap: wrap;
         }
 
         .card {
@@ -52,10 +63,16 @@
 
         .card:hover {
             transform: scale(1.1);
+            cursor: pointer;
+        }
+
+        .info {
+            margin-top: 1rem;
+            color: #4caf50;
+            text-align: center;
         }
 
         .buttons {
-            text-align: center;
             margin-top: 1rem;
         }
 
@@ -68,120 +85,153 @@
             font-size: 1rem;
         }
 
-        .btn-shuffle {
+        .btn-start {
             background: #4caf50;
             color: white;
         }
 
-        .btn-play {
+        .btn-mode {
             background: #3b82f6;
             color: white;
         }
 
-        .winner {
-            text-align: center;
-            font-size: 1.5rem;
-            color: #4caf50;
-            margin-top: 1rem;
-        }
-
-        .quantum-animation {
-            width: 100px;
-            height: 100px;
-            background: radial-gradient(circle, rgba(59,130,246,1) 0%, rgba(255,255,255,0) 70%);
-            border-radius: 50%;
-            position: absolute;
-            animation: pulse 1s infinite;
-        }
-
-        @keyframes pulse {
-            0% {
-                transform: scale(1);
-                opacity: 1;
-            }
-            100% {
-                transform: scale(2);
-                opacity: 0;
-            }
+        .btn-difficulty {
+            background: #9333ea;
+            color: white;
         }
     </style>
 </head>
 <body>
     <header>
         <h1>Q Spades - Quantum Gaming</h1>
-        <p>Experience the future of Spades with quantum enhancements!</p>
+        <p>Experience traditional Spades with quantum visual enhancements!</p>
     </header>
 
-    <div class="game-area">
-        <div class="cards" id="cards-container">
-            <!-- Cards will be dynamically inserted here -->
-        </div>
+    <div class="game-area" id="game-area">
+        <div class="info" id="info">Select a game mode and start playing!</div>
 
         <div class="buttons">
-            <button class="btn btn-shuffle" onclick="quantumShuffle()">Quantum Shuffle</button>
-            <button class="btn btn-play" onclick="playRound()">Play Round</button>
+            <button class="btn btn-mode" onclick="setMode('team')">Team Mode</button>
+            <button class="btn btn-mode" onclick="setMode('solo')">Solo Mode</button>
+            <button class="btn btn-difficulty" onclick="setDifficulty('easy')">AI Difficulty: Easy</button>
+            <button class="btn btn-difficulty" onclick="setDifficulty('hard')">AI Difficulty: Hard</button>
+            <button class="btn btn-start" onclick="startGame()">Start Game</button>
         </div>
-
-        <div class="winner" id="winner-text"></div>
     </div>
 
     <script>
-        // Initialize the deck
-        let deck = [
-            "A♠", "2♠", "3♠", "4♠", "5♠", "6♠", "7♠", "8♠", "9♠", "10♠", "J♠", "Q♠", "K♠",
-            "A♥", "2♥", "3♥", "4♥", "5♥", "6♥", "7♥", "8♥", "9♥", "10♥", "J♥", "Q♥", "K♥"
-        ];
+        // Game Variables
+        const players = ["You", "AI Player 1", "AI Player 2", "AI Player 3"];
+        let deck = [];
+        let hands = [[], [], [], []]; // Player hands
+        let mode = "team"; // Default mode: 'team' or 'solo'
+        let difficulty = "easy"; // AI difficulty
 
-        const cardsContainer = document.getElementById("cards-container");
-        const winnerText = document.getElementById("winner-text");
+        // Initialize Deck
+        function initializeDeck() {
+            const suits = ["♠", "♥", "♦", "♣"];
+            const values = ["A", "2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K"];
+            deck = [];
+            for (let suit of suits) {
+                for (let value of values) {
+                    deck.push(`${value}${suit}`);
+                }
+            }
+        }
 
-        // Render cards in the UI
-        function renderDeck(deck) {
-            cardsContainer.innerHTML = "";
-            deck.forEach(card => {
-                const cardElement = document.createElement("div");
-                cardElement.className = "card";
-                cardElement.textContent = card;
-                cardsContainer.appendChild(cardElement);
+        // Shuffle Deck (Quantum Visuals)
+        function shuffleDeck() {
+            for (let i = deck.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [deck[i], deck[j]] = [deck[j], deck[i]];
+            }
+        }
+
+        // Deal Cards
+        function dealCards() {
+            for (let i = 0; i < 52; i++) {
+                hands[i % 4].push(deck[i]);
+            }
+        }
+
+        // Set Game Mode
+        function setMode(selectedMode) {
+            mode = selectedMode;
+            document.getElementById("info").textContent = `Mode selected: ${mode === "team" ? "Team Mode" : "Solo Mode"}`;
+        }
+
+        // Set AI Difficulty
+        function setDifficulty(selectedDifficulty) {
+            difficulty = selectedDifficulty;
+            document.getElementById("info").textContent = `AI Difficulty set to: ${difficulty}`;
+        }
+
+        // Start Game
+        function startGame() {
+            initializeDeck();
+            shuffleDeck();
+            dealCards();
+            renderHands();
+            document.getElementById("info").textContent = "Game started! Your turn.";
+        }
+
+        // Render Hands
+        function renderHands() {
+            const gameArea = document.getElementById("game-area");
+            gameArea.innerHTML = "";
+
+            players.forEach((player, index) => {
+                const playerDiv = document.createElement("div");
+                playerDiv.className = "player";
+
+                const playerName = document.createElement("h3");
+                playerName.textContent = player;
+
+                const cardsDiv = document.createElement("div");
+                cardsDiv.className = "cards";
+
+                hands[index].forEach((card, cardIndex) => {
+                    const cardDiv = document.createElement("div");
+                    cardDiv.className = "card";
+                    cardDiv.textContent = card;
+
+                    // Player cards are clickable
+                    if (index === 0) {
+                        cardDiv.addEventListener("click", () => playCard(index, cardIndex));
+                    }
+
+                    cardsDiv.appendChild(cardDiv);
+                });
+
+                playerDiv.appendChild(playerName);
+                playerDiv.appendChild(cardsDiv);
+                gameArea.appendChild(playerDiv);
             });
         }
 
-        // Quantum shuffle using Fisher-Yates + pseudo-random quantum behavior
-        function quantumShuffle() {
-            for (let i = deck.length - 1; i > 0; i--) {
-                const randomIndex = Math.floor(Math.random() * (i + 1));
-                [deck[i], deck[randomIndex]] = [deck[randomIndex], deck[i]];
+        // Play a Card
+        function playCard(playerIndex, cardIndex) {
+            const playedCard = hands[playerIndex].splice(cardIndex, 1)[0];
+            document.getElementById("info").textContent = `${players[playerIndex]} played ${playedCard}`;
+            renderHands();
+            aiTurn(); // Trigger AI turns
+        }
+
+        // AI Turn
+        function aiTurn() {
+            for (let i = 1; i < players.length; i++) {
+                if (hands[i].length > 0) {
+                    const aiCardIndex = Math.floor(Math.random() * hands[i].length); // Random selection for now
+                    const playedCard = hands[i].splice(aiCardIndex, 1)[0];
+                    document.getElementById("info").textContent = `${players[i]} played ${playedCard}`;
+                    renderHands();
+                    break; // AI plays one card per turn
+                }
             }
-            renderDeck(deck);
-            winnerText.textContent = "Deck shuffled with quantum randomness!";
         }
 
-        // Play a round (select random winner)
-        function playRound() {
-            const winnerIndex = Math.floor(Math.random() * deck.length);
-            const winningCard = deck[winnerIndex];
-
-            // Display winner and animate
-            winnerText.textContent = `Winning Card: ${winningCard}`;
-            showQuantumAnimation(cardsContainer.children[winnerIndex]);
-        }
-
-        // Quantum animation effect
-        function showQuantumAnimation(cardElement) {
-            const animation = document.createElement("div");
-            animation.className = "quantum-animation";
-            animation.style.left = `${cardElement.offsetLeft + 40}px`;
-            animation.style.top = `${cardElement.offsetTop + 60}px`;
-
-            cardsContainer.appendChild(animation);
-
-            setTimeout(() => {
-                animation.remove();
-            }, 1000);
-        }
-
-        // Initial render
-        renderDeck(deck);
+        // Initialize Deck on Load
+        initializeDeck();
     </script>
 </body>
 </html>
