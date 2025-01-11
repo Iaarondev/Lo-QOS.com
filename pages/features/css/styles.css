@@ -1,0 +1,478 @@
+/* Base styles */
+body {
+  margin: 0;
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: #0a0a1f;
+  color: #fff;
+  font-family: "Arial", sans-serif;
+  overflow: hidden;
+}
+
+.container {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Canvas */
+.particle-canvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+}
+
+/* Clock styles */
+.quantum-clock {
+  width: 300px;
+  height: 300px;
+  position: relative;
+  background: rgba(16, 16, 48, 0.8);
+  border-radius: 50%;
+  padding: 20px;
+  box-shadow: 0 0 30px rgba(99, 102, 241, 0.3);
+  z-index: 2;
+  cursor: pointer;
+}
+
+.clock-face {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  border: 4px solid #6366f1;
+  border-radius: 50%;
+  overflow: hidden;
+}
+
+.quantum-field {
+  position: absolute;
+  inset: -20%;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle,
+    rgba(99, 102, 241, 0.2) 0%,
+    transparent 70%
+  );
+  animation: pulse 4s ease-in-out infinite;
+}
+
+/* Clock hands */
+.hand {
+  position: absolute;
+  bottom: 50%;
+  left: 50%;
+  transform-origin: bottom;
+  background: #6366f1;
+  border-radius: 4px;
+  transition: all 0.05s cubic-bezier(0.4, 2.08, 0.55, 0.44);
+}
+
+.hour-hand {
+  width: 4px;
+  height: 35%;
+  background: linear-gradient(to top, #6366f1, #818cf8);
+}
+
+.minute-hand {
+  width: 3px;
+  height: 45%;
+  background: linear-gradient(to top, #818cf8, #a5b4fc);
+}
+
+.second-hand {
+  width: 2px;
+  height: 50%;
+  background: #a5b4fc;
+}
+
+.center-dot {
+  position: absolute;
+  width: 16px;
+  height: 16px;
+  background: #6366f1;
+  border-radius: 50%;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 3;
+}
+
+/* Hour markers */
+.hour-markers {
+  position: absolute;
+  inset: 0;
+}
+
+.hour-marker {
+  position: absolute;
+  width: 2px;
+  height: 12px;
+  background: #818cf8;
+  left: 50%;
+  transform-origin: 50% 150px;
+}
+
+/* Digital display */
+.digital-time {
+  position: absolute;
+  bottom: -40px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 1.2em;
+  font-family: monospace;
+  color: #818cf8;
+  text-shadow: 0 0 10px rgba(99, 102, 241, 0.5);
+}
+
+/* Info panels */
+.quantum-info {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  background: rgba(16, 16, 48, 0.8);
+  padding: 15px;
+  border-radius: 10px;
+  border: 1px solid #6366f1;
+}
+
+.quantum-state {
+  font-family: monospace;
+  margin: 5px 0;
+}
+
+/* Quantum meter */
+.quantum-meter {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  background: rgba(16, 16, 48, 0.8);
+  padding: 15px;
+  border-radius: 10px;
+  border: 1px solid #6366f1;
+  width: 200px;
+}
+
+.quantum-meter-circle {
+  position: relative;
+  width: 120px;
+  height: 120px;
+  margin: 0 auto 15px;
+}
+
+.quantum-meter-svg {
+  transform: rotate(-90deg);
+}
+
+.quantum-meter-value {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 1.2em;
+  font-family: monospace;
+  color: #818cf8;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.quantum-meter-icon {
+  font-size: 1.5em;
+  animation: spin 4s linear infinite;
+}
+
+.quantum-meter-bar {
+  width: 100%;
+  height: 4px;
+  background: rgba(99, 102, 241, 0.2);
+  border-radius: 2px;
+  margin: 8px 0;
+  overflow: hidden;
+}
+
+.quantum-meter-progress {
+  height: 100%;
+  background: #6366f1;
+  transition: width 0.3s ease;
+  box-shadow: 0 0 10px rgba(99, 102, 241, 0.6);
+  border-radius: 2px;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Add shimmer effect */
+.quantum-meter-progress::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.2),
+    transparent
+  );
+  animation: shimmer 2s infinite;
+}
+
+/* Value indicator */
+.quantum-meter-value {
+  position: relative;
+  z-index: 2;
+}
+
+/* Smooth transitions */
+.quantum-meter-progress.transitioning {
+  transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Pulse effect when value increases */
+.quantum-meter-progress.pulse {
+  animation: pulse-glow 0.5s ease-in-out;
+}
+
+/* State-based colors */
+.quantum-meter-progress[data-state="0"] {
+  background: linear-gradient(90deg, #6366f1, #818cf8);
+}
+
+.quantum-meter-progress[data-state="0.5"] {
+  background: linear-gradient(90deg, #818cf8, #a5b4fc);
+}
+
+.quantum-meter-progress[data-state="1"] {
+  background: linear-gradient(90deg, #a5b4fc, #c7d2fe);
+}
+
+/* Animation keyframes */
+@keyframes shimmer {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(200%);
+  }
+}
+
+@keyframes pulse-glow {
+  0%,
+  100% {
+    box-shadow: 0 0 10px rgba(99, 102, 241, 0.6);
+  }
+  50% {
+    box-shadow: 0 0 20px rgba(99, 102, 241, 0.8);
+  }
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .quantum-meter-progress {
+    height: 3px;
+  }
+
+  .quantum-meter-progress::after {
+    animation: shimmer 1.5s infinite;
+  }
+}
+
+/* High contrast mode */
+@media (prefers-contrast: high) {
+  .quantum-meter-progress {
+    background: #6366f1;
+    box-shadow: none;
+    border: 1px solid #fff;
+  }
+}
+
+/* Reduced motion preferences */
+@media (prefers-reduced-motion: reduce) {
+  .quantum-meter-progress {
+    transition: none;
+  }
+
+  .quantum-meter-progress::after {
+    animation: none;
+  }
+}
+.quantum-meter-label {
+  display: flex;
+  justify-content: space-between;
+  font-family: monospace;
+  margin-bottom: 4px;
+}
+
+/* ZKP States */
+.zkp-states {
+  position: absolute;
+  bottom: 100px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 20px;
+  background: rgba(16, 16, 48, 0.8);
+  padding: 15px;
+  border-radius: 10px;
+  border: 1px solid #6366f1;
+  z-index: 3;
+}
+
+.zkp-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+  font-family: monospace;
+  color: #818cf8;
+}
+
+.zkp-indicator {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: rgba(99, 102, 241, 0.2);
+  transition: all 0.3s ease;
+}
+
+.zkp-indicator.active {
+  background: #6366f1;
+  box-shadow: 0 0 10px rgba(99, 102, 241, 0.6);
+}
+
+/* Mode Switch */
+.mode-switch {
+  position: absolute;
+  bottom: 20px;
+  display: flex;
+  gap: 10px;
+  z-index: 3;
+}
+
+.mode-btn {
+  background: rgba(99, 102, 241, 0.2);
+  border: 1px solid #6366f1;
+  color: #fff;
+  padding: 8px 16px;
+  border-radius: 20px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-family: monospace;
+}
+
+.mode-btn:hover {
+  background: rgba(99, 102, 241, 0.4);
+}
+
+.mode-btn.active {
+  background: #6366f1;
+  box-shadow: 0 0 15px rgba(99, 102, 241, 0.4);
+}
+
+/* Animations */
+@keyframes pulse {
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 0.2;
+  }
+  50% {
+    transform: scale(1.1);
+    opacity: 0.3;
+  }
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .quantum-clock {
+    width: 250px;
+    height: 250px;
+  }
+
+  .quantum-meter {
+    width: 180px;
+  }
+
+  .quantum-meter-circle {
+    width: 100px;
+    height: 100px;
+  }
+
+  .mode-btn {
+    padding: 6px 12px;
+    font-size: 0.9em;
+  }
+
+  .zkp-states {
+    bottom: 80px;
+    padding: 10px;
+    gap: 15px;
+  }
+
+  .zkp-indicator {
+    width: 16px;
+    height: 16px;
+  }
+}
+
+/* Performance Optimizations */
+.quantum-field,
+.quantum-meter-progress,
+.zkp-indicator,
+.hand {
+  will-change: transform, opacity;
+}
+
+/* Accessibility */
+.mode-btn:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.5);
+}
+
+/* Dark Mode Support */
+@media (prefers-color-scheme: dark) {
+  .quantum-clock {
+    background: rgba(13, 13, 38, 0.9);
+  }
+
+  .quantum-info,
+  .quantum-meter,
+  .zkp-states {
+    background: rgba(13, 13, 38, 0.9);
+  }
+}
+
+/* Print Styles */
+@media print {
+  body {
+    background: white;
+  }
+
+  .quantum-clock {
+    box-shadow: none;
+    border: 2px solid #6366f1;
+  }
+
+  .quantum-field,
+  .particle-canvas {
+    display: none;
+  }
+}
