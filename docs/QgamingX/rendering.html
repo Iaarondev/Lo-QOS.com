@@ -3,10 +3,10 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="High-resolution video rendering simulation using SVG patterns and quantum mapping.">
-  <meta name="keywords" content="SVG, quantum rendering, ultra-high resolution, 8K, 16K, 256K">
+  <meta name="description" content="Comparison of Traditional and Quantum Rendering using SVG animations with chaos simulation.">
+  <meta name="keywords" content="SVG, quantum rendering, traditional rendering, chaos simulation, ultra-high resolution">
   <meta name="author" content="Your Name">
-  <title>Quantum SVG Rendering</title>
+  <title>Traditional vs Quantum Rendering</title>
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -23,6 +23,18 @@
       text-align: center;
       color: #00ffff;
       margin: 20px 0;
+    }
+
+    .container {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+      gap: 20px;
+      width: 100%;
+      padding: 10px;
+    }
+
+    .simulator {
+      text-align: center;
     }
 
     canvas {
@@ -62,30 +74,51 @@
   </style>
 </head>
 <body>
-  <h1>Quantum SVG Rendering Simulation</h1>
-  <canvas id="renderCanvas"></canvas>
-  <div class="stats">
-    <p id="resolution">Resolution: 8K</p>
-    <p id="fps">FPS: Calculating...</p>
-    <p id="compression">Compression: 0%</p>
+  <h1>Traditional vs Quantum Rendering</h1>
+  <div class="container">
+    <!-- Traditional Rendering -->
+    <div class="simulator">
+      <h2>Traditional Rendering</h2>
+      <canvas id="traditionalCanvas"></canvas>
+      <div class="stats">
+        <p id="traditionalFPS">FPS: Calculating...</p>
+        <p id="traditionalCompression">Compression: 0%</p>
+        <p id="traditionalChaos">Chaos Events: 0</p>
+      </div>
+    </div>
+
+    <!-- Quantum Rendering -->
+    <div class="simulator">
+      <h2>Quantum Rendering</h2>
+      <canvas id="quantumCanvas"></canvas>
+      <div class="stats">
+        <p id="quantumFPS">FPS: Calculating...</p>
+        <p id="quantumCompression">Compression: 0%</p>
+        <p id="quantumChaos">Chaos Events: 0</p>
+      </div>
+    </div>
   </div>
-  <button id="increaseResolution">Increase Resolution</button>
-  <button id="toggleChaos">Toggle Chaos</button>
+  <button id="resetChaos">Reset Chaos</button>
 
   <script>
-    const canvas = document.getElementById("renderCanvas");
-    const ctx = canvas.getContext("2d");
+    const traditionalCanvas = document.getElementById("traditionalCanvas");
+    const traditionalCtx = traditionalCanvas.getContext("2d");
+    const quantumCanvas = document.getElementById("quantumCanvas");
+    const quantumCtx = quantumCanvas.getContext("2d");
 
     // Canvas dimensions
-    canvas.width = 7680; // Default to 8K width
-    canvas.height = 4320; // Default to 8K height
+    traditionalCanvas.width = quantumCanvas.width = 800;
+    traditionalCanvas.height = quantumCanvas.height = 800;
 
-    // Render settings
-    let resolution = "8K";
-    let chaosMode = false;
-    let compression = 0;
-    let frameCount = 0;
-    let lastTimestamp = performance.now();
+    // Rendering settings
+    let chaosEventsTraditional = 0;
+    let chaosEventsQuantum = 0;
+    let traditionalCompression = 0;
+    let quantumCompression = 0;
+
+    // Chaos mode
+    let chaosModeTraditional = false;
+    let chaosModeQuantum = false;
 
     // SVG Generation Function
     function generateSVGPattern(width, height, cellSize) {
@@ -100,75 +133,114 @@
       return svg;
     }
 
-    // Render SVG Pattern on Canvas
-    function renderSVGToCanvas(svgString) {
+    // Render SVG to Canvas
+    function renderSVGToCanvas(ctx, svgString, animationStep) {
       const img = new Image();
       const svgBlob = new Blob([svgString], { type: "image/svg+xml;charset=utf-8" });
       const url = URL.createObjectURL(svgBlob);
 
       img.onload = () => {
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+        ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+        ctx.save();
+        ctx.translate(ctx.canvas.width / 2, ctx.canvas.height / 2); // Move origin to center
+        ctx.rotate(animationStep / 50); // Rotate
+        ctx.translate(-ctx.canvas.width / 2, -ctx.canvas.height / 2); // Restore origin
+        ctx.drawImage(img, 0, 0, ctx.canvas.width, ctx.canvas.height);
+        ctx.restore();
         URL.revokeObjectURL(url);
       };
 
       img.src = url;
     }
 
-    // Update Resolution
-    function updateResolution() {
-      if (resolution === "8K") {
-        resolution = "16K";
-        canvas.width = 15360; // 16K width
-        canvas.height = 8640; // 16K height
-      } else if (resolution === "16K") {
-        resolution = "256K";
-        canvas.width = 245760; // Theoretical 256K width
-        canvas.height = 138240; // Theoretical 256K height
-      } else {
-        resolution = "8K"; // Loop back to 8K
-        canvas.width = 7680;
-        canvas.height = 4320;
-      }
-
-      document.getElementById("resolution").textContent = `Resolution: ${resolution}`;
-      renderFrame();
-    }
-
-    // Render Frame
-    function renderFrame() {
-      const cellSize = chaosMode ? 20 : 10; // Larger cells in chaos mode
-      const svgPattern = generateSVGPattern(canvas.width, canvas.height, cellSize);
-      renderSVGToCanvas(svgPattern);
-
-      // Simulate Compression
-      compression = chaosMode ? Math.random() * 20 : Math.random() * 5;
-      document.getElementById("compression").textContent = `Compression: ${compression.toFixed(2)}%`;
-    }
-
-    // Main Render Loop
-    function renderLoop() {
+    // Update FPS
+    function updateFPS(fpsElement, frameCount, lastTimestamp) {
       const now = performance.now();
       frameCount++;
       if (now - lastTimestamp > 1000) {
-        const fps = frameCount;
+        fpsElement.textContent = `FPS: ${frameCount}`;
         frameCount = 0;
         lastTimestamp = now;
-        document.getElementById("fps").textContent = `FPS: ${fps}`;
       }
-
-      renderFrame();
-      requestAnimationFrame(renderLoop);
+      return { frameCount, lastTimestamp };
     }
 
-    // Event Listeners
-    document.getElementById("increaseResolution").addEventListener("click", updateResolution);
-    document.getElementById("toggleChaos").addEventListener("click", () => {
-      chaosMode = !chaosMode;
+    // Main Render Loops
+    let traditionalFrameCount = 0;
+    let traditionalLastTimestamp = performance.now();
+    let quantumFrameCount = 0;
+    let quantumLastTimestamp = performance.now();
+    let animationStep = 0;
+
+    function renderTraditional() {
+      const cellSize = chaosModeTraditional ? 40 : 20;
+      const svgPattern = generateSVGPattern(traditionalCanvas.width, traditionalCanvas.height, cellSize);
+      renderSVGToCanvas(traditionalCtx, svgPattern, animationStep);
+
+      // Simulate compression
+      traditionalCompression = chaosModeTraditional ? Math.random() * 30 : Math.random() * 10;
+      document.getElementById("traditionalCompression").textContent = `Compression: ${traditionalCompression.toFixed(2)}%`;
+
+      // Update FPS
+      const fpsData = updateFPS(
+        document.getElementById("traditionalFPS"),
+        traditionalFrameCount,
+        traditionalLastTimestamp
+      );
+      traditionalFrameCount = fpsData.frameCount;
+      traditionalLastTimestamp = fpsData.lastTimestamp;
+
+      animationStep++;
+      requestAnimationFrame(renderTraditional);
+    }
+
+    function renderQuantum() {
+      const cellSize = chaosModeQuantum ? 20 : 10; // Smaller cells for higher quality
+      const svgPattern = generateSVGPattern(quantumCanvas.width, quantumCanvas.height, cellSize);
+      renderSVGToCanvas(quantumCtx, svgPattern, animationStep);
+
+      // Simulate compression
+      quantumCompression = chaosModeQuantum ? Math.random() * 10 : Math.random() * 5;
+      document.getElementById("quantumCompression").textContent = `Compression: ${quantumCompression.toFixed(2)}%`;
+
+      // Update FPS
+      const fpsData = updateFPS(
+        document.getElementById("quantumFPS"),
+        quantumFrameCount,
+        quantumLastTimestamp
+      );
+      quantumFrameCount = fpsData.frameCount;
+      quantumLastTimestamp = fpsData.lastTimestamp;
+
+      animationStep++;
+      requestAnimationFrame(renderQuantum);
+    }
+
+    // Chaos Event Listeners
+    traditionalCanvas.addEventListener("click", () => {
+      chaosModeTraditional = !chaosModeTraditional;
+      chaosEventsTraditional++;
+      document.getElementById("traditionalChaos").textContent = `Chaos Events: ${chaosEventsTraditional}`;
     });
 
-    // Start the simulation
-    renderLoop();
+    quantumCanvas.addEventListener("click", () => {
+      chaosModeQuantum = !chaosModeQuantum;
+      chaosEventsQuantum++;
+      document.getElementById("quantumChaos").textContent = `Chaos Events: ${chaosEventsQuantum}`;
+    });
+
+    document.getElementById("resetChaos").addEventListener("click", () => {
+      chaosModeTraditional = false;
+      chaosModeQuantum = false;
+      chaosEventsTraditional = 0;
+      chaosEventsQuantum = 0;
+      document.getElementById("traditionalChaos").textContent = "Chaos Events: 0";
+      document.getElementById("quantumChaos").textContent = "Chaos Events: 0";
+    });
+
+    // Start Rendering
+    renderTraditional();
+    renderQuantum();
   </script>
 </body>
 </html>
