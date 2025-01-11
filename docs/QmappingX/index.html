@@ -1,226 +1,730 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Responsive quantum ZKP simulation with user interaction on mobile and desktop.">
-  <meta name="keywords" content="quantum ZKP, particle simulation, responsive design, mobile-friendly, interactive simulation">
-  <meta name="author" content="Your Name">
-  <title>Traditional vs Quantum ZKP Simulation</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      background-color: #121212;
-      color: #ffffff;
-      margin: 0;
-      padding: 0;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-    }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quantum Multiverse Gaming Demo</title>
+    <style>
+        :root {
+            --quantum-primary: #00ffd0;
+            --quantum-secondary: #8c00ff;
+            --quantum-tertiary: #ff00aa;
+            --background: #0a0a1f;
+            --text: #ffffff;
+        }
 
-    h1 {
-      text-align: center;
-      color: #00ffff;
-      font-size: 1.5rem;
-      margin: 10px 0;
-    }
+        body {
+            background-color: var(--background);
+            color: var(--text);
+            font-family: 'Courier New', monospace;
+            margin: 0;
+            padding: 20px;
+        }
 
-    .container {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
-      gap: 20px;
-      width: 100%;
-      padding: 10px;
-    }
+        .multiverse-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 20px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
 
-    .simulator {
-      text-align: center;
-    }
+        .universe-panel {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+            padding: 20px;
+            backdrop-filter: blur(10px);
+            position: relative;
+            overflow: hidden;
+        }
 
-    canvas {
-      background-color: #000;
-      border: 2px solid #00ffff;
-      width: 100%; /* Ensure canvas scales dynamically */
-      height: auto; /* Maintain aspect ratio */
-    }
+        .universe-canvas {
+            width: 100%;
+            height: 400px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 4px;
+        }
 
-    .stats {
-      text-align: center;
-      font-size: 1rem;
-      margin: 10px 0;
-      color: #ffffff;
-      padding: 10px;
-      background: rgba(0, 0, 0, 0.5);
-      border-radius: 5px;
-    }
+        .entanglement-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 10;
+        }
 
-    .stats p {
-      margin: 5px 0;
-    }
+        .metrics-panel {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin: 10px 0;
+        }
 
-    @media (max-width: 600px) {
-      h1 {
-        font-size: 1.2rem;
-      }
+        .metric {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 10px;
+            border-radius: 4px;
+            text-align: center;
+        }
 
-      canvas {
-        height: 300px;
-      }
+        .metric-value {
+            font-size: 1.2em;
+            font-weight: bold;
+            color: var(--quantum-primary);
+        }
 
-      .stats {
-        font-size: 0.9rem;
-      }
-    }
-  </style>
+        .controls {
+            display: flex;
+            gap: 10px;
+            margin: 10px 0;
+        }
+
+        button {
+            background: var(--quantum-primary);
+            color: var(--background);
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 0 20px rgba(0, 255, 208, 0.3);
+        }
+
+        .quantum-state {
+            height: 4px;
+            background: linear-gradient(to right, 
+                var(--quantum-primary),
+                var(--quantum-secondary),
+                var(--quantum-tertiary)
+            );
+            margin: 10px 0;
+            position: relative;
+            border-radius: 2px;
+        }
+
+        .quantum-indicator {
+            position: absolute;
+            height: 12px;
+            width: 4px;
+            background: #fff;
+            top: -4px;
+            transform: translateX(-50%);
+            border-radius: 2px;
+            box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+            transition: left 0.3s ease;
+        }
+
+        @keyframes entangle-pulse {
+            0% { opacity: 0.2; }
+            50% { opacity: 0.5; }
+            100% { opacity: 0.2; }
+        }
+
+        .entanglement-line {
+            position: absolute;
+            background: var(--quantum-secondary);
+            opacity: 0.3;
+            animation: entangle-pulse 2s infinite;
+            pointer-events: none;
+        }
+
+        .debug-panel {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: rgba(0, 0, 0, 0.8);
+            padding: 10px;
+            border-radius: 4px;
+            font-size: 12px;
+            max-width: 300px;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+
+        .debug-entry {
+            color: var(--quantum-primary);
+            margin: 2px 0;
+        }
+    </style>
 </head>
 <body>
-  <h1>Traditional vs Quantum ZKP Simulation</h1>
-  <div class="container">
-    <!-- Traditional Simulation -->
-    <div class="simulator">
-      <h2>Traditional Simulation</h2>
-      <canvas id="traditionalCanvas"></canvas>
-      <div class="stats">
-        <p id="traditionalFPS">FPS: Calculating...</p>
-        <p id="traditionalParticleCount">Particles: 0</p>
-        <p id="traditionalConnections">Connections: 0</p>
-        <p id="traditionalChaos">Chaos Events: 0</p>
-      </div>
+    <div class="multiverse-container">
+        <!-- Universe A -->
+        <div class="universe-panel" id="universe-a">
+            <h2>Universe A</h2>
+            <div class="quantum-state">
+                <div class="quantum-indicator" style="left: 50%"></div>
+            </div>
+            <div class="controls">
+                <button onclick="universeA.toggle()">Toggle Universe</button>
+                <button onclick="universeA.entangle(universeB)">Entangle</button>
+            </div>
+            <canvas class="universe-canvas" id="canvas-a"></canvas>
+            <div class="metrics-panel">
+                <div class="metric">
+                    <div class="metric-value" id="states-a">0</div>
+                    <div class="metric-label">Quantum States</div>
+                </div>
+                <div class="metric">
+                    <div class="metric-value" id="entanglement-a">0</div>
+                    <div class="metric-label">Entanglements</div>
+                </div>
+                <div class="metric">
+                    <div class="metric-value" id="coherence-a">100%</div>
+                    <div class="metric-label">Coherence</div>
+                </div>
+            </div>
+            <canvas class="entanglement-overlay" id="overlay-a"></canvas>
+        </div>
+
+        <!-- Universe B -->
+        <div class="universe-panel" id="universe-b">
+            <h2>Universe B</h2>
+            <div class="quantum-state">
+                <div class="quantum-indicator" style="left: 50%"></div>
+            </div>
+            <div class="controls">
+                <button onclick="universeB.toggle()">Toggle Universe</button>
+                <button onclick="universeB.compress()">Compress States</button>
+            </div>
+            <canvas class="universe-canvas" id="canvas-b"></canvas>
+            <div class="metrics-panel">
+                <div class="metric">
+                    <div class="metric-value" id="states-b">0</div>
+                    <div class="metric-label">Quantum States</div>
+                </div>
+                <div class="metric">
+                    <div class="metric-value" id="entanglement-b">0</div>
+                    <div class="metric-label">Entanglements</div>
+                </div>
+                <div class="metric">
+                    <div class="metric-value" id="coherence-b">100%</div>
+                    <div class="metric-label">Coherence</div>
+                </div>
+            </div>
+            <canvas class="entanglement-overlay" id="overlay-b"></canvas>
+        </div>
     </div>
 
-    <!-- Quantum ZKP Simulation -->
-    <div class="simulator">
-      <h2>Quantum ZKP Simulation</h2>
-      <canvas id="quantumCanvas"></canvas>
-      <div class="stats">
-        <p id="quantumFPS">FPS: Calculating...</p>
-        <p id="quantumParticleCount">Particles: 0</p>
-        <p id="quantumConnections">Connections: 0</p>
-        <p id="quantumChaos">Chaos Events: 0</p>
-        <p id="quantumOptimization">Optimization State: 100%</p>
-        <p id="quantumZKP">ZKP Validations: 0</p>
-      </div>
-    </div>
-  </div>
+    <div class="debug-panel" id="debug-log"></div>
 
-  <script>
-    // Shared Variables
-    const traditionalCanvas = document.getElementById("traditionalCanvas");
-    const traditionalCtx = traditionalCanvas.getContext("2d");
-    const quantumCanvas = document.getElementById("quantumCanvas");
-    const quantumCtx = quantumCanvas.getContext("2d");
+    <script>
+        // Quantum Game Entity
+        class QuantumEntity {
+            constructor(x, y, state = 0.5) {
+                this.x = x;
+                this.y = y;
+                this.vx = (Math.random() - 0.5) * 4;
+                this.vy = (Math.random() - 0.5) * 4;
+                this.state = state;
+                this.quantumState = {
+                    superposition: [Math.cos(state * Math.PI), Math.sin(state * Math.PI)],
+                    phase: 0,
+                    coherence: 1.0,
+                    entangled: null
+                };
+                this.size = 10;
+                this.color = this.getColorForState(state);
+            }
 
-    // Responsive Canvas Setup
-    function resizeCanvas() {
-      const width = traditionalCanvas.parentElement.offsetWidth;
-      traditionalCanvas.width = width;
-      traditionalCanvas.height = width;
-      quantumCanvas.width = width;
-      quantumCanvas.height = width;
-    }
-    window.addEventListener("resize", resizeCanvas);
-    resizeCanvas();
+            update() {
+                // Update position
+                this.x += this.vx;
+                this.y += this.vy;
 
-    // Particle Systems
-    const traditionalParticles = [];
-    const quantumParticles = [];
-    const particlesToAddPerChaos = 50;
+                // Update quantum state
+                this.quantumState.phase += 0.1;
+                this.quantumState.coherence *= 0.999;
 
-    let traditionalChaos = 0;
-    let quantumChaos = 0;
+                // Update superposition
+                const phase = this.quantumState.phase;
+                this.quantumState.superposition = [
+                    Math.cos(phase) * this.quantumState.coherence,
+                    Math.sin(phase) * this.quantumState.coherence
+                ];
 
-    // Initialize Particles
-    function initializeParticles(particles, canvas) {
-      for (let i = 0; i < 200; i++) {
-        particles.push(createParticle(canvas));
-      }
-    }
+                // Update color based on state
+                this.color = this.getColorForState(this.state);
+            }
 
-    function createParticle(canvas) {
-      return {
-        x: Math.random() * canvas.width,
-        y: Math.random() * canvas.height,
-        vx: (Math.random() - 0.5) * 2,
-        vy: (Math.random() - 0.5) * 2,
-        size: Math.random() * 2 + 1,
-        color: `rgba(${Math.random() * 255}, ${Math.random() * 255}, ${Math.random() * 255}, 1)`,
-      };
-    }
+            draw(ctx) {
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fillStyle = this.color;
+                ctx.fill();
 
-    initializeParticles(traditionalParticles, traditionalCanvas);
-    initializeParticles(quantumParticles, quantumCanvas);
+                if (this.quantumState.entangled) {
+                    ctx.strokeStyle = `rgba(140, 0, 255, ${this.quantumState.coherence})`;
+                    ctx.lineWidth = 2;
+                    ctx.stroke();
+                }
+            }
 
-    // Draw Particles
-    function drawParticles(ctx, particles) {
-      ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+            getColorForState(state) {
+                const colors = {
+                    0: '#00ffd0',
+                    0.5: '#8c00ff',
+                    1: '#ff00aa'
+                };
+                return colors[state] || colors[0.5];
+            }
 
-      particles.forEach((particle) => {
-        ctx.fillStyle = particle.color;
-        ctx.beginPath();
-        ctx.arc(particle.x, particle.y, particle.size, 0, Math.PI * 2);
-        ctx.fill();
-      });
-    }
+            collapse() {
+                // Collapse superposition to nearest base state
+                const magnitude = Math.sqrt(
+                    this.quantumState.superposition[0] ** 2 +
+                    this.quantumState.superposition[1] ** 2
+                );
 
-    // Update Particles
-    function updateParticles(particles, canvas) {
-      particles.forEach((particle) => {
-        particle.x += particle.vx;
-        particle.y += particle.vy;
+                if (magnitude < 0.3) return 0;
+                if (magnitude > 0.7) return 1;
+                return 0.5;
+            }
 
-        // Wrap around edges
-        if (particle.x < 0) particle.x = canvas.width;
-        if (particle.x > canvas.width) particle.x = 0;
-        if (particle.y < 0) particle.y = canvas.height;
-        if (particle.y > canvas.height) particle.y = 0;
-      });
-    }
+            entangle(other) {
+                if (!other) return;
+                this.quantumState.entangled = other;
+                other.quantumState.entangled = this;
+            }
+        }
 
-    // Chaos Event Handlers
-    function handleChaos(event, particles, canvas, chaosCounterId) {
-      const rect = canvas.getBoundingClientRect();
-      const x = event.clientX - rect.left;
-      const y = event.clientY - rect.top;
+        // Quantum Universe
+        class QuantumUniverse {
+            constructor(canvasId, overlayId) {
+                this.canvas = document.getElementById(canvasId);
+                this.overlay = document.getElementById(overlayId);
+                this.ctx = this.canvas.getContext('2d');
+                this.overlayCtx = this.overlay.getContext('2d');
+                
+                // Set canvas dimensions
+                this.canvas.width = this.canvas.offsetWidth;
+                this.canvas.height = this.canvas.offsetHeight;
+                this.overlay.width = this.overlay.offsetWidth;
+                this.overlay.height = this.overlay.offsetHeight;
 
-      for (let i = 0; i < particlesToAddPerChaos; i++) {
-        particles.push({
-          x: x + (Math.random() - 0.5) * 50,
-          y: y + (Math.random() - 0.5) * 50,
-          vx: (Math.random() - 0.5) * 2,
-          vy: (Math.random() - 0.5) * 2,
-          size: Math.random() * 2 + 1,
-          color: `rgba(${Math.random() * 255}, ${Math.random() * 255}, ${Math.random() * 255}, 1)`,
+                this.entities = new Set();
+                this.entanglements = new Set();
+                this.running = false;
+                this.metrics = {
+                    states: 0,
+                    entanglements: 0,
+                    coherence: 1.0
+                };
+
+                this.initialize();
+            }
+
+            initialize() {
+                // Create initial entities
+                for (let i = 0; i < 20; i++) {
+                    this.addEntity(
+                        Math.random() * this.canvas.width,
+                        Math.random() * this.canvas.height
+                    );
+                }
+            }
+
+            addEntity(x, y, state = 0.5) {
+                const entity = new QuantumEntity(x, y, state);
+                this.entities.add(entity);
+                this.metrics.states++;
+                return entity;
+            }
+
+            toggle() {
+                this.running = !this.running;
+                if (this.running) this.update();
+            }
+
+            update() {
+                if (!this.running) return;
+
+                this.clear();
+                this.updateEntities();
+                this.drawEntanglements();
+                this.updateMetrics();
+
+                requestAnimationFrame(() => this.update());
+            }
+
+            updateEntities() {
+                for (const entity of this.entities) {
+                    // Update entity
+                    entity.update();
+
+                    // Handle boundaries
+                    if (entity.x < 0 || entity.x > this.canvas.width) entity.vx *= -1;
+                    if (entity.y < 0 || entity.y > this.canvas.height) entity.vy *= -1;
+
+                    // Draw entity
+                    entity.draw(this.ctx);
+
+                    // Handle entanglement
+                    if (entity.quantumState.entangled) {
+                        this.handleEntanglement(entity);
+                    }
+                }
+            }
+
+            handleEntanglement(entity) {
+                const other = entity.quantumState.entangled;
+                if (!other) return;
+
+                // Share quantum states
+                entity.state = (entity.state + other.state) / 2;
+                entity.quantumState.coherence = 
+                    (entity.quantumState.coherence + other.quantumState.coherence) / 2;
+
+                // Visual connection
+                this.drawEntanglementLine(entity, other);
+            }
+
+            drawEntanglementLine(entity1, entity2) {
+                this.overlayCtx.beginPath();
+                this.overlayCtx.moveTo(entity1.x, entity1.y);
+                this.overlayCtx.lineTo(entity2.x, entity2.y);
+                this.overlayCtx.strokeStyle = `rgba(140, 0, 255, ${
+                    (entity1.quantumState.coherence + entity2.quantumState.coherence) / 4
+                })`;
+                this.overlayCtx.lineWidth = 1;
+                this.overlayCtx.stroke();
+            }
+
+            drawEntanglements() {
+                this.overlayCtx.clearRect(0, 0, this.overlay.width, this.overlay.height);
+                for (const entity of this.entities) {
+                    if (entity.quantumState.entangled) {
+                        this.drawEntanglementLine(entity, entity.quantumState.entangled);
+                    }
+                }
+            }
+
+            clear() {
+                this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+                this.overlayCtx.clearRect(0, 0, this.overlay.width, this.overlay.height);
+            }
+
+            entangle(other) {
+                if (!other || !(other instanceof QuantumUniverse)) return;
+
+                // Entangle random entities between universes
+                const ourEntities = Array.from(this.entities);
+                const theirEntities = Array.from(other.entities);
+
+                const count = Math.min(
+                    Math.floor(Math.random() * 5) + 1,
+                    ourEntities.length,
+                    theirEntities.length
+                );
+
+                for (let i = 0; i < count; i++) {
+                    const ourEntity = ourEntities[Math.floor(Math.random() * ourEntities.length)];
+                    const theirEntity = theirEntities[Math.floor(Math.random() * theirEntities.length)];
+                    ourEntity.entangle(theirEntity);
+                    this.entanglements.add([ourEntity, theirEntity]);
+                    this.metrics.entanglements++;
+                }
+
+                this.log(`Entangled ${count} entities with parallel universe`);
+            }
+
+            compress() {
+                // Compress quantum states through entanglement patterns
+                const statePatterns = new Map();
+                const compressedEntities = new Set();
+
+                for (const entity of this.entities) {
+                    const pattern = this.getStatePattern(entity);
+                    
+                    if (statePatterns.has(pattern)) {
+                        // Found matching pattern - entangle states
+                        const matchingEntity = statePatterns.get(pattern);
+                        entity.entangle(matchingEntity);
+                        compressedEntities.add(entity);
+                        this.metrics.entanglements++;
+                    } else {
+                        statePatterns.set(pattern, entity);
+                    }
+                }
+
+                this.metrics.coherence *= 0.9;
+                this.log(`Compressed ${compressedEntities.size} quantum states`);
+            }
+
+            getStatePattern(entity) {
+                return `${entity.state.toFixed(1)}_${entity.quantumState.superposition.map(n => 
+                    n.toFixed(2)).join('_')}`;
+            }
+
+            updateMetrics() {
+                document.getElementById(`states-${this.canvas.id.split('-')[1]}`).textContent = 
+                    this.metrics.states;
+                document.getElementById(`entanglement-${this.canvas.id.split('-')[1]}`).textContent = 
+                    this.metrics.entanglements;
+                document.getElementById(`coherence-${this.canvas.id.split('-')[1]}`).textContent = 
+                    `${(this.metrics.coherence * 100).toFixed(1)}%`;
+            }
+
+            log(message) {
+                const debugLog = document.getElementById('debug-log');
+                const entry = document.createElement('div');
+                entry.className = 'debug-entry';
+                entry.textContent = `[Universe ${this.canvas.id.split('-')[1].toUpperCase()}] ${message}`;
+                debugLog.appendChild(entry);
+                debugLog.scrollTop = debugLog.scrollHeight;
+            }
+        }
+
+        // Quantum State Animation System
+        class QuantumAnimationSystem {
+            constructor() {
+                this.animations = new Map();
+                this.phase = 0;
+                this.lastUpdate = performance.now();
+            }
+
+            createAnimation(id, options = {}) {
+                const animation = {
+                    state: 0.5,
+                    target: options.target || 1,
+                    duration: options.duration || 1000,
+                    startTime: performance.now(),
+                    quantum: {
+                        superposition: [Math.cos(this.phase), Math.sin(this.phase)],
+                        coherence: 1.0,
+                        entangled: options.entangled || null
+                    }
+                };
+
+                this.animations.set(id, animation);
+                return animation;
+            }
+
+            update() {
+                const now = performance.now();
+                const delta = (now - this.lastUpdate) / 1000;
+                this.lastUpdate = now;
+
+                // Update quantum phase
+                this.phase = (this.phase + delta) % (Math.PI * 2);
+
+                // Update all animations
+                for (const [id, animation] of this.animations) {
+                    this.updateAnimation(animation, now);
+                }
+            }
+
+            updateAnimation(animation, now) {
+                const elapsed = now - animation.startTime;
+                const progress = Math.min(1, elapsed / animation.duration);
+
+                // Update quantum state
+                animation.quantum.superposition = [
+                    Math.cos(this.phase * progress),
+                    Math.sin(this.phase * progress)
+                ];
+
+                // Calculate current state through quantum collapse
+                animation.state = this.collapseState(animation.quantum.superposition);
+
+                // Handle entanglement
+                if (animation.quantum.entangled) {
+                    this.propagateEntanglement(animation);
+                }
+
+                return animation.state;
+            }
+
+            collapseState(superposition) {
+                const [real, imag] = superposition;
+                const magnitude = Math.sqrt(real * real + imag * imag);
+
+                // Collapse to nearest quantum state
+                if (magnitude < 0.3) return 0;
+                if (magnitude > 0.7) return 1;
+                return 0.5;
+            }
+
+            propagateEntanglement(animation) {
+                const entangled = this.animations.get(animation.quantum.entangled);
+                if (!entangled) return;
+
+                // Share quantum states
+                const sharedState = (animation.state + entangled.state) / 2;
+                animation.state = entangled.state = sharedState;
+
+                // Update coherence
+                animation.quantum.coherence *= 0.99;
+                entangled.quantum.coherence = animation.quantum.coherence;
+            }
+        }
+
+        // Quantum Visual Effects System
+        class QuantumVisualEffects {
+            constructor(canvas) {
+                this.canvas = canvas;
+                this.ctx = canvas.getContext('2d');
+                this.effects = new Set();
+                this.phase = 0;
+            }
+
+            createEffect(type, options = {}) {
+                const effect = {
+                    type,
+                    position: options.position || { x: 0, y: 0 },
+                    size: options.size || 20,
+                    color: options.color || '#00ffd0',
+                    duration: options.duration || 1000,
+                    startTime: performance.now(),
+                    quantum: {
+                        state: 0.5,
+                        superposition: [1/Math.sqrt(2), 1/Math.sqrt(2)],
+                        coherence: 1.0
+                    }
+                };
+
+                this.effects.add(effect);
+                return effect;
+            }
+
+            update() {
+                const now = performance.now();
+                this.phase = (this.phase + 0.1) % (Math.PI * 2);
+
+                // Update and draw all effects
+                for (const effect of this.effects) {
+                    this.updateEffect(effect, now);
+                    this.drawEffect(effect);
+
+                    // Remove completed effects
+                    if (now - effect.startTime > effect.duration) {
+                        this.effects.delete(effect);
+                    }
+                }
+            }
+
+            updateEffect(effect, now) {
+                const progress = (now - effect.startTime) / effect.duration;
+                
+                // Update quantum state
+                effect.quantum.superposition = [
+                    Math.cos(this.phase * progress),
+                    Math.sin(this.phase * progress)
+                ];
+                effect.quantum.coherence = Math.max(0, 1 - progress);
+                effect.quantum.state = this.collapseState(effect.quantum.superposition);
+            }
+
+            drawEffect(effect) {
+                switch(effect.type) {
+                    case 'ripple':
+                        this.drawRippleEffect(effect);
+                        break;
+                    case 'entanglement':
+                        this.drawEntanglementEffect(effect);
+                        break;
+                    case 'quantum':
+                        this.drawQuantumEffect(effect);
+                        break;
+                }
+            }
+
+            drawRippleEffect(effect) {
+                const progress = (performance.now() - effect.startTime) / effect.duration;
+                const size = effect.size * (1 + progress * 2);
+                const alpha = (1 - progress) * effect.quantum.coherence;
+
+                this.ctx.beginPath();
+                this.ctx.arc(effect.position.x, effect.position.y, size, 0, Math.PI * 2);
+                this.ctx.strokeStyle = `rgba(${this.hexToRgb(effect.color)}, ${alpha})`;
+                this.ctx.lineWidth = 2 * effect.quantum.coherence;
+                this.ctx.stroke();
+            }
+
+            drawEntanglementEffect(effect) {
+                const progress = (performance.now() - effect.startTime) / effect.duration;
+                const alpha = (1 - progress) * effect.quantum.coherence;
+
+                this.ctx.beginPath();
+                this.ctx.moveTo(effect.position.x, effect.position.y);
+                this.ctx.lineTo(
+                    effect.position.x + Math.cos(this.phase) * effect.size,
+                    effect.position.y + Math.sin(this.phase) * effect.size
+                );
+                this.ctx.strokeStyle = `rgba(140, 0, 255, ${alpha})`;
+                this.ctx.lineWidth = 2 * effect.quantum.coherence;
+                this.ctx.stroke();
+            }
+
+            drawQuantumEffect(effect) {
+                const progress = (performance.now() - effect.startTime) / effect.duration;
+                const alpha = (1 - progress) * effect.quantum.coherence;
+                const size = effect.size * effect.quantum.coherence;
+
+                // Draw quantum probability cloud
+                this.ctx.beginPath();
+                for (let i = 0; i < Math.PI * 2; i += 0.1) {
+                    const radius = size * (1 + Math.cos(i * 3 + this.phase) * 0.2);
+                    const x = effect.position.x + Math.cos(i) * radius;
+                    const y = effect.position.y + Math.sin(i) * radius;
+                    
+                    if (i === 0) {
+                        this.ctx.moveTo(x, y);
+                    } else {
+                        this.ctx.lineTo(x, y);
+                    }
+                }
+                this.ctx.closePath();
+                this.ctx.fillStyle = `rgba(${this.hexToRgb(effect.color)}, ${alpha * 0.5})`;
+                this.ctx.fill();
+            }
+
+            collapseState(superposition) {
+                const [real, imag] = superposition;
+                const magnitude = Math.sqrt(real * real + imag * imag);
+                return magnitude < 0.5 ? 0 : 1;
+            }
+
+            hexToRgb(hex) {
+                const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+                return result ? 
+                    `${parseInt(result[1], 16)}, ${parseInt(result[2], 16)}, ${parseInt(result[3], 16)}` : 
+                    '0, 0, 0';
+            }
+        }
+
+        // Initialize universes
+        const universeA = new QuantumUniverse('canvas-a', 'overlay-a');
+        const universeB = new QuantumUniverse('canvas-b', 'overlay-b');
+
+        // Initialize animation and effects systems
+        const animationSystem = new QuantumAnimationSystem();
+        const effectsA = new QuantumVisualEffects(document.getElementById('overlay-a'));
+        const effectsB = new QuantumVisualEffects(document.getElementById('overlay-b'));
+
+        // Animation loop
+        function animate() {
+            animationSystem.update();
+            effectsA.update();
+            effectsB.update();
+            requestAnimationFrame(animate);
+        }
+
+        // Start animation
+        animate();
+
+        // Handle window resize
+        window.addEventListener('resize', () => {
+            universeA = new QuantumUniverse('canvas-a', 'overlay-a');
+            universeB = new QuantumUniverse('canvas-b', 'overlay-b');
         });
-      }
-
-      // Update Chaos Counter
-      if (chaosCounterId === "traditionalChaos") traditionalChaos++;
-      if (chaosCounterId === "quantumChaos") quantumChaos++;
-      document.getElementById(chaosCounterId).textContent = `Chaos Events: ${
-        chaosCounterId === "traditionalChaos" ? traditionalChaos : quantumChaos
-      }`;
-    }
-
-    traditionalCanvas.addEventListener("pointerdown", (e) =>
-      handleChaos(e, traditionalParticles, traditionalCanvas, "traditionalChaos")
-    );
-    quantumCanvas.addEventListener("pointerdown", (e) =>
-      handleChaos(e, quantumParticles, quantumCanvas, "quantumChaos")
-    );
-
-    // Main Loop
-    function simulationLoop() {
-      updateParticles(traditionalParticles, traditionalCanvas);
-      updateParticles(quantumParticles, quantumCanvas);
-
-      drawParticles(traditionalCtx, traditionalParticles);
-      drawParticles(quantumCtx, quantumParticles);
-
-      requestAnimationFrame(simulationLoop);
-    }
-
-    simulationLoop();
-  </script>
+    </script>
 </body>
 </html>
