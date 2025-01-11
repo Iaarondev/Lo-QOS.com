@@ -1,244 +1,321 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Interactive quantum ZKP simulation where user-generated chaos dynamically affects particle behavior and optimization.">
-  <meta name="keywords" content="quantum ZKP, particle simulation, chaos theory, mobile friendly, optimization, real-time visualization">
-  <meta name="author" content="Your Name">
-  <title>Quantum ZKP Simulation with User Chaos</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      background-color: #121212;
-      color: #ffffff;
-      margin: 0;
-      padding: 0;
-      overflow: hidden;
-    }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quantum ZKP Dynamic Optimization Simulation</title>
+    <style>
+        :root {
+            --quantum-primary: #00ffff;
+            --quantum-secondary: #6a0dad;
+            --background-dark: #121212;
+            --text-light: #ffffff;
+        }
 
-    h1 {
-      text-align: center;
-      color: #00ffff;
-      font-size: 1.5rem;
-      margin: 10px 0;
-    }
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: var(--background-dark);
+            color: var(--text-light);
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            overflow: hidden;
+        }
 
-    canvas {
-      display: block;
-      margin: 0 auto;
-      background-color: #000;
-    }
+        #renderCanvas {
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0, 255, 255, 0.3);
+        }
 
-    .stats {
-      text-align: center;
-      font-size: 1rem;
-      margin: 10px 0;
-      color: #ffffff;
-      padding: 10px;
-      background: rgba(0, 0, 0, 0.5);
-      border-radius: 5px;
-    }
+        .stats-container {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            width: 100%;
+            max-width: 800px;
+            margin-top: 10px;
+            text-align: center;
+        }
 
-    .stats p {
-      margin: 5px 0;
-    }
-  </style>
+        .stat-card {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            padding: 10px;
+            transition: all 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: scale(1.05);
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .quantum-state-indicator {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            padding: 5px 10px;
+            background: rgba(0, 255, 255, 0.2);
+            border-radius: 5px;
+        }
+    </style>
 </head>
 <body>
-  <h1>Quantum ZKP Simulation</h1>
-  <canvas id="renderCanvas"></canvas>
-  <div class="stats">
-    <p id="fps">FPS: Calculating...</p>
-    <p id="chaosCount">Chaos Events: 0</p>
-    <p id="particleCount">Particles: 0</p>
-    <p id="totalConnections">Connections: 0</p>
-    <p id="optimizationState">Optimization State: 100%</p>
-    <p id="zkpValidations">ZKP Validations: 0</p>
-  </div>
+    <div class="quantum-state-indicator" id="quantumStateDisplay">
+        Quantum State: 0.0
+    </div>
+    <canvas id="renderCanvas"></canvas>
+    <div class="stats-container">
+        <div class="stat-card">
+            <h3>FPS</h3>
+            <p id="fpsDisplay">0</p>
+        </div>
+        <div class="stat-card">
+            <h3>Particles</h3>
+            <p id="particleCountDisplay">0</p>
+        </div>
+        <div class="stat-card">
+            <h3>Optimization Level</h3>
+            <p id="optimizationDisplay">100%</p>
+        </div>
+    </div>
 
-  <script>
-    const canvas = document.getElementById("renderCanvas");
-    const ctx = canvas.getContext("2d");
-
-    // Responsive canvas setup
-    function resizeCanvas() {
-      canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight * 0.8; // Take 80% of the viewport height
-    }
-    window.addEventListener("resize", resizeCanvas);
-    resizeCanvas();
-
-    // Particle System
-    const particles = [];
-    const particlesToAddPerChaos = 50; // Number of particles added per chaos event
-    let chaosEvents = 0; // Count of chaos events introduced by the user
-    let totalConnections = 0; // Total number of connections
-    let fps = 0; // Frames per second
-    let lastFrameTime = performance.now();
-    let optimizationState = 100; // Start with full optimization (100%)
-    let zkpValidations = 0; // Number of ZKP validations performed
-
-    // Initialize particles with random properties
-    function initializeParticles() {
-      particles.length = 0;
-      for (let i = 0; i < 200; i++) {
-        particles.push(createParticle());
-      }
-      document.getElementById("particleCount").textContent = `Particles: ${particles.length}`;
-    }
-
-    // Create a single particle
-    function createParticle() {
-      return {
-        x: Math.random() * canvas.width,
-        y: Math.random() * canvas.height,
-        vx: (Math.random() - 0.5) * 2,
-        vy: (Math.random() - 0.5) * 2,
-        size: Math.random() * 2 + 1,
-        color: `rgba(${Math.random() * 255}, ${Math.random() * 255}, ${Math.random() * 255}, 1)`,
-        connections: [], // To store connected particles
-      };
-    }
-
-    // Quantum ZKP Emulation
-    function performZKPOptimization(particle) {
-      zkpValidations++;
-
-      // Skip redundant calculations for "verified" particles
-      if (Math.random() < 0.95) return;
-
-      // Perform remapping for particles (simulating optimization)
-      particle.vx *= 0.9; // Reduce velocity as part of the optimization
-      particle.vy *= 0.9;
-    }
-
-    // Update particles with ZKP optimization
-    function updateParticles() {
-      totalConnections = 0; // Reset connection count
-
-      particles.forEach((particle, index) => {
-        // Perform ZKP Optimization
-        performZKPOptimization(particle);
-
-        // Quantum randomness and motion
-        particle.vx += (Math.random() - 0.5) * 0.05;
-        particle.vy += (Math.random() - 0.5) * 0.05;
-
-        // Gradual slowing towards "near-zero"
-        particle.vx *= 0.99;
-        particle.vy *= 0.99;
-
-        // Update position
-        particle.x += particle.vx;
-        particle.y += particle.vy;
-
-        // Wrap particles around edges
-        if (particle.x < 0) particle.x = canvas.width;
-        if (particle.x > canvas.width) particle.x = 0;
-        if (particle.y < 0) particle.y = canvas.height;
-        if (particle.y > canvas.height) particle.y = 0;
-
-        // Create connections (entanglement mapping)
-        particle.connections = [];
-        particles.forEach((other, otherIndex) => {
-          if (index !== otherIndex) {
-            const dist = Math.hypot(particle.x - other.x, particle.y - other.y);
-            if (dist < 100) {
-              particle.connections.push(other);
-              totalConnections++;
+    <script>
+        class QuantumParticleSystem {
+            constructor(canvas) {
+                this.canvas = canvas;
+                this.ctx = canvas.getContext('2d');
+                this.particles = [];
+                this.quantumState = 0; // Quantum state from 0 to 1
+                this.optimizationLevel = 100;
+                this.zkpValidations = 0;
+                this.chaosEvents = 0;
             }
-          }
+
+            // Quantum State Compression Logic
+            compressQuantumState(particles) {
+                // Implement quantum state compression
+                const stateGroups = [
+                    { state: 0, particles: [] },   // Low energy state
+                    { state: 0.5, particles: [] }, // Superposition state
+                    { state: 1, particles: [] }    // High energy state
+                ];
+
+                // Group particles based on their energy/velocity
+                particles.forEach(particle => {
+                    const energy = Math.sqrt(
+                        particle.vx * particle.vx + 
+                        particle.vy * particle.vy
+                    );
+
+                    if (energy < 0.5) {
+                        stateGroups[0].particles.push(particle);
+                    } else if (energy < 1.5) {
+                        stateGroups[1].particles.push(particle);
+                    } else {
+                        stateGroups[2].particles.push(particle);
+                    }
+                });
+
+                // Optimize each state group
+                stateGroups.forEach(group => {
+                    if (group.particles.length > 10) {
+                        // Perform batch optimization for groups with many particles
+                        this.batchOptimizeGroup(group);
+                    }
+                });
+
+                return stateGroups;
+            }
+
+            // Batch optimization for particle groups
+            batchOptimizeGroup(group) {
+                if (group.particles.length === 0) return;
+
+                // Compute group centroid
+                const centroidX = group.particles.reduce((sum, p) => sum + p.x, 0) / group.particles.length;
+                const centroidY = group.particles.reduce((sum, p) => sum + p.y, 0) / group.particles.length;
+
+                // Normalize velocities around centroid
+                group.particles.forEach(particle => {
+                    const dx = centroidX - particle.x;
+                    const dy = centroidY - particle.y;
+                    
+                    // Quantum-inspired velocity adjustment
+                    particle.vx += dx * 0.01;
+                    particle.vy += dy * 0.01;
+                });
+
+                this.zkpValidations++;
+            }
+
+            // Zero-Knowledge Proof Validation
+            zkpValidate(particle) {
+                // Simulate ZKP validation
+                const validationProbability = Math.random();
+                
+                if (validationProbability < 0.9) {
+                    // High probability of validation
+                    return true;
+                }
+
+                // Low probability actions (rare events)
+                if (validationProbability < 0.95) {
+                    // Quantum state transition
+                    this.quantumState = Math.random();
+                }
+
+                return false;
+            }
+
+            // Dynamic Chaos Injection
+            injectChaos(x, y) {
+                const chaosParticles = 50 * (1 + this.quantumState);
+                
+                for (let i = 0; i < chaosParticles; i++) {
+                    this.particles.push({
+                        x: x + (Math.random() - 0.5) * 100,
+                        y: y + (Math.random() - 0.5) * 100,
+                        vx: (Math.random() - 0.5) * 5,
+                        vy: (Math.random() - 0.5) * 5,
+                        size: Math.random() * 3 + 1,
+                        color: this.generateQuantumColor()
+                    });
+                }
+
+                this.chaosEvents++;
+                this.updateOptimizationLevel();
+            }
+
+            // Generate quantum-inspired color
+            generateQuantumColor() {
+                const hue = this.quantumState * 360;
+                return `hsl(${hue}, 70%, 50%)`;
+            }
+
+            // Dynamic Optimization Level Adjustment
+            updateOptimizationLevel() {
+                // Reduce optimization level with chaos
+                this.optimizationLevel = Math.max(
+                    50, 
+                    100 - (this.chaosEvents * 2)
+                );
+            }
+
+            // Update Particle Physics
+            update() {
+                // Quantum state progression
+                this.quantumState = (this.quantumState + 0.01) % 1;
+
+                this.particles.forEach((particle, index) => {
+                    // ZKP Validation
+                    if (!this.zkpValidate(particle)) return;
+
+                    // Quantum-inspired movement
+                    particle.vx += (Math.random() - 0.5) * 0.1;
+                    particle.vy += (Math.random() - 0.5) * 0.1;
+
+                    // Apply damping based on quantum state
+                    particle.vx *= 0.99 - (this.quantumState * 0.05);
+                    particle.vy *= 0.99 - (this.quantumState * 0.05);
+
+                    // Update position
+                    particle.x += particle.vx;
+                    particle.y += particle.vy;
+
+                    // Wrap around canvas
+                    particle.x = (particle.x + this.canvas.width) % this.canvas.width;
+                    particle.y = (particle.y + this.canvas.height) % this.canvas.height;
+                });
+
+                // Periodic state compression
+                if (this.particles.length > 500) {
+                    const compressedStates = this.compressQuantumState(this.particles);
+                    
+                    // Reduce total particles based on compression
+                    this.particles = compressedStates.flatMap(group => 
+                        group.particles.slice(0, Math.ceil(group.particles.length * 0.75))
+                    );
+                }
+            }
+
+            // Render Particles
+            render() {
+                this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+
+                this.particles.forEach(particle => {
+                    this.ctx.beginPath();
+                    this.ctx.fillStyle = particle.color;
+                    this.ctx.arc(particle.x, particle.y, particle.size, 0, Math.PI * 2);
+                    this.ctx.fill();
+                });
+            }
+        }
+
+        // Main Simulation Setup
+        const canvas = document.getElementById('renderCanvas');
+        const fpsDisplay = document.getElementById('fpsDisplay');
+        const particleCountDisplay = document.getElementById('particleCountDisplay');
+        const optimizationDisplay = document.getElementById('optimizationDisplay');
+        const quantumStateDisplay = document.getElementById('quantumStateDisplay');
+
+        function resizeCanvas() {
+            canvas.width = window.innerWidth * 0.95;
+            canvas.height = window.innerHeight * 0.8;
+        }
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+
+        const particleSystem = new QuantumParticleSystem(canvas);
+
+        // Initial particle population
+        for (let i = 0; i < 200; i++) {
+            particleSystem.injectChaos(canvas.width / 2, canvas.height / 2);
+        }
+
+        // Performance Tracking
+        let lastFrameTime = performance.now();
+        let frames = 0;
+
+        function gameLoop() {
+            const now = performance.now();
+            const deltaTime = now - lastFrameTime;
+            
+            particleSystem.update();
+            particleSystem.render();
+
+            // FPS Calculation
+            frames++;
+            if (now >= lastFrameTime + 1000) {
+                fpsDisplay.textContent = frames;
+                particleCountDisplay.textContent = particleSystem.particles.length;
+                optimizationDisplay.textContent = `${particleSystem.optimizationLevel.toFixed(2)}%`;
+                quantumStateDisplay.textContent = `Quantum State: ${particleSystem.quantumState.toFixed(2)}`;
+                
+                frames = 0;
+                lastFrameTime = now;
+            }
+
+            requestAnimationFrame(gameLoop);
+        }
+
+        // Chaos Injection Event Handlers
+        canvas.addEventListener('mousedown', (e) => {
+            particleSystem.injectChaos(e.offsetX, e.offsetY);
         });
-      });
 
-      // Dynamically reduce optimization state
-      if (optimizationState > 50) {
-        optimizationState -= 0.01; // Reduce complexity as optimization progresses
-      }
-    }
-
-    // Handle chaos events (user input)
-    function handleChaos(event) {
-      const rect = canvas.getBoundingClientRect();
-      const inputX = event.touches ? event.touches[0].clientX : event.clientX;
-      const inputY = event.touches ? event.touches[0].clientY : event.clientY;
-      const chaosX = inputX - rect.left;
-      const chaosY = inputY - rect.top;
-
-      // Add new particles at the chaos point
-      for (let i = 0; i < particlesToAddPerChaos; i++) {
-        particles.push({
-          x: chaosX + (Math.random() - 0.5) * 50, // Spread around chaos point
-          y: chaosY + (Math.random() - 0.5) * 50,
-          vx: (Math.random() - 0.5) * 2,
-          vy: (Math.random() - 0.5) * 2,
-          size: Math.random() * 2 + 1,
-          color: `rgba(${Math.random() * 255}, ${Math.random() * 255}, ${Math.random() * 255}, 1)`,
-          connections: [],
+        canvas.addEventListener('touchstart', (e) => {
+            const touch = e.touches[0];
+            const rect = canvas.getBoundingClientRect();
+            particleSystem.injectChaos(
+                touch.clientX - rect.left, 
+                touch.clientY - rect.top
+            );
         });
-      }
 
-      chaosEvents++;
-      document.getElementById("chaosCount").textContent = `Chaos Events: ${chaosEvents}`;
-      document.getElementById("particleCount").textContent = `Particles: ${particles.length}`;
-    }
-
-    // Draw particles and connections
-    function drawParticles() {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-      // Draw connections
-      particles.forEach((particle) => {
-        particle.connections.forEach((connection) => {
-          ctx.strokeStyle = "rgba(0, 255, 255, 0.2)";
-          ctx.beginPath();
-          ctx.moveTo(particle.x, particle.y);
-          ctx.lineTo(connection.x, connection.y);
-          ctx.stroke();
-        });
-      });
-
-      // Draw particles
-      particles.forEach((particle) => {
-        ctx.fillStyle = particle.color;
-        ctx.beginPath();
-        ctx.arc(particle.x, particle.y, particle.size, 0, Math.PI * 2);
-        ctx.fill();
-      });
-    }
-
-    // Update FPS
-    function updateFPS() {
-      const now = performance.now();
-      fps = Math.round(1000 / (now - lastFrameTime));
-      lastFrameTime = now;
-      document.getElementById("fps").textContent = `FPS: ${fps}`;
-    }
-
-    // Continuous Optimization Visualization
-    function updateStats() {
-      document.getElementById("optimizationState").textContent = `Optimization State: ${optimizationState.toFixed(2)}%`;
-      document.getElementById("zkpValidations").textContent = `ZKP Validations: ${zkpValidations}`;
-      document.getElementById("totalConnections").textContent = `Connections: ${totalConnections}`;
-    }
-
-    // Main simulation loop
-    function simulationLoop() {
-      updateFPS(); // Update FPS
-      updateParticles(); // Update particles with ZKP optimization
-      drawParticles(); // Render particles and connections
-      updateStats(); // Update stats
-
-      // Request next frame
-      requestAnimationFrame(simulationLoop);
-    }
-
-    // Initialize simulation
-    canvas.addEventListener("mousedown", handleChaos); // Desktop support
-    canvas.addEventListener("touchstart", handleChaos); // Mobile support
-    initializeParticles();
-    simulationLoop();
-  </script>
+        // Start Simulation
+        gameLoop();
+    </script>
 </body>
 </html>
