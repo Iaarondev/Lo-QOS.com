@@ -1,0 +1,52 @@
+[
+    {
+        "name": "Quantum Swarm Commander",
+        "slug": "quantum-swarm-commander",
+        "description": "Strategy game exploring quantum entanglement and AI-driven swarm intelligence.",
+        "icon": "<svg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='currentColor'><path strokeLinecap='round' strokeLinejoin='round' strokeWidth={2} d='M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4m0 5c0 2.21-3.582 4-8 4s-8-1.79-8-4' /></svg>",
+        "additionalLink": {
+            "url": "/docs/QgamingX/QgamesX/QSwarm",
+            "text": "Tutorial"
+        }
+    },
+    {
+        "name": "Quantum Dodge",
+        "slug": "quantum-dodge",
+        "description": "Navigate quantum states while avoiding entangled obstacles.",
+        "icon": "<svg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='currentColor'><path strokeLinecap='round' strokeLinejoin='round' strokeWidth={2} d='M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z' /></svg>",
+        "additionalLink": {
+            "url": "/docs/QgamingX/QgamesX/quantum-dodge/leaderboard",
+            "text": "Leaderboard"
+        }
+    },
+    {
+        "name": "Superposition Puzzle",
+        "slug": "superposition-puzzle",
+        "description": "Solve intricate puzzles by manipulating quantum states.",
+        "icon": "<svg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='currentColor'><path strokeLinecap='round' strokeLinejoin='round' strokeWidth={2} d='M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z' /></svg>",
+        "additionalLink": {
+            "url": "/docs/QgamingX/QgamesX/superposition-puzzle/challenges",
+            "text": "Challenges"
+        }
+    },
+    {
+        "name": "Quantum Racer",
+        "slug": "quantum-racer",
+        "description": "Race through quantum tunnels maintaining wave-particle duality.",
+        "icon": "<svg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='currentColor'><path strokeLinecap='round' strokeLinejoin='round' strokeWidth={2} d='M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z' /></svg>",
+        "additionalLink": {
+            "url": "/docs/QgamingX/QgamesX/quantum-racer/tracks",
+            "text": "Tracks"
+        }
+    },
+    {
+        "name": "Entanglement Wars",
+        "slug": "entanglement-wars",
+        "description": "Multiplayer strategy game using quantum entanglement mechanics.",
+        "icon": "<svg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='currentColor'><path strokeLinecap='round' strokeLinejoin='round' strokeWidth={2} d='M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z' /></svg>",
+        "additionalLink": {
+            "url": "/docs/QgamingX/QgamesX/entanglement-wars/multiplayer",
+            "text": "Multiplayer"
+        }
+    }
+]
