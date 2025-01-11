@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Quantum Clock</title>
+    <style>
+      body {
+        margin: 0;
+        min-height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background: #0a0a1f;
+        color: #fff;
+        font-family: "Arial", sans-serif;
+        overflow: hidden;
+      }
+
+      .container {
+        position: relative;
+        width: 100vw;
+        height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+
+      .quantum-clock {
+        width: 300px;
+        height: 300px;
+        position: relative;
+        background: rgba(16, 16, 48, 0.8);
+        border-radius: 50%;
+        padding: 20px;
+        box-shadow: 0 0 30px rgba(99, 102, 241, 0.3);
+        z-index: 2;
+        cursor: pointer;
+      }
+
+      .clock-face {
+        width: 100%;
+        height: 100%;
+        position: relative;
+        border: 4px solid #6366f1;
+        border-radius: 50%;
+        overflow: hidden;
+      }
+
+      .quantum-field {
+        position: absolute;
+        inset: -20%;
+        border-radius: 50%;
+        background: radial-gradient(
+          circle,
+          rgba(99, 102, 241, 0.2) 0%,
+          transparent 70%
+        );
+        animation: pulse 4s ease-in-out infinite;
+      }
+
+      .particle-canvas {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 1;
+      }
+
+      .hand {
+        position: absolute;
+        bottom: 50%;
+        left: 50%;
+        transform-origin: bottom;
+        background: #6366f1;
+        border-radius: 4px;
+        transition: all 0.05s cubic-bezier(0.4, 2.08, 0.55, 0.44);
+      }
+
+      .hour-hand {
+        width: 4px;
+        height: 35%;
+        background: linear-gradient(to top, #6366f1, #818cf8);
+      }
+
+      .minute-hand {
+        width: 3px;
+        height: 45%;
+        background: linear-gradient(to top, #818cf8, #a5b4fc);
+      }
+
+      .second-hand {
+        width: 2px;
+        height: 50%;
+        background: #a5b4fc;
+      }
+
+      .center-dot {
+        position: absolute;
+        width: 16px;
+        height: 16px;
+        background: #6366f1;
+        border-radius: 50%;
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%, -50%);
+        z-index: 3;
+      }
+
+      .hour-markers {
+        position: absolute;
+        inset: 0;
+      }
+
+      .hour-marker {
+        position: absolute;
+        width: 2px;
+        height: 12px;
+        background: #818cf8;
+        left: 50%;
+        transform-origin: 50% 150px;
+      }
+
+      .digital-time {
+        position: absolute;
+        bottom: -40px;
+        left: 50%;
+        transform: translateX(-50%);
+        font-size: 1.2em;
+        font-family: monospace;
+        color: #818cf8;
+        text-shadow: 0 0 10px rgba(99, 102, 241, 0.5);
+      }
+
+      .quantum-info {
+        position: absolute;
+        top: 20px;
+        right: 20px;
+        background: rgba(16, 16, 48, 0.8);
+        padding: 15px;
+        border-radius: 10px;
+        border: 1px solid #6366f1;
+      }
+
+      .quantum-state {
+        font-family: monospace;
+        margin: 5px 0;
+      }
+
+      @keyframes pulse {
+        0%,
+        100% {
+          transform: scale(1);
+          opacity: 0.2;
+        }
+        50% {
+          transform: scale(1.1);
+          opacity: 0.3;
+        }
+      }
+
+      .mode-switch {
+        position: absolute;
+        bottom: 20px;
+        display: flex;
+        gap: 10px;
+      }
+
+      .mode-btn {
+        background: rgba(99, 102, 241, 0.2);
+        border: 1px solid #6366f1;
+        color: #fff;
+        padding: 8px 16px;
+        border-radius: 20px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+      }
+
+      .mode-btn:hover {
+        background: rgba(99, 102, 241, 0.4);
+      }
+
+      .mode-btn.active {
+        background: #6366f1;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <canvas class="particle-canvas"></canvas>
+      <div class="quantum-clock">
+        <div class="clock-face">
+          <div class="quantum-field"></div>
+          <div class="hour-markers"></div>
+          <div class="hand hour-hand"></div>
+          <div class="hand minute-hand"></div>
+          <div class="hand second-hand"></div>
+          <div class="center-dot"></div>
+        </div>
+        <div class="digital-time"></div>
+      </div>
+      <div class="quantum-info">
+        <div class="quantum-state">
+          Quantum State: <span id="quantum-value">0</span>
+        </div>
+        <div class="quantum-state">
+          Particle Count: <span id="particle-count">0</span>
+        </div>
+        <div class="quantum-state">
+          Coherence: <span id="coherence-value">100%</span>
+        </div>
+      </div>
+      <div class="mode-switch">
+        <button class="mode-btn active" data-mode="normal">Normal</button>
+        <button class="mode-btn" data-mode="chaos">Chaos</button>
+        <button class="mode-btn" data-mode="harmony">Harmony</button>
+      </div>
+    </div>
+
+    <script>
+      class Particle {
+        constructor(x, y, quantumState) {
+          this.x = x;
+          this.y = y;
+          this.size = Math.random() * 3 + 1;
+          this.speedX = Math.random() * 2 - 1;
+          this.speedY = Math.random() * 2 - 1;
+          this.quantumState = quantumState;
+          this.hue = 240 + Math.random() * 60;
+          this.life = 1;
+          this.mode = "normal";
+        }
+
+        update() {
+          switch (this.mode) {
+            case "normal":
+              this.normalBehavior();
+              break;
+            case "chaos":
+              this.chaosBehavior();
+              break;
+            case "harmony":
+              this.harmonyBehavior();
+              break;
+          }
+
+          this.life -= 0.01;
+        }
+
+        normalBehavior() {
+          this.x += this.speedX * (1 + this.quantumState);
+          this.y += this.speedY * (1 + this.quantumState);
+        }
+
+        chaosBehavior() {
+          const angle = Math.atan2(
+            this.y - window.innerHeight / 2,
+            this.x - window.innerWidth / 2
+          );
+          this.speedX = Math.cos(angle + this.quantumState * Math.PI) * 2;
+          this.speedY = Math.sin(angle + this.quantumState * Math.PI) * 2;
+          this.x += this.speedX;
+          this.y += this.speedY;
+        }
+
+        harmonyBehavior() {
+          const centerX = window.innerWidth / 2;
+          const centerY = window.innerHeight / 2;
+          const angle = Math.atan2(this.y - centerY, this.x - centerX);
+          const distance = Math.sqrt(
+            Math.pow(this.x - centerX, 2) + Math.pow(this.y - centerY, 2)
+          );
+          const targetDistance =
+            150 + Math.sin(this.quantumState * Math.PI * 2) * 50;
+
+          this.x +=
+            (centerX + Math.cos(angle) * targetDistance - this.x) * 0.05;
+          this.y +=
+            (centerY + Math.sin(angle) * targetDistance - this.y) * 0.05;
+        }
+
+        draw(ctx) {
+          const alpha = this.life * (0.5 + this.quantumState * 0.5);
+          ctx.fillStyle = `hsla(${this.hue}, 70%, 60%, ${alpha})`;
+          ctx.beginPath();
+          ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+          ctx.fill();
+        }
+      }
+
+      class QuantumClock {
+        constructor() {
+          this.quantumState = 0;
+          this.coherence = 1;
+          this.particles = [];
+          this.canvas = document.querySelector(".particle-canvas");
+          this.ctx = this.canvas.getContext("2d");
+          this.mode = "normal";
+          this.isClockHovered = false;
+          this.initialize();
+        }
+
+        initialize() {
+          this.setupCanvas();
+          this.createHourMarkers();
+          this.setupEventListeners();
+          this.updateClock();
+          setInterval(() => this.updateClock(), 1000);
+          this.animate();
+        }
+
+        setupCanvas() {
+          this.resizeCanvas();
+          window.addEventListener("resize", () => this.resizeCanvas());
+        }
+
+        resizeCanvas() {
+          this.canvas.width = window.innerWidth;
+          this.canvas.height = window.innerHeight;
+        }
+
+        createHourMarkers() {
+          const markers = document.querySelector(".hour-markers");
+          for (let i = 0; i < 12; i++) {
+            const marker = document.createElement("div");
+            marker.className = "hour-marker";
+            marker.style.transform = `rotate(${i * 30}deg)`;
+            markers.appendChild(marker);
+          }
+        }
+
+        setupEventListeners() {
+          const clock = document.querySelector(".quantum-clock");
+          clock.addEventListener("mouseenter", () => {
+            this.isClockHovered = true;
+            this.coherence = Math.min(1, this.coherence + 0.2);
+          });
+          clock.addEventListener("mouseleave", () => {
+            this.isClockHovered = false;
+          });
+          clock.addEventListener("click", () => {
+            this.spawnParticles(20);
+          });
+
+          document.querySelectorAll(".mode-btn").forEach((btn) => {
+            btn.addEventListener("click", () => {
+              document
+                .querySelectorAll(".mode-btn")
+                .forEach((b) => b.classList.remove("active"));
+              btn.classList.add("active");
+              this.mode = btn.dataset.mode;
+              this.particles.forEach((p) => (p.mode = this.mode));
+            });
+          });
+        }
+
+        spawnParticles(count) {
+          const centerX = window.innerWidth / 2;
+          const centerY = window.innerHeight / 2;
+          for (let i = 0; i < count; i++) {
+            this.particles.push(
+              new Particle(centerX, centerY, this.quantumState)
+            );
+          }
+        }
+
+        updateClock() {
+          const now = new Date();
+          const hours = now.getHours() % 12;
+          const minutes = now.getMinutes();
+          const seconds = now.getSeconds();
+
+          // Update quantum state
+          this.quantumState = (this.quantumState + 0.1) % 1;
+          if (!this.isClockHovered) {
+            this.coherence = Math.max(0.5, this.coherence - 0.01);
+          }
+
+          const quantumEffect =
+            Math.sin(this.quantumState * Math.PI * 2) * 5 * this.coherence;
+
+          // Update hands
+          this.updateHand(
+            "hour-hand",
+            hours * 30 + minutes * 0.5 + quantumEffect
+          );
+          this.updateHand("minute-hand", minutes * 6 + quantumEffect);
+          this.updateHand("second-hand", seconds * 6 + quantumEffect);
+
+          // Update display elements
+          document.querySelector(".digital-time").textContent =
+            now.toLocaleTimeString();
+          document.getElementById("quantum-value").textContent =
+            this.quantumState.toFixed(3);
+          document.getElementById("particle-count").textContent =
+            this.particles.length;
+          document.getElementById("coherence-value").textContent = `${(
+            this.coherence * 100
+          ).toFixed(0)}%`;
+
+          // Spawn particles based on quantum state
+          if (Math.random() < this.quantumState * 0.3) {
+            this.spawnParticles(1);
+          }
+        }
+
+        updateHand(className, degrees) {
+          const hand = document.querySelector(`.${className}`);
+          hand.style.transform = `rotate(${degrees}deg) translateX(-50%)`;
+          hand.style.boxShadow = `0 0 ${
+            10 * this.quantumState * this.coherence
+          }px rgba(99, 102, 241, 0.6)`;
+        }
+
+        animate() {
+          this.ctx.fillStyle = "rgba(10, 10, 31, 0.2)";
+          this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+
+          this.particles = this.particles.filter((p) => p.life > 0);
+          this.particles.forEach((particle) => {
+            particle.quantumState = this.quantumState;
+            particle.update();
+            particle.draw(this.ctx);
+          });
+
+          requestAnimationFrame(() => this.animate());
+        }
+      }
+
+      // Initialize the quantum clock
+      document.addEventListener("DOMContentLoaded", () => {
+        new QuantumClock();
+      });
+    </script>
+  </body>
+</html>
