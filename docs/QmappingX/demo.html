@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Entanglement and Mapping Visualization</title>
+  <title>Chaos and Optimization Demo</title>
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -18,8 +18,10 @@
     canvas {
       background: #1e1e1e;
       border: 1px solid #444;
-      display: block;
-      margin: 20px 0;
+    }
+    .info {
+      margin-top: 10px;
+      text-align: center;
     }
     button {
       margin-top: 10px;
@@ -36,46 +38,70 @@
   </style>
 </head>
 <body>
-  <h1>Entanglement and Mapping Visualization</h1>
-  <p>Observe how states (0, 0.5, 1) are mapped and entangled to form a self-optimizing process.</p>
+  <h1>Chaos and Optimization Demo</h1>
   <canvas id="visualization" width="600" height="400"></canvas>
+  <div class="info">
+    <p><strong>FPS:</strong> <span id="fpsCounter">0</span></p>
+    <p><strong>Chaos Level:</strong> <span id="chaosLevel">0</span></p>
+    <p><strong>Node Count:</strong> <span id="nodeCount">3</span></p>
+  </div>
   <button id="start">Start Simulation</button>
   <script>
-    // Canvas setup
     const canvas = document.getElementById('visualization');
     const ctx = canvas.getContext('2d');
+    const fpsCounter = document.getElementById('fpsCounter');
+    const chaosLevelDisplay = document.getElementById('chaosLevel');
+    const nodeCountDisplay = document.getElementById('nodeCount');
 
-    // Nodes representing states and tasks
-    const nodes = [
-      { id: 'Task 1', state: 0, x: 100, y: 150, dx: 0, dy: 0 },
-      { id: 'Task 2', state: 0.5, x: 300, y: 50, dx: 0, dy: 0 },
-      { id: 'Task 3', state: 1, x: 500, y: 250, dx: 0, dy: 0 }
+    let nodes = [
+      { id: 'Task 1', state: 0, x: 100, y: 150, dx: 2, dy: 2 },
+      { id: 'Task 2', state: 0.5, x: 300, y: 50, dx: -1, dy: 1 },
+      { id: 'Task 3', state: 1, x: 500, y: 250, dx: -2, dy: -2 }
     ];
 
-    // Entanglement connections
     const edges = [
       { from: 'Task 1', to: 'Task 2' },
       { from: 'Task 2', to: 'Task 3' },
       { from: 'Task 3', to: 'Task 1' }
     ];
 
-    // Update states dynamically toward near-zero
+    let chaosLevel = 0; // Introduces random disruptive forces
+    let lastTime = performance.now();
+    let frameCount = 0;
+    let fps = 0;
+
     function updateStates() {
+      // Dynamically adjust chaos level to maintain balance
+      if (fps < 30) chaosLevel = Math.min(chaosLevel + 0.1, 1); // Increase chaos when FPS drops
+      else chaosLevel = Math.max(chaosLevel - 0.05, 0); // Reduce chaos when stable
+
+      // Introduce chaos into node motion
       nodes.forEach(node => {
         node.state += (Math.random() - 0.5) * 0.1; // Simulate learning
-        node.state = Math.max(0, Math.min(1, node.state)); // Keep state within 0 to 1
+        node.state = Math.max(0, Math.min(1, node.state));
+
+        // Add chaotic motion
+        node.dx += (Math.random() - 0.5) * chaosLevel;
+        node.dy += (Math.random() - 0.5) * chaosLevel;
+
+        // Move the nodes
+        node.x += node.dx;
+        node.y += node.dy;
+
+        // Bounce off edges
+        if (node.x <= 20 || node.x >= canvas.width - 20) node.dx *= -1;
+        if (node.y <= 20 || node.y >= canvas.height - 20) node.dy *= -1;
       });
     }
 
-    // Draw the visualization
     function draw() {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-      // Draw edges (entanglements)
+      // Draw edges
       edges.forEach(edge => {
         const fromNode = nodes.find(node => node.id === edge.from);
         const toNode = nodes.find(node => node.id === edge.to);
-        ctx.strokeStyle = `rgba(76, 175, 80, 0.5)`;
+        ctx.strokeStyle = `rgba(76, 175, 80, ${1 - chaosLevel})`;
         ctx.lineWidth = 2;
         ctx.beginPath();
         ctx.moveTo(fromNode.x, fromNode.y);
@@ -85,27 +111,50 @@
 
       // Draw nodes
       nodes.forEach(node => {
-        const stateColor = `rgba(${255 * (1 - node.state)}, ${255 * node.state}, 50, 1)`;
-        ctx.fillStyle = stateColor;
+        const color = `rgba(${255 * (1 - node.state)}, ${255 * node.state}, 50, 1)`;
+        ctx.fillStyle = color;
         ctx.beginPath();
         ctx.arc(node.x, node.y, 20, 0, Math.PI * 2);
         ctx.fill();
-        ctx.fillStyle = '#fff';
-        ctx.font = '12px Arial';
-        ctx.textAlign = 'center';
-        ctx.fillText(node.id, node.x, node.y - 30);
-        ctx.fillText(`State: ${node.state.toFixed(2)}`, node.x, node.y + 30);
       });
     }
 
-    // Run the simulation
+    function selfOptimize() {
+      // Adjust node count dynamically based on FPS
+      if (fps < 30 && nodes.length > 3) nodes.pop(); // Reduce complexity
+      else if (fps > 50 && nodes.length < 10) {
+        // Add more nodes when FPS is high
+        nodes.push({
+          id: `Task ${nodes.length + 1}`,
+          state: Math.random(),
+          x: Math.random() * canvas.width,
+          y: Math.random() * canvas.height,
+          dx: Math.random() * 2 - 1,
+          dy: Math.random() * 2 - 1
+        });
+      }
+      nodeCountDisplay.textContent = nodes.length;
+    }
+
     function runSimulation() {
+      const currentTime = performance.now();
+      const deltaTime = currentTime - lastTime;
+
+      frameCount++;
+      if (deltaTime >= 1000) {
+        fps = frameCount;
+        fpsCounter.textContent = fps;
+        frameCount = 0;
+        lastTime = currentTime;
+      }
+
       updateStates();
       draw();
+      selfOptimize();
+      chaosLevelDisplay.textContent = chaosLevel.toFixed(2);
       requestAnimationFrame(runSimulation);
     }
 
-    // Start button
     document.getElementById('start').addEventListener('click', () => {
       runSimulation();
     });
