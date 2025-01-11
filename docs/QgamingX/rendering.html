@@ -3,10 +3,10 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Dynamic video rendering with quantum mapping for natural compression and resolution scaling.">
-  <meta name="keywords" content="quantum video mapping, dynamic resolution, self-shrinking video, natural compression">
+  <meta name="description" content="High-resolution video rendering simulation using SVG patterns and quantum mapping.">
+  <meta name="keywords" content="SVG, quantum rendering, ultra-high resolution, 8K, 16K, 256K">
   <meta name="author" content="Your Name">
-  <title>Quantum Video Mapping</title>
+  <title>Quantum SVG Rendering</title>
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -25,19 +25,12 @@
       margin: 20px 0;
     }
 
-    video {
+    canvas {
+      background-color: #000;
+      border: 2px solid #00ffff;
       width: 100%;
       max-width: 800px;
       height: auto;
-      background: #000;
-      border: 2px solid #00ffff;
-    }
-
-    canvas {
-      position: absolute;
-      top: 0;
-      left: 0;
-      pointer-events: none; /* Allow interaction with the video */
     }
 
     .stats {
@@ -69,98 +62,113 @@
   </style>
 </head>
 <body>
-  <h1>Quantum Video Mapping</h1>
-  <video id="video" controls>
-    <!-- Replace this with a dynamic video source -->
-    <source src="https://storage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4" type="video/mp4">
-    Your browser does not support the video tag.
-  </video>
-  <canvas id="overlay"></canvas>
+  <h1>Quantum SVG Rendering Simulation</h1>
+  <canvas id="renderCanvas"></canvas>
   <div class="stats">
-    <p id="compression">Compression: 0%</p>
-    <p id="resolution">Resolution: 1080p</p>
+    <p id="resolution">Resolution: 8K</p>
     <p id="fps">FPS: Calculating...</p>
+    <p id="compression">Compression: 0%</p>
   </div>
-  <button id="simulateChaos">Simulate Chaos</button>
+  <button id="increaseResolution">Increase Resolution</button>
+  <button id="toggleChaos">Toggle Chaos</button>
 
   <script>
-    const video = document.getElementById("video");
-    const overlay = document.getElementById("overlay");
-    const ctx = overlay.getContext("2d");
+    const canvas = document.getElementById("renderCanvas");
+    const ctx = canvas.getContext("2d");
 
-    const stats = {
-      compression: 0,
-      resolution: 1080,
-      fps: 0,
-      frameCount: 0,
-      lastTimestamp: performance.now(),
-    };
+    // Canvas dimensions
+    canvas.width = 7680; // Default to 8K width
+    canvas.height = 4320; // Default to 8K height
 
+    // Render settings
+    let resolution = "8K";
     let chaosMode = false;
+    let compression = 0;
+    let frameCount = 0;
+    let lastTimestamp = performance.now();
 
-    // Resize canvas to match video
-    function resizeCanvas() {
-      overlay.width = video.offsetWidth;
-      overlay.height = video.offsetHeight;
-    }
-
-    window.addEventListener("resize", resizeCanvas);
-    video.addEventListener("loadedmetadata", resizeCanvas);
-
-    // Quantum Mapping and Compression Simulation
-    function processFrame() {
-      // Draw the current video frame onto the canvas
-      ctx.drawImage(video, 0, 0, overlay.width, overlay.height);
-
-      // Simulate quantum mapping
-      const imageData = ctx.getImageData(0, 0, overlay.width, overlay.height);
-      const data = imageData.data;
-
-      let pixelCount = data.length / 4; // Total number of pixels
-      let compressedPixels = 0;
-
-      for (let i = 0; i < data.length; i += 4) {
-        // Simulate compression by identifying repetitive patterns (basic grayscale example)
-        const brightness = (data[i] + data[i + 1] + data[i + 2]) / 3;
-        if (brightness > 200 || brightness < 50) {
-          compressedPixels++; // Count pixels that can be compressed
+    // SVG Generation Function
+    function generateSVGPattern(width, height, cellSize) {
+      let svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}" viewBox="0 0 ${width} ${height}">`;
+      for (let y = 0; y < height; y += cellSize) {
+        for (let x = 0; x < width; x += cellSize) {
+          const color = `hsl(${(x / width) * 360}, 100%, 50%)`;
+          svg += `<rect x="${x}" y="${y}" width="${cellSize}" height="${cellSize}" fill="${color}" />`;
         }
       }
-
-      // Update compression stats
-      stats.compression = ((compressedPixels / pixelCount) * 100).toFixed(2);
-      document.getElementById("compression").textContent = `Compression: ${stats.compression}%`;
-
-      // Simulate resolution scaling
-      if (chaosMode) {
-        stats.resolution -= 10; // Reduce resolution under chaos
-        if (stats.resolution < 480) stats.resolution = 480;
-      } else if (stats.resolution < 1080) {
-        stats.resolution += 5; // Gradually restore resolution
-        if (stats.resolution > 1080) stats.resolution = 1080;
-      }
-      document.getElementById("resolution").textContent = `Resolution: ${stats.resolution}p`;
-
-      // Simulate FPS calculation
-      const now = performance.now();
-      stats.frameCount++;
-      if (now - stats.lastTimestamp > 1000) {
-        stats.fps = stats.frameCount;
-        stats.frameCount = 0;
-        stats.lastTimestamp = now;
-        document.getElementById("fps").textContent = `FPS: ${stats.fps}`;
-      }
-
-      requestAnimationFrame(processFrame);
+      svg += "</svg>";
+      return svg;
     }
 
-    // Simulate Chaos Mode
-    document.getElementById("simulateChaos").addEventListener("click", () => {
+    // Render SVG Pattern on Canvas
+    function renderSVGToCanvas(svgString) {
+      const img = new Image();
+      const svgBlob = new Blob([svgString], { type: "image/svg+xml;charset=utf-8" });
+      const url = URL.createObjectURL(svgBlob);
+
+      img.onload = () => {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+        URL.revokeObjectURL(url);
+      };
+
+      img.src = url;
+    }
+
+    // Update Resolution
+    function updateResolution() {
+      if (resolution === "8K") {
+        resolution = "16K";
+        canvas.width = 15360; // 16K width
+        canvas.height = 8640; // 16K height
+      } else if (resolution === "16K") {
+        resolution = "256K";
+        canvas.width = 245760; // Theoretical 256K width
+        canvas.height = 138240; // Theoretical 256K height
+      } else {
+        resolution = "8K"; // Loop back to 8K
+        canvas.width = 7680;
+        canvas.height = 4320;
+      }
+
+      document.getElementById("resolution").textContent = `Resolution: ${resolution}`;
+      renderFrame();
+    }
+
+    // Render Frame
+    function renderFrame() {
+      const cellSize = chaosMode ? 20 : 10; // Larger cells in chaos mode
+      const svgPattern = generateSVGPattern(canvas.width, canvas.height, cellSize);
+      renderSVGToCanvas(svgPattern);
+
+      // Simulate Compression
+      compression = chaosMode ? Math.random() * 20 : Math.random() * 5;
+      document.getElementById("compression").textContent = `Compression: ${compression.toFixed(2)}%`;
+    }
+
+    // Main Render Loop
+    function renderLoop() {
+      const now = performance.now();
+      frameCount++;
+      if (now - lastTimestamp > 1000) {
+        const fps = frameCount;
+        frameCount = 0;
+        lastTimestamp = now;
+        document.getElementById("fps").textContent = `FPS: ${fps}`;
+      }
+
+      renderFrame();
+      requestAnimationFrame(renderLoop);
+    }
+
+    // Event Listeners
+    document.getElementById("increaseResolution").addEventListener("click", updateResolution);
+    document.getElementById("toggleChaos").addEventListener("click", () => {
       chaosMode = !chaosMode;
     });
 
-    // Start processing frames when the video plays
-    video.addEventListener("play", processFrame);
+    // Start the simulation
+    renderLoop();
   </script>
 </body>
 </html>
