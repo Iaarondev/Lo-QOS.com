@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Chaos and Optimization Demo</title>
+  <title>Chaos vs Traditional Visualization</title>
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -18,13 +18,20 @@
     canvas {
       background: #1e1e1e;
       border: 1px solid #444;
+      margin: 10px;
     }
     .info {
-      margin-top: 10px;
+      margin: 10px 0;
       text-align: center;
     }
+    .container {
+      display: flex;
+      justify-content: space-around;
+      width: 100%;
+      max-width: 1200px;
+    }
     button {
-      margin-top: 10px;
+      margin-top: 20px;
       padding: 10px 20px;
       background: linear-gradient(90deg, #4caf50, #2196f3);
       border: none;
@@ -38,125 +45,141 @@
   </style>
 </head>
 <body>
-  <h1>Chaos and Optimization Demo</h1>
-  <canvas id="visualization" width="600" height="400"></canvas>
-  <div class="info">
-    <p><strong>FPS:</strong> <span id="fpsCounter">0</span></p>
-    <p><strong>Chaos Level:</strong> <span id="chaosLevel">0</span></p>
-    <p><strong>Node Count:</strong> <span id="nodeCount">3</span></p>
+  <h1>Chaos vs Traditional Visualization</h1>
+  <div class="container">
+    <div>
+      <h2>Self-Optimizing Chaos System</h2>
+      <canvas id="chaosCanvas" width="600" height="400"></canvas>
+      <div class="info">
+        <p><strong>FPS:</strong> <span id="chaosFps">0</span></p>
+        <p><strong>Chaos Level:</strong> <span id="chaosLevel">0</span></p>
+        <p><strong>Node Count:</strong> <span id="chaosNodeCount">3</span></p>
+      </div>
+    </div>
+    <div>
+      <h2>Traditional System</h2>
+      <canvas id="traditionalCanvas" width="600" height="400"></canvas>
+      <div class="info">
+        <p><strong>FPS:</strong> <span id="traditionalFps">0</span></p>
+        <p><strong>Node Count:</strong> <span id="traditionalNodeCount">10</span></p>
+      </div>
+    </div>
   </div>
-  <button id="start">Start Simulation</button>
+  <button id="startSimulation">Start Simulation</button>
   <script>
-    const canvas = document.getElementById('visualization');
-    const ctx = canvas.getContext('2d');
-    const fpsCounter = document.getElementById('fpsCounter');
+    const chaosCanvas = document.getElementById('chaosCanvas');
+    const chaosCtx = chaosCanvas.getContext('2d');
+    const traditionalCanvas = document.getElementById('traditionalCanvas');
+    const traditionalCtx = traditionalCanvas.getContext('2d');
+
+    const chaosFpsDisplay = document.getElementById('chaosFps');
     const chaosLevelDisplay = document.getElementById('chaosLevel');
-    const nodeCountDisplay = document.getElementById('nodeCount');
+    const chaosNodeCountDisplay = document.getElementById('chaosNodeCount');
 
-    let nodes = [
-      { id: 'Task 1', state: 0, x: 100, y: 150, dx: 2, dy: 2 },
-      { id: 'Task 2', state: 0.5, x: 300, y: 50, dx: -1, dy: 1 },
-      { id: 'Task 3', state: 1, x: 500, y: 250, dx: -2, dy: -2 }
+    const traditionalFpsDisplay = document.getElementById('traditionalFps');
+    const traditionalNodeCountDisplay = document.getElementById('traditionalNodeCount');
+
+    let chaosNodes = [
+      { x: 100, y: 100, dx: 2, dy: 2, state: 0.5 },
+      { x: 300, y: 200, dx: -1.5, dy: 1.5, state: 0.3 },
+      { x: 500, y: 100, dx: 1, dy: -2, state: 0.8 }
     ];
+    let traditionalNodes = Array.from({ length: 10 }, () => ({
+      x: Math.random() * 600,
+      y: Math.random() * 400,
+      dx: Math.random() * 2 - 1,
+      dy: Math.random() * 2 - 1,
+      state: Math.random()
+    }));
 
-    const edges = [
-      { from: 'Task 1', to: 'Task 2' },
-      { from: 'Task 2', to: 'Task 3' },
-      { from: 'Task 3', to: 'Task 1' }
-    ];
+    let chaosFrameCount = 0, chaosLastTime = performance.now(), chaosFps = 0, chaosLevel = 0;
+    let traditionalFrameCount = 0, traditionalLastTime = performance.now(), traditionalFps = 0;
 
-    let chaosLevel = 0; // Introduces random disruptive forces
-    let lastTime = performance.now();
-    let frameCount = 0;
-    let fps = 0;
+    function updateChaosNodes() {
+      if (chaosFps < 30) chaosLevel = Math.min(chaosLevel + 0.05, 1);
+      else chaosLevel = Math.max(chaosLevel - 0.02, 0);
 
-    function updateStates() {
-      // Dynamically adjust chaos level to maintain balance
-      if (fps < 30) chaosLevel = Math.min(chaosLevel + 0.1, 1); // Increase chaos when FPS drops
-      else chaosLevel = Math.max(chaosLevel - 0.05, 0); // Reduce chaos when stable
-
-      // Introduce chaos into node motion
-      nodes.forEach(node => {
-        node.state += (Math.random() - 0.5) * 0.1; // Simulate learning
-        node.state = Math.max(0, Math.min(1, node.state));
-
-        // Add chaotic motion
-        node.dx += (Math.random() - 0.5) * chaosLevel;
-        node.dy += (Math.random() - 0.5) * chaosLevel;
-
-        // Move the nodes
-        node.x += node.dx;
-        node.y += node.dy;
-
-        // Bounce off edges
-        if (node.x <= 20 || node.x >= canvas.width - 20) node.dx *= -1;
-        if (node.y <= 20 || node.y >= canvas.height - 20) node.dy *= -1;
-      });
-    }
-
-    function draw() {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-      // Draw edges
-      edges.forEach(edge => {
-        const fromNode = nodes.find(node => node.id === edge.from);
-        const toNode = nodes.find(node => node.id === edge.to);
-        ctx.strokeStyle = `rgba(76, 175, 80, ${1 - chaosLevel})`;
-        ctx.lineWidth = 2;
-        ctx.beginPath();
-        ctx.moveTo(fromNode.x, fromNode.y);
-        ctx.lineTo(toNode.x, toNode.y);
-        ctx.stroke();
+      chaosNodes.forEach(node => {
+        node.x += node.dx + (Math.random() - 0.5) * chaosLevel;
+        node.y += node.dy + (Math.random() - 0.5) * chaosLevel;
+        if (node.x <= 20 || node.x >= chaosCanvas.width - 20) node.dx *= -1;
+        if (node.y <= 20 || node.y >= chaosCanvas.height - 20) node.dy *= -1;
       });
 
-      // Draw nodes
-      nodes.forEach(node => {
-        const color = `rgba(${255 * (1 - node.state)}, ${255 * node.state}, 50, 1)`;
-        ctx.fillStyle = color;
-        ctx.beginPath();
-        ctx.arc(node.x, node.y, 20, 0, Math.PI * 2);
-        ctx.fill();
-      });
-    }
-
-    function selfOptimize() {
-      // Adjust node count dynamically based on FPS
-      if (fps < 30 && nodes.length > 3) nodes.pop(); // Reduce complexity
-      else if (fps > 50 && nodes.length < 10) {
-        // Add more nodes when FPS is high
-        nodes.push({
-          id: `Task ${nodes.length + 1}`,
-          state: Math.random(),
-          x: Math.random() * canvas.width,
-          y: Math.random() * canvas.height,
+      if (chaosFps < 30 && chaosNodes.length > 3) chaosNodes.pop();
+      else if (chaosFps > 50 && chaosNodes.length < 20) {
+        chaosNodes.push({
+          x: Math.random() * chaosCanvas.width,
+          y: Math.random() * chaosCanvas.height,
           dx: Math.random() * 2 - 1,
-          dy: Math.random() * 2 - 1
+          dy: Math.random() * 2 - 1,
+          state: Math.random()
         });
       }
-      nodeCountDisplay.textContent = nodes.length;
-    }
-
-    function runSimulation() {
-      const currentTime = performance.now();
-      const deltaTime = currentTime - lastTime;
-
-      frameCount++;
-      if (deltaTime >= 1000) {
-        fps = frameCount;
-        fpsCounter.textContent = fps;
-        frameCount = 0;
-        lastTime = currentTime;
-      }
-
-      updateStates();
-      draw();
-      selfOptimize();
+      chaosNodeCountDisplay.textContent = chaosNodes.length;
       chaosLevelDisplay.textContent = chaosLevel.toFixed(2);
-      requestAnimationFrame(runSimulation);
     }
 
-    document.getElementById('start').addEventListener('click', () => {
-      runSimulation();
+    function drawChaosNodes() {
+      chaosCtx.clearRect(0, 0, chaosCanvas.width, chaosCanvas.height);
+      chaosNodes.forEach(node => {
+        chaosCtx.fillStyle = `rgba(${255 * (1 - node.state)}, ${255 * node.state}, 50, 1)`;
+        chaosCtx.beginPath();
+        chaosCtx.arc(node.x, node.y, 20, 0, Math.PI * 2);
+        chaosCtx.fill();
+      });
+    }
+
+    function updateTraditionalNodes() {
+      traditionalNodes.forEach(node => {
+        node.x += node.dx;
+        node.y += node.dy;
+        if (node.x <= 20 || node.x >= traditionalCanvas.width - 20) node.dx *= -1;
+        if (node.y <= 20 || node.y >= traditionalCanvas.height - 20) node.dy *= -1;
+      });
+    }
+
+    function drawTraditionalNodes() {
+      traditionalCtx.clearRect(0, 0, traditionalCanvas.width, traditionalCanvas.height);
+      traditionalNodes.forEach(node => {
+        traditionalCtx.fillStyle = `rgba(${255 * (1 - node.state)}, ${255 * node.state}, 50, 1)`;
+        traditionalCtx.beginPath();
+        traditionalCtx.arc(node.x, node.y, 20, 0, Math.PI * 2);
+        traditionalCtx.fill();
+      });
+    }
+
+    function runChaosSystem() {
+      const now = performance.now();
+      chaosFrameCount++;
+      if (now - chaosLastTime >= 1000) {
+        chaosFps = chaosFrameCount;
+        chaosFpsDisplay.textContent = chaosFps;
+        chaosFrameCount = 0;
+        chaosLastTime = now;
+      }
+      updateChaosNodes();
+      drawChaosNodes();
+      requestAnimationFrame(runChaosSystem);
+    }
+
+    function runTraditionalSystem() {
+      const now = performance.now();
+      traditionalFrameCount++;
+      if (now - traditionalLastTime >= 1000) {
+        traditionalFps = traditionalFrameCount;
+        traditionalFpsDisplay.textContent = traditionalFps;
+        traditionalFrameCount = 0;
+        traditionalLastTime = now;
+      }
+      updateTraditionalNodes();
+      drawTraditionalNodes();
+      requestAnimationFrame(runTraditionalSystem);
+    }
+
+    document.getElementById('startSimulation').addEventListener('click', () => {
+      runChaosSystem();
+      runTraditionalSystem();
     });
   </script>
 </body>
