@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quantum AI Adventure</title>
+    <style>
+        :root {
+            --quantum-primary: #00f0ff;
+            --quantum-enemy: #ff3366;
+            --quantum-friend: #33ff99;
+        }
+
+        body {
+            margin: 0;
+            overflow-x: hidden;
+            background: #000;
+            color: #fff;
+            font-family: Arial, sans-serif;
+        }
+
+        canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+        }
+
+        .ui {
+            position: fixed;
+            padding: 10px;
+            background: rgba(0,0,0,0.7);
+            border-radius: 5px;
+            z-index: 1;
+        }
+
+        .controls { bottom: 20px; left: 50%; transform: translateX(-50%); }
+        .stats { top: 20px; right: 20px; }
+        .health { top: 20px; left: 20px; }
+        
+        .tutorial {
+            position: fixed;
+            bottom: 100px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0,0,0,0.8);
+            padding: 20px;
+            border-radius: 10px;
+            max-width: 600px;
+            text-align: center;
+            z-index: 2;
+        }
+
+        .particle {
+            position: absolute;
+            pointer-events: none;
+            border-radius: 50%;
+            z-index: 0;
+        }
+
+        .quantum-indicator {
+            position: fixed;
+            bottom: 60px;
+            left: 20px;
+            width: 100px;
+            height: 100px;
+            border: 2px solid var(--quantum-primary);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            z-index: 1;
+        }
+
+        .health-bar {
+            width: 200px;
+            height: 20px;
+            background: #333;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .health-fill {
+            height: 100%;
+            background: var(--quantum-friend);
+            transition: width 0.3s;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="game"></canvas>
+    
+    <div class="controls ui">
+        <label>Dimension Control: <span id="dimValue">0</span></label>
+        <input type="range" id="dimSlider" min="-10" max="10" value="0" step="0.1">
+    </div>
+
+    <div class="stats ui">
+        <div>FPS: <span id="fps">0</span></div>
+        <div>Score: <span id="score">0</span></div>
+        <div>Quantum State: <span id="qstate">Stable</span></div>
+    </div>
+
+    <div class="health ui">
+        <div class="health-bar">
+            <div class="health-fill" id="healthFill" style="width: 100%"></div>
+        </div>
+        <div>Health: <span id="health">100</span>%</div>
+    </div>
+
+    <div class="quantum-indicator" id="qIndicator">Q</div>
+
+    <div class="tutorial">
+        <h3>Quantum AI Adventure - Tutorial</h3>
+        <p>Navigate through quantum space with your AI companion!</p>
+        <ul style="text-align: left">
+            <p>• Touch/Drag to rotate in 3D space</p>
+            <p>• Use slider to move through dimensions</p>
+            <p>• Green AI = Friend, Red = Enemy</p>
+            <p>• Collect quantum particles for power</p>
+            <p>• Q-Indicator shows quantum state</p>
+        </ul>
+        <button onclick="this.parentElement.style.display='none'">Got it!</button>
+    </div>
+
+    <script>
+        class QuantumParticle {
+            constructor(x, y, type = 'friendly') {
+                this.x = x;
+                this.y = y;
+                this.size = Math.random() * 3 + 2;
+                this.speed = Math.random() * 2 + 1;
+                this.angle = Math.random() * Math.PI * 2;
+                this.type = type;
+                this.color = type === 'friendly' ? 'var(--quantum-friend)' : 'var(--quantum-enemy)';
+                this.opacity = 1;
+            }
+
+            update() {
+                this.x += Math.cos(this.angle) * this.speed;
+                this.y += Math.sin(this.angle) * this.speed;
+                this.opacity -= 0.01;
+                return this.opacity > 0;
+            }
+
+            draw(ctx) {
+                ctx.fillStyle = this.color;
+                ctx.globalAlpha = this.opacity;
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.globalAlpha = 1;
+            }
+        }
+
+        class QuantumAI {
+            constructor(type = 'friendly') {
+                this.type = type;
+                this.x = Math.random() * window.innerWidth;
+                this.y = Math.random() * window.innerHeight;
+                this.targetX = this.x;
+                this.targetY = this.y;
+                this.speed = type === 'friendly' ? 2 : 3;
+                this.size = 15;
+                this.color = type === 'friendly' ? 'var(--quantum-friend)' : 'var(--quantum-enemy)';
+                this.particles = [];
+                this.lastThink = 0;
+                this.thinkInterval = 1000;
+            }
+
+            think(playerX, playerY) {
+                const now = performance.now();
+                if (now - this.lastThink < this.thinkInterval) return;
+                
+                if (this.type === 'friendly') {
+                    // Friendly AI tries to stay near player
+                    const angle = Math.random() * Math.PI * 2;
+                    const distance = Math.random() * 100 + 50;
+                    this.targetX = playerX + Math.cos(angle) * distance;
+                    this.targetY = playerY + Math.sin(angle) * distance;
+                } else {
+                    // Enemy AI tries to intercept player
+                    this.targetX = playerX;
+                    this.targetY = playerY;
+                }
+                
+                this.lastThink = now;
+            }
+
+            update(playerX, playerY) {
+                this.think(playerX, playerY);
+
+                // Move towards target
+                const dx = this.targetX - this.x;
+                const dy = this.targetY - this.y;
+                const dist = Math.sqrt(dx * dx + dy * dy);
+                
+                if (dist > 1) {
+                    this.x += (dx / dist) * this.speed;
+                    this.y += (dy / dist) * this.speed;
+                }
+
+                // Create particles occasionally
+                if (Math.random() < 0.1) {
+                    this.particles.push(new QuantumParticle(this.x, this.y, this.type));
+                }
+
+                // Update particles
+                this.particles = this.particles.filter(p => p.update());
+            }
+
+            draw(ctx) {
+                // Draw particles
+                this.particles.forEach(p => p.draw(ctx));
+
+                // Draw AI
+                ctx.fillStyle = this.color;
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fill();
+
+                // Draw quantum aura
+                ctx.strokeStyle = this.color;
+                ctx.lineWidth = 2;
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size + 5 + Math.sin(performance.now() / 200) * 3, 0, Math.PI * 2);
+                ctx.stroke();
+            }
+
+            checkCollision(x, y) {
+                const dx = this.x - x;
+                const dy = this.y - y;
+                return Math.sqrt(dx * dx + dy * dy) < this.size * 2;
+            }
+        }
+
+        class Game {
+            constructor() {
+                this.canvas = document.getElementById('game');
+                this.ctx = this.canvas.getContext('2d');
+                
+                this.dimension = 0;
+                this.playerX = window.innerWidth / 2;
+                this.playerY = window.innerHeight / 2;
+                this.health = 100;
+                this.score = 0;
+                this.quantumState = 0;
+                
+                this.friendlyAI = new QuantumAI('friendly');
+                this.enemies = [new QuantumAI('enemy')];
+                
+                this.lastTime = performance.now();
+                this.frameCount = 0;
+                this.fps = 0;
+
+                this.initCanvas();
+                this.setupControls();
+                this.gameLoop();
+            }
+
+            initCanvas() {
+                const resize = () => {
+                    this.canvas.width = window.innerWidth;
+                    this.canvas.height = window.innerHeight;
+                };
+                window.addEventListener('resize', resize);
+                resize();
+            }
+
+            setupControls() {
+                const slider = document.getElementById('dimSlider');
+                const dimValue = document.getElementById('dimValue');
+
+                slider.addEventListener('input', (e) => {
+                    this.dimension = parseFloat(e.target.value);
+                    dimValue.textContent = this.dimension.toFixed(1);
+                });
+
+                // Touch controls
+                let lastX = 0, lastY = 0;
+                this.canvas.addEventListener('touchstart', (e) => {
+                    if (e.touches.length === 1) {
+                        const touch = e.touches[0];
+                        this.playerX = touch.clientX;
+                        this.playerY = touch.clientY;
+                        lastX = touch.clientX;
+                        lastY = touch.clientY;
+                    }
+                });
+
+                this.canvas.addEventListener('touchmove', (e) => {
+                    if (e.touches.length === 1) {
+                        const touch = e.touches[0];
+                        this.playerX = touch.clientX;
+                        this.playerY = touch.clientY;
+                        lastX = touch.clientX;
+                        lastY = touch.clientY;
+                    }
+                });
+
+                // Mouse controls
+                this.canvas.addEventListener('mousemove', (e) => {
+                    this.playerX = e.clientX;
+                    this.playerY = e.clientY;
+                });
+            }
+
+            updateStats() {
+                const now = performance.now();
+                this.frameCount++;
+
+                if (now - this.lastTime >= 1000) {
+                    this.fps = Math.round((this.frameCount * 1000) / (now - this.lastTime));
+                    document.getElementById('fps').textContent = this.fps;
+                    document.getElementById('score').textContent = this.score;
+                    document.getElementById('health').textContent = this.health;
+                    document.getElementById('healthFill').style.width = `${this.health}%`;
+                    
+                    this.frameCount = 0;
+                    this.lastTime = now;
+                }
+            }
+
+            updateQuantumState() {
+                // Update quantum state based on dimension and activity
+                this.quantumState = (Math.sin(performance.now() / 1000) + 1) / 2;
+                const stateText = this.quantumState < 0.3 ? 'Stable' :
+                                this.quantumState < 0.7 ? 'Fluctuating' : 'Chaotic';
+                
+                document.getElementById('qstate').textContent = stateText;
+                document.getElementById('qIndicator').style.borderColor = 
+                    `hsl(${this.quantumState * 360}, 100%, 50%)`;
+            }
+
+            update() {
+                // Update AIs
+                this.friendlyAI.update(this.playerX, this.playerY);
+                this.enemies.forEach(enemy => {
+                    enemy.update(this.playerX, this.playerY);
+                    
+                    // Check for collisions
+                    if (enemy.checkCollision(this.playerX, this.playerY)) {
+                        this.health = Math.max(0, this.health - 1);
+                    }
+                });
+
+                // Maybe spawn new enemy
+                if (Math.random() < 0.001 && this.enemies.length < 5) {
+                    this.enemies.push(new QuantumAI('enemy'));
+                }
+
+                // Update score based on friendly AI proximity
+                if (this.friendlyAI.checkCollision(this.playerX, this.playerY)) {
+                    this.score++;
+                }
+
+                this.updateStats();
+                this.updateQuantumState();
+            }
+
+            draw() {
+                // Clear canvas
+                this.ctx.fillStyle = 'black';
+                this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+
+                // Draw player
+                this.ctx.fillStyle = 'var(--quantum-primary)';
+                this.ctx.beginPath();
+                this.ctx.arc(this.playerX, this.playerY, 10, 0, Math.PI * 2);
+                this.ctx.fill();
+
+                // Draw quantum aura around player
+                this.ctx.strokeStyle = 'var(--quantum-primary)';
+                this.ctx.lineWidth = 2;
+                this.ctx.beginPath();
+                this.ctx.arc(this.playerX, this.playerY, 15 + Math.sin(performance.now() / 200) * 3, 
+                           0, Math.PI * 2);
+                this.ctx.stroke();
+
+                // Draw AIs
+                this.friendlyAI.draw(this.ctx);
+                this.enemies.forEach(enemy => enemy.draw(this.ctx));
+            }
+
+            gameLoop() {
+                this.update();
+                this.draw();
+                requestAnimationFrame(() => this.gameLoop());
+            }
+        }
+
+        // Start game when page loads
+        window.addEventListener('load', () => {
+            const game = new Game();
+        });
+    </script>
+</body>
+</html>
