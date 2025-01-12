@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quantum AI Adventure</title>
+    <style>
+        :root {
+            --quantum-primary: #6366f1;
+            --quantum-friend: #33ff99;
+            --quantum-enemy: #ff3366;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: system-ui, -apple-system, sans-serif;
+            background: #0f172a;
+            color: #f8fafc;
+            min-height: 100vh;
+            padding: 2rem;
+        }
+
+        .game-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: #1e293b;
+            border-radius: 0.5rem;
+            overflow: hidden;
+        }
+
+        .game-header {
+            padding: 1rem;
+            background: #334155;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .game-title {
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+
+        .game-content {
+            display: grid;
+            grid-template-columns: 1fr 300px;
+            gap: 1rem;
+            padding: 1rem;
+        }
+
+        @media (max-width: 768px) {
+            .game-content {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .game-canvas-container {
+            position: relative;
+            aspect-ratio: 16/9;
+            background: #000;
+            border-radius: 0.5rem;
+            overflow: hidden;
+        }
+
+        #gameCanvas {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+        }
+
+        .game-sidebar {
+            padding: 1rem;
+            background: #1e293b;
+            border-radius: 0.5rem;
+        }
+
+        .quantum-clock {
+            width: 128px;
+            height: 128px;
+            margin: 1rem auto;
+            position: relative;
+        }
+
+        .clock-face {
+            position: absolute;
+            inset: 0;
+            border: 4px solid var(--quantum-primary);
+            border-radius: 50%;
+        }
+
+        .clock-hand {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 4px;
+            height: 50%;
+            background: var(--quantum-primary);
+            transform-origin: 50% 100%;
+            transition: transform 0.1s;
+        }
+
+        .stats-container {
+            margin-top: 2rem;
+        }
+
+        .stat-item {
+            margin-bottom: 1rem;
+        }
+
+        .stat-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+            font-size: 0.875rem;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: #475569;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: var(--quantum-primary);
+            transition: width 0.3s;
+        }
+
+        .tutorial {
+            position: fixed;
+            bottom: 2rem;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0, 0, 0, 0.8);
+            padding: 1rem;
+            border-radius: 0.5rem;
+            max-width: 400px;
+            text-align: center;
+            z-index: 10;
+        }
+
+        .tutorial button {
+            margin-top: 1rem;
+            padding: 0.5rem 1rem;
+            background: var(--quantum-primary);
+            border: none;
+            border-radius: 0.25rem;
+            color: white;
+            cursor: pointer;
+        }
+
+        .tutorial button:hover {
+            opacity: 0.9;
+        }
+    </style>
+</head>
+<body>
+    <div class="game-container">
+        <div class="game-header">
+            <div class="game-title">Quantum AI Adventure</div>
+            <div class="game-icons">🎮 🕹️</div>
+        </div>
+        
+        <div class="game-content">
+            <div class="game-canvas-container">
+                <canvas id="gameCanvas"></canvas>
+            </div>
+            
+            <div class="game-sidebar">
+                <!-- Quantum Clock -->
+                <div class="quantum-clock">
+                    <div class="clock-face"></div>
+                    <div class="clock-hand" id="clockHand"></div>
+                </div>
+
+                <!-- Stats -->
+                <div class="stats-container">
+                    <div class="stat-item">
+                        <div class="stat-header">
+                            <span>Health</span>
+                            <span id="healthValue">100%</span>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="healthBar" style="width: 100%; background: var(--quantum-friend)"></div>
+                        </div>
+                    </div>
+
+                    <div class="stat-item">
+                        <div class="stat-header">
+                            <span>Quantum Coherence</span>
+                            <span id="coherenceValue">100%</span>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="coherenceBar" style="width: 100%"></div>
+                        </div>
+                    </div>
+
+                    <div class="stat-item">
+                        <div class="stat-header">
+                            <span>Score</span>
+                            <span id="scoreValue">0</span>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="scoreBar" style="width: 0%"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="tutorial" id="tutorial">
+        <h3>How to Play</h3>
+        <p>Move your mouse to control the quantum particle. Collect friendly particles (green) and avoid enemy particles (red).</p>
+        <p>Watch the quantum clock and coherence levels!</p>
+        <button onclick="this.parentElement.style.display='none'">Got it!</button>
+    </div>
+
+    <script>
+        class QuantumParticle {
+            constructor(x, y, type = 'friendly') {
+                this.x = x;
+                this.y = y;
+                this.size = Math.random() * 3 + 2;
+                this.speed = Math.random() * 2 + 1;
+                this.angle = Math.random() * Math.PI * 2;
+                this.type = type;
+                this.phase = Math.random() * Math.PI * 2;
+                this.coherence = 1;
+                this.life = 1;
+            }
+
+            update(deltaTime, targetX, targetY, quantumPhase) {
+                const angle = Math.atan2(targetY - this.y, targetX - this.x);
+                const quantumInfluence = Math.sin(this.phase + quantumPhase);
+                
+                this.x += Math.cos(angle) * this.speed * deltaTime;
+                this.y += Math.sin(angle) * this.speed * deltaTime;
+                
+                this.phase = (this.phase + deltaTime) % (Math.PI * 2);
+                this.coherence = Math.max(0, this.coherence - 0.01 * deltaTime);
+                this.life -= 0.1 * deltaTime;
+            }
+
+            draw(ctx) {
+                const alpha = this.life * this.coherence;
+                ctx.fillStyle = this.type === 'friendly' ? 
+                    `rgba(51, 255, 153, ${alpha})` : 
+                    `rgba(255, 51, 102, ${alpha})`;
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fill();
+            }
+        }
+
+        class Game {
+            constructor() {
+                this.canvas = document.getElementById('gameCanvas');
+                this.ctx = this.canvas.getContext('2d');
+                
+                this.gameState = {
+                    playerX: 0,
+                    playerY: 0,
+                    health: 100,
+                    score: 0,
+                    quantumPhase: 0,
+                    coherence: 1,
+                    particles: []
+                };
+
+                this.lastFrameTime = performance.now();
+                this.setupCanvas();
+                this.setupEventListeners();
+                this.gameLoop();
+            }
+
+            setupCanvas() {
+                const updateCanvasSize = () => {
+                    const container = this.canvas.parentElement;
+                    this.canvas.width = container.clientWidth;
+                    this.canvas.height = container.clientHeight;
+                };
+
+                window.addEventListener('resize', updateCanvasSize);
+                updateCanvasSize();
+            }
+
+            setupEventListeners() {
+                this.canvas.addEventListener('mousemove', (e) => {
+                    const rect = this.canvas.getBoundingClientRect();
+                    this.gameState.playerX = e.clientX - rect.left;
+                    this.gameState.playerY = e.clientY - rect.top;
+                });
+            }
+
+            updateGame(currentTime) {
+                const deltaTime = (currentTime - this.lastFrameTime) / 1000;
+                this.lastFrameTime = currentTime;
+
+                // Update quantum state
+                this.gameState.quantumPhase = (this.gameState.quantumPhase + deltaTime) % (Math.PI * 2);
+                this.gameState.coherence = Math.max(0.5, this.gameState.coherence - 0.001);
+
+                // Update particles
+                this.gameState.particles = this.gameState.particles.filter(p => p.life > 0);
+
+                // Add new particles
+                if (this.gameState.particles.length < 50 && Math.random() < 0.1) {
+                    this.gameState.particles.push(new QuantumParticle(
+                        Math.random() * this.canvas.width,
+                        Math.random() * this.canvas.height,
+                        Math.random() > 0.5 ? 'friendly' : 'enemy'
+                    ));
+                }
+
+                // Update each particle
+                this.gameState.particles.forEach(particle => {
+                    particle.update(
+                        deltaTime,
+                        this.gameState.playerX,
+                        this.gameState.playerY,
+                        this.gameState.quantumPhase
+                    );
+
+                    // Check collisions with player
+                    const dx = particle.x - this.gameState.playerX;
+                    const dy = particle.y - this.gameState.playerY;
+                    const distance = Math.sqrt(dx * dx + dy * dy);
+
+                    if (distance < 15 + particle.size) {
+                        if (particle.type === 'friendly') {
+                            this.gameState.score += 1;
+                            particle.life = 0;
+                        } else {
+                            this.gameState.health = Math.max(0, this.gameState.health - 1);
+                        }
+                    }
+                });
+
+                this.updateUI();
+            }
+
+            updateUI() {
+                // Update health
+                document.getElementById('healthValue').textContent = `${Math.round(this.gameState.health)}%`;
+                document.getElementById('healthBar').style.width = `${this.gameState.health}%`;
+
+                // Update coherence
+                document.getElementById('coherenceValue').textContent = 
+                    `${(this.gameState.coherence * 100).toFixed(1)}%`;
+                document.getElementById('coherenceBar').style.width = 
+                    `${this.gameState.coherence * 100}%`;
+
+                // Update score
+                document.getElementById('scoreValue').textContent = this.gameState.score;
+                document.getElementById('scoreBar').style.width = 
+                    `${Math.min((this.gameState.score / 100) * 100, 100)}%`;
+
+                // Update quantum clock
+                document.getElementById('clockHand').style.transform = 
+                    `rotate(${this.gameState.quantumPhase * 180 / Math.PI}deg)`;
+            }
+
+            draw() {
+                this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+
+                // Draw background
+                const gradient = this.ctx.createRadialGradient(
+                    this.canvas.width/2, this.canvas.height/2, 0,
+                    this.canvas.width/2, this.canvas.height/2, this.canvas.width/2
+                );
+                gradient.addColorStop(0, '#000033');
+                gradient.addColorStop(1, '#000000');
+                this.ctx.fillStyle = gradient;
+                this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+
+                // Draw particles
+                this.gameState.particles.forEach(particle => particle.draw(this.ctx));
+
+                // Draw player
+                this.ctx.fillStyle = '#6366f1';
+                this.ctx.beginPath();
+                this.ctx.arc(this.gameState.playerX, this.gameState.playerY, 10, 0, Math.PI * 2);
+                this.ctx.fill();
+
+                // Draw player aura
+                this.ctx.strokeStyle = '#6366f1';
+                this.ctx.lineWidth = 2;
+                this.ctx.beginPath();
+                this.ctx.arc(
+                    this.gameState.playerX,
+                    this.gameState.playerY,
+                    15 + Math.sin(performance.now() / 200) * 3,
+                    0,
+                    Math.PI * 2
+                );
+                this.ctx.stroke();
+            }
+
+            gameLoop() {
+                const currentTime = performance.now();
+                this.updateGame(currentTime);
+                this.draw();
+                requestAnimationFrame(() => this.gameLoop());
+            }
+        }
+
+        // Start game when page loads
+        window.addEventListener('load', () => {
+            new Game();
+        });
+    </script>
+</body>
+</html>
