@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Quantum Chess Concept Test</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f4f4f9;
+      margin: 0;
+      padding: 0;
+    }
+    .board {
+      display: grid;
+      grid-template-columns: repeat(8, minmax(30px, 50px));
+      grid-gap: 2px;
+      margin: 20px auto;
+      width: max-content;
+    }
+    .cell {
+      width: minmax(30px, 50px);
+      height: minmax(30px, 50px);
+      background-color: #ddd;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 18px;
+      font-weight: bold;
+      border: 1px solid #ccc;
+      cursor: pointer;
+    }
+    .cell.dark {
+      background-color: #bbb;
+    }
+    .controls {
+      text-align: center;
+      margin: 20px;
+    }
+    .rules, .player-ui {
+      margin: 20px auto;
+      padding: 15px;
+      background-color: #fff;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      max-width: 600px;
+    }
+    .player-ui {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .player-hints {
+      font-size: 14px;
+      color: #555;
+    }
+    button {
+      padding: 10px 20px;
+      font-size: 16px;
+      margin: 5px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1 style="text-align: center;">Quantum Chess Concept Testing</h1>
+  </header>
+  <main>
+    <div class="controls">
+      <button onclick="startGame()">Start Game</button>
+      <button onclick="toggleQuantumState()">Toggle Quantum State</button>
+      <button onclick="scaleDimensions()">Scale Dimensions</button>
+    </div>
+    <div class="rules">
+      <h2>Rules:</h2>
+      <ul>
+        <li>Toggle between Classic and Quantum state using the buttons.</li>
+        <li>Click on a board cell to perform an action based on the state.</li>
+        <li>Quantum state enables uncertain interactions (e.g., entanglement).</li>
+        <li>Classic state follows standard chess rules for movement.</li>
+        <li>Scale dimensions to add more boards for advanced play.</li>
+      </ul>
+    </div>
+    <div id="board-container" class="board"></div>
+    <div class="player-ui">
+      <div>
+        <strong>Current Player:</strong> <span id="current-player">Player 1</span>
+      </div>
+      <div class="player-hints">
+        <strong>Hints:</strong> <span id="player-hints">Plan your next move carefully.</span>
+      </div>
+    </div>
+  </main>
+  <footer>
+    <p style="text-align: center;">&copy; 2025 Quantum Chess Project</p>
+  </footer>
+
+  <script>
+    let quantumState = false;
+    let currentPlayer = "Player 1";
+    let dimensions = 1;
+
+    // Initialize Board
+    function createBoard(containerId, boards = 1) {
+      const container = document.getElementById(containerId);
+      container.innerHTML = ""; // Clear existing boards
+
+      for (let b = 0; b < boards; b++) {
+        const boardLabel = document.createElement("div");
+        boardLabel.textContent = `Board ${b + 1}`;
+        boardLabel.style.textAlign = "center";
+        boardLabel.style.marginTop = "10px";
+        container.appendChild(boardLabel);
+
+        const board = document.createElement("div");
+        board.classList.add("board");
+        for (let row = 0; row < 8; row++) {
+          for (let col = 0; col < 8; col++) {
+            const cell = document.createElement("div");
+            cell.classList.add("cell");
+            cell.dataset.position = `${b},${row},${col}`;
+            if ((row + col) % 2 === 0) cell.classList.add("dark");
+            cell.addEventListener("click", () => cellClicked(cell));
+            board.appendChild(cell);
+          }
+        }
+        container.appendChild(board);
+      }
+    }
+
+    function cellClicked(cell) {
+      const position = cell.dataset.position;
+      const hints = document.getElementById("player-hints");
+      if (quantumState) {
+        console.log(`Quantum interaction at ${position}`);
+        cell.textContent = "?"; // Example of quantum uncertainty
+        hints.textContent = "Quantum interaction triggered. Opponent's turn!";
+      } else {
+        console.log(`Classic move at ${position}`);
+        cell.textContent = "X"; // Example of a classic move
+        hints.textContent = "Classic move made. Switch to quantum state for advanced strategies.";
+      }
+      switchPlayer();
+    }
+
+    function toggleQuantumState() {
+      quantumState = !quantumState;
+      console.log(`Quantum State: ${quantumState ? "ON" : "OFF"}`);
+      alert(`Quantum State is now ${quantumState ? "ON" : "OFF"}`);
+    }
+
+    function scaleDimensions() {
+      dimensions += 1;
+      createBoard("board-container", dimensions);
+      document.getElementById("player-hints").textContent = `Dimensions scaled to ${dimensions}. New board added!`;
+    }
+
+    function switchPlayer() {
+      currentPlayer = currentPlayer === "Player 1" ? "Player 2" : "Player 1";
+      document.getElementById("current-player").textContent = currentPlayer;
+    }
+
+    // Example Game Initialization
+    function startGame() {
+      console.log("Game Started!");
+      createBoard("board-container", dimensions);
+
+      // Example of placing a piece on the first board
+      const boardContainer = document.getElementById("board-container");
+      const firstBoard = boardContainer.querySelectorAll(".board")[0];
+      const queenCell = firstBoard.children[27]; // Place queen in the center
+      queenCell.textContent = "Q";
+
+      document.getElementById("player-hints").textContent = "Game started! Plan your strategy.";
+    }
+
+    // Load board on initial page load
+    document.addEventListener("DOMContentLoaded", () => createBoard("board-container", dimensions));
+  </script>
+</body>
+</html>
