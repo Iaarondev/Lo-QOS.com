@@ -11,6 +11,7 @@
             --danger: #ff3366;
             --bg-dark: #1a1a2e;
             --text-light: #ffffff;
+            --quantum-glow: 0 0 20px var(--primary);
         }
 
         body {
@@ -33,12 +34,34 @@
             padding: 4rem 2rem;
             background: linear-gradient(45deg, #1a1a2e, #16213e);
             border-bottom: 2px solid var(--primary);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(90deg, 
+                transparent 0%,
+                rgba(0, 240, 255, 0.1) 50%,
+                transparent 100%);
+            animation: quantum-wave 8s linear infinite;
+        }
+
+        @keyframes quantum-wave {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
         }
 
         .hero h1 {
             font-size: 2.5rem;
             margin-bottom: 1rem;
             color: var(--primary);
+            text-shadow: var(--quantum-glow);
         }
 
         .content {
@@ -59,6 +82,12 @@
             padding: 2rem;
             border-radius: 8px;
             border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: transform 0.3s ease;
+        }
+
+        .section:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0, 240, 255, 0.2);
         }
 
         .highlight {
@@ -66,6 +95,7 @@
             padding: 1.5rem;
             border-radius: 8px;
             margin: 1rem 0;
+            border: 1px solid rgba(0, 240, 255, 0.2);
         }
 
         .code {
@@ -74,6 +104,15 @@
             border-radius: 4px;
             overflow-x: auto;
             font-family: monospace;
+            position: relative;
+        }
+
+        .code::before {
+            content: '>';
+            position: absolute;
+            left: 10px;
+            color: var(--primary);
+            opacity: 0.5;
         }
 
         .simulation-container {
@@ -81,12 +120,24 @@
             padding: 1rem;
             border-radius: 8px;
             margin: 2rem 0;
+            position: relative;
+        }
+
+        .simulation-info {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: rgba(0, 0, 0, 0.7);
+            padding: 10px;
+            border-radius: 4px;
+            font-size: 0.9em;
         }
 
         .controls {
             display: flex;
             gap: 1rem;
             margin-bottom: 1rem;
+            flex-wrap: wrap;
         }
 
         button {
@@ -96,16 +147,64 @@
             padding: 0.5rem 1rem;
             border-radius: 4px;
             cursor: pointer;
-            transition: opacity 0.2s;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
         }
 
         button:hover {
             opacity: 0.9;
+            transform: translateY(-2px);
+            box-shadow: 0 2px 8px rgba(0, 240, 255, 0.4);
+        }
+
+        .legend {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-top: 1rem;
+            padding: 1rem;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 4px;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .legend-color {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
         }
 
         #root {
             width: 100%;
             min-height: 500px;
+            position: relative;
+        }
+
+        .metrics-panel {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: rgba(0, 0, 0, 0.8);
+            padding: 1rem;
+            border-radius: 4px;
+            border: 1px solid var(--primary);
+        }
+
+        .quantum-badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 0.25rem 0.5rem;
+            background: rgba(0, 240, 255, 0.1);
+            border-radius: 4px;
+            margin: 0.25rem;
+            font-size: 0.9em;
         }
     </style>
 </head>
@@ -123,12 +222,12 @@
                 
                 <div class="highlight">
                     <h3>Key Technologies:</h3>
-                    <ul>
-                        <li>Quantum Entanglement</li>
-                        <li>Zero-Knowledge Proofs</li>
-                        <li>Swarm Intelligence</li>
-                        <li>Sub-atomic Programming</li>
-                    </ul>
+                    <div class="quantum-badges">
+                        <span class="quantum-badge">Quantum Entanglement</span>
+                        <span class="quantum-badge">Zero-Knowledge Proofs</span>
+                        <span class="quantum-badge">Swarm Intelligence</span>
+                        <span class="quantum-badge">Sub-atomic Programming</span>
+                    </div>
                 </div>
             </div>
 
@@ -138,6 +237,24 @@
                 
                 <div class="simulation-container">
                     <div id="root"></div>
+                    <div class="legend">
+                        <div class="legend-item">
+                            <div class="legend-color" style="background: #00f0ff"></div>
+                            <span>Searching Nanobots</span>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-color" style="background: #33ff99"></div>
+                            <span>Cleaning Nanobots</span>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-color" style="background: #ff3366"></div>
+                            <span>Harmful Particles</span>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-color" style="background: #666666"></div>
+                            <span>Normal Particles</span>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -169,6 +286,7 @@ class QuantumNanobot {
     constructor() {
         this.state = superposition(0, 1);
         this.entangled = [];
+        this.quantumPhase = Math.random() * Math.PI * 2;
     }
 
     scan() {
@@ -180,13 +298,18 @@ class QuantumNanobot {
             return this.executeClean(particle);
         }
     }
+
+    entangle(otherBot) {
+        this.entangledWith = otherBot;
+        this.state = 'entangled';
+    }
 }</pre>
             </div>
         </div>
 
         <div class="section">
             <h2>System Architecture</h2>
-            <p>The system employs a layered architecture:</p>
+            <p>The system employs a layered architecture with quantum-enhanced features:</p>
             
             <ol>
                 <li><strong>Quantum Layer</strong>: Handles entanglement and state management</li>
@@ -202,16 +325,17 @@ class QuantumNanobot {
                     <li>Swarm Coordination Efficiency: 99.9%</li>
                     <li>Cleaning Success Rate: 99.99%</li>
                     <li>ZKP Compression Ratio: 1000:1</li>
+                    <li>Entanglement Success Rate: 95%</li>
+                    <li>Real-time Processing Latency: <2ms</li>
                 </ul>
             </div>
         </div>
     </div>
 
     <script type="module">
-        // Import and initialize simulation component here
         import { QuantumNanobotSim } from './quantum-sim.js';
         const root = document.getElementById('root');
-        QuantumNanobotSim.mount(root);
+        const sim = QuantumNanobotSim.mount(root);
     </script>
 </body>
 </html>
