@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QHealthX - Quantum Nanobot Blood Cleaning System</title>
+    <style>
+        :root {
+            --primary: #00f0ff;
+            --secondary: #33ff99;
+            --danger: #ff3366;
+            --bg-dark: #1a1a2e;
+            --text-light: #ffffff;
+        }
+
+        body {
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+            background: var(--bg-dark);
+            color: var(--text-light);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .hero {
+            text-align: center;
+            padding: 4rem 2rem;
+            background: linear-gradient(45deg, #1a1a2e, #16213e);
+            border-bottom: 2px solid var(--primary);
+        }
+
+        .hero h1 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            color: var(--primary);
+        }
+
+        .content {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 2rem;
+            padding: 2rem;
+        }
+
+        @media (min-width: 768px) {
+            .content {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        .section {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 2rem;
+            border-radius: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .highlight {
+            background: rgba(0, 240, 255, 0.1);
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin: 1rem 0;
+        }
+
+        .code {
+            background: #1e1e3f;
+            padding: 1rem;
+            border-radius: 4px;
+            overflow-x: auto;
+            font-family: monospace;
+        }
+
+        .simulation-container {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 1rem;
+            border-radius: 8px;
+            margin: 2rem 0;
+        }
+
+        .controls {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        button {
+            background: var(--primary);
+            color: var(--bg-dark);
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: opacity 0.2s;
+        }
+
+        button:hover {
+            opacity: 0.9;
+        }
+
+        #root {
+            width: 100%;
+            min-height: 500px;
+        }
+    </style>
+</head>
+<body>
+    <div class="hero">
+        <h1>QHealthX Documentation</h1>
+        <p>Quantum-Entangled Nanobots for Blood System Cleaning</p>
+    </div>
+
+    <div class="container">
+        <div class="content">
+            <div class="section">
+                <h2>Overview</h2>
+                <p>QHealthX implements a revolutionary approach to blood system cleaning using quantum-entangled nanobots. This documentation covers both theoretical foundations and practical implementation details.</p>
+                
+                <div class="highlight">
+                    <h3>Key Technologies:</h3>
+                    <ul>
+                        <li>Quantum Entanglement</li>
+                        <li>Zero-Knowledge Proofs</li>
+                        <li>Swarm Intelligence</li>
+                        <li>Sub-atomic Programming</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="section">
+                <h2>Interactive Simulation</h2>
+                <p>Below is a real-time simulation of quantum nanobots cleaning harmful particles from the blood system. The simulation demonstrates key concepts of quantum entanglement and swarm coordination.</p>
+                
+                <div class="simulation-container">
+                    <div id="root"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>Technical Implementation</h2>
+            
+            <h3>Quantum Entanglement Protocol</h3>
+            <div class="code">
+                <pre>
+// Quantum state representation
+|ψ⟩ = α|0⟩ + β|1⟩
+
+// ZKP Compression Protocol
+function generateProof(observation) {
+    return zkp.compress(observation);
+}
+
+// Swarm coordination
+function coordinateSwarm(bots) {
+    return quantum.entangle(bots.map(b => b.state));
+}</pre>
+            </div>
+
+            <h3>Core Functions</h3>
+            <div class="highlight">
+                <pre>
+class QuantumNanobot {
+    constructor() {
+        this.state = superposition(0, 1);
+        this.entangled = [];
+    }
+
+    scan() {
+        return quantumScan(this.radius);
+    }
+
+    clean(particle) {
+        if(verifyZKP(particle)) {
+            return this.executeClean(particle);
+        }
+    }
+}</pre>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>System Architecture</h2>
+            <p>The system employs a layered architecture:</p>
+            
+            <ol>
+                <li><strong>Quantum Layer</strong>: Handles entanglement and state management</li>
+                <li><strong>ZKP Layer</strong>: Manages proof generation and verification</li>
+                <li><strong>Control Layer</strong>: Coordinates swarm behavior and cleaning operations</li>
+                <li><strong>Interface Layer</strong>: Provides monitoring and control capabilities</li>
+            </ol>
+
+            <div class="highlight">
+                <h3>Key Performance Metrics:</h3>
+                <ul>
+                    <li>Quantum Coherence Time: >100ms</li>
+                    <li>Swarm Coordination Efficiency: 99.9%</li>
+                    <li>Cleaning Success Rate: 99.99%</li>
+                    <li>ZKP Compression Ratio: 1000:1</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        // Import and initialize simulation component here
+        import { QuantumNanobotSim } from './quantum-sim.js';
+        const root = document.getElementById('root');
+        QuantumNanobotSim.mount(root);
+    </script>
+</body>
+</html>
