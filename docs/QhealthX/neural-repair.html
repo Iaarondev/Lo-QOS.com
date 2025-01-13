@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QHealthX - Quantum Neural Pathway Repair</title>
+    <meta name="description" content="Advanced neural pathway repair using quantum-entangled nanobots for treating neurological conditions">
+    <style>
+        /* [Previous styles from main page] */
+        .neuron {
+            background: #9966ff !important;
+            width: 10px !important;
+            height: 10px !important;
+        }
+        
+        .synapse {
+            background: #66aaff !important;
+            width: 2px !important;
+            height: 10px !important;
+            transform-origin: center;
+        }
+        
+        .repair-beam {
+            background: linear-gradient(90deg, #9966ff, transparent);
+            height: 2px;
+            position: absolute;
+            animation: beam 1s infinite;
+        }
+    </style>
+</head>
+<body>
+    <div class="hero">
+        <h1>Neural Pathway Repair</h1>
+        <p>Quantum-guided neural regeneration and synapse restoration</p>
+    </div>
+
+    <main class="content">
+        <div class="grid">
+            <section class="section">
+                <h2>Technology Overview</h2>
+                <div class="highlight">
+                    <h3>Applications:</h3>
+                    <ul>
+                        <li>Spinal cord injury repair</li>
+                        <li>Treatment of neurodegenerative diseases</li>
+                        <li>Stroke recovery assistance</li>
+                        <li>Memory pathway restoration</li>
+                    </ul>
+                </div>
+
+                <h3>Core Features</h3>
+                <ul>
+                    <li>Quantum mapping of neural pathways</li>
+                    <li>Precise synapse reconstruction</li>
+                    <li>Guided axon regeneration</li>
+                    <li>Real-time neural activity monitoring</li>
+                </ul>
+            </section>
+
+            <section class="section">
+                <h2>Live Neural Repair Simulation</h2>
+                <div class="simulation-container">
+                    <div id="root"></div>
+                    <div class="legend">
+                        <div class="legend-item">
+                            <div class="legend-color" style="background: #9966ff"></div>
+                            <span>Neurons</span>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-color" style="background: #66aaff"></div>
+                            <span>Synapses</span>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-color" style="background: #00f0ff"></div>
+                            <span>Repair Nanobots</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <section class="section">
+            <h2>Neural Repair Protocol</h2>
+            <div class="code">
+                <pre><code>
+class NeuralRepairBot extends QuantumNanobot {
+    constructor() {
+        super();
+        this.repairCapabilities = {
+            axonGuiding: true,
+            synapseReconstruction: true,
+            myelinRepair: true
+        };
+    }
+
+    async mapNeuralPathway(region) {
+        const quantumMap = await this.scanNeuralActivity(region);
+        return this.reconstructPathway(quantumMap);
+    }
+
+    async repairSynapse(connection) {
+        const optimalStructure = await this.analyzeHistoricalData(connection);
+        return this.synthesizeRepairMaterials(optimalStructure);
+    }
+
+    async guideAxonGrowth(start, target) {
+        const growthPath = this.calculateOptimalPath(start, target);
+        return this.deployGrowthFactors(growthPath);
+    }
+}
+                </code></pre>
+            </div>
+        </section>
+
+        <section class="section">
+            <h2>Clinical Success Metrics</h2>
+            <div class="highlight">
+                <h3>Performance Indicators:</h3>
+                <ul>
+                    <li>Neural Pathway Mapping Accuracy: 99.9%</li>
+                    <li>Synapse Reconstruction Success: 95%</li>
+                    <li>Axon Regeneration Rate: +400%</li>
+                    <li>Functional Recovery: Up to 85%</li>
+                </ul>
+            </div>
+        </section>
+    </main>
+
+    <script>
+        // Neural repair simulation parameters
+        const neuralParams = {
+            particleTypes: {
+                neuron: { color: '#9966ff', size: 10 },
+                synapse: { color: '#66aaff', size: 2 }
+            },
+            repairBeamColor: '#9966ff',
+            neuralActivityThreshold: 0.75
+        };
+
+        // Initialize neural repair simulation
+        import { QuantumNanobotSim } from './quantum-sim.js';
+        const sim = QuantumNanobotSim.mount(
+            document.getElementById('root'),
+            neuralParams
+        );
+    </script>
+</body>
+</html>

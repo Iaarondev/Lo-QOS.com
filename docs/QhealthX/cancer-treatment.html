@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QHealthX - Quantum Cancer Cell Detection and Treatment</title>
+    <meta name="description" content="Precision cancer treatment using quantum-entangled nanobots for targeted cell detection and elimination">
+    <style>
+        /* [Previous styles from main page] */
+        .cancer-cell {
+            background: #ff4444 !important;
+            width: 8px !important;
+            height: 8px !important;
+        }
+        
+        .healthy-cell {
+            background: #44ff44 !important;
+            opacity: 0.3 !important;
+        }
+        
+        .treatment-zone {
+            border: 2px solid #ff4444;
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+    </style>
+</head>
+<body>
+    <div class="hero">
+        <h1>Cancer Cell Detection & Treatment</h1>
+        <p>Precision quantum nanobot therapy for targeted cancer treatment</p>
+    </div>
+
+    <main class="content">
+        <div class="grid">
+            <section class="section">
+                <h2>Technology Overview</h2>
+                <div class="highlight">
+                    <h3>Key Features:</h3>
+                    <ul>
+                        <li>Real-time cancer cell detection using quantum signatures</li>
+                        <li>Targeted treatment with minimal impact on healthy cells</li>
+                        <li>Swarm coordination for efficient tumor coverage</li>
+                        <li>ZKP-verified treatment validation</li>
+                    </ul>
+                </div>
+
+                <h3>Clinical Applications</h3>
+                <ul>
+                    <li>Early-stage tumor detection</li>
+                    <li>Precision chemotherapy delivery</li>
+                    <li>Post-treatment cancer cell monitoring</li>
+                    <li>Metastasis prevention</li>
+                </ul>
+            </section>
+
+            <section class="section">
+                <h2>Live Treatment Simulation</h2>
+                <div class="simulation-container">
+                    <div id="root"></div>
+                    <div class="legend">
+                        <div class="legend-item">
+                            <div class="legend-color" style="background: #00f0ff"></div>
+                            <span>Treatment Nanobots</span>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-color" style="background: #ff4444"></div>
+                            <span>Cancer Cells</span>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-color" style="background: #44ff44"></div>
+                            <span>Healthy Cells</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <section class="section">
+            <h2>Treatment Protocol</h2>
+            <div class="code">
+                <pre><code>
+class CancerTreatmentBot extends QuantumNanobot {
+    constructor() {
+        super();
+        this.treatmentPayload = {
+            type: 'targeted_therapy',
+            dosage: 0,
+            activated: false
+        };
+    }
+
+    async detectCancerCell(cell) {
+        const quantumSignature = await this.scanCellStructure(cell);
+        return this.validateMalignancy(quantumSignature);
+    }
+
+    async deliverTreatment(cell) {
+        if (await this.detectCancerCell(cell)) {
+            this.treatmentPayload.activated = true;
+            this.treatmentPayload.dosage = this.calculateOptimalDosage(cell);
+            return this.administerTreatment(cell);
+        }
+        return false;
+    }
+}
+                </code></pre>
+            </div>
+        </section>
+
+        <section class="section">
+            <h2>Clinical Outcomes</h2>
+            <div class="highlight">
+                <h3>Performance Metrics:</h3>
+                <ul>
+                    <li>Detection Accuracy: 99.99%</li>
+                    <li>Treatment Precision: 99.95%</li>
+                    <li>Healthy Cell Preservation: 99.99%</li>
+                    <li>Average Treatment Time: 48 hours</li>
+                </ul>
+            </div>
+        </section>
+    </main>
+
+    <script>
+        // Modify simulation parameters for cancer treatment
+        const specializedParams = {
+            particleTypes: {
+                cancer: { color: '#ff4444', size: 8 },
+                healthy: { color: '#44ff44', size: 4, opacity: 0.3 }
+            },
+            treatmentRadius: 30,
+            healingRate: 0.98
+        };
+
+        // Import and initialize simulation with cancer treatment parameters
+        import { QuantumNanobotSim } from './quantum-sim.js';
+        const sim = QuantumNanobotSim.mount(
+            document.getElementById('root'),
+            specializedParams
+        );
+    </script>
+</body>
+</html>
