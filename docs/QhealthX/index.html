@@ -3,7 +3,47 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>QHealthX - Quantum Nanobot Blood Cleaning System</title>
+
+    <!-- Primary Meta Tags -->
+    <title>QHealthX - Quantum Nanobot Blood System Cleaning | Advanced Medical Technology</title>
+    <meta name="title" content="QHealthX - Quantum Nanobot Blood System Cleaning | Advanced Medical Technology">
+    <meta name="description" content="Discover QHealthX's revolutionary quantum-entangled nanobots for blood system cleaning. Explore our advanced medical technology combining quantum computing, AI, and nanotechnology.">
+    <meta name="keywords" content="quantum nanobots, blood cleaning system, medical nanotechnology, quantum computing medicine, AI healthcare, quantum entanglement, zero knowledge proofs, swarm intelligence, medical innovation">
+    <meta name="author" content="QHealthX Research Team">
+    <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://docs.qhealthx.com/">
+    <meta property="og:title" content="QHealthX - Advanced Quantum Nanobot Technology for Medical Applications">
+    <meta property="og:description" content="Revolutionary blood system cleaning using quantum-entangled nanobots. Experience the future of medical technology with real-time quantum computing and AI integration.">
+    <meta property="og:image" content="https://docs.qhealthx.com/assets/images/qhealthx-preview.jpg">
+
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="https://docs.qhealthx.com/">
+    <meta property="twitter:title" content="QHealthX - Quantum Nanobot Medical Technology">
+    <meta property="twitter:description" content="Experience the future of medical technology with quantum-entangled nanobots for blood system cleaning. Real-time quantum computing meets medical innovation.">
+    <meta property="twitter:image" content="https://docs.qhealthx.com/assets/images/qhealthx-preview.jpg">
+
+    <!-- Schema.org Markup -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "TechArticle",
+        "headline": "QHealthX - Quantum Nanobot Blood System Cleaning",
+        "description": "Comprehensive documentation on quantum-entangled nanobots for blood system cleaning, featuring real-time simulation and technical implementation details.",
+        "author": {
+            "@type": "Organization",
+            "name": "QHealthX Research Team"
+        },
+        "datePublished": "2025-01-13",
+        "dateModified": "2025-01-13",
+        "articleSection": "Medical Technology",
+        "keywords": "quantum nanobots, blood cleaning, medical nanotechnology, quantum computing, AI healthcare"
+    }
+    </script>
+
     <style>
         :root {
             --primary: #00f0ff;
@@ -14,65 +54,133 @@
             --quantum-glow: 0 0 20px var(--primary);
         }
 
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
         body {
             font-family: 'Segoe UI', system-ui, sans-serif;
             line-height: 1.6;
-            margin: 0;
-            padding: 0;
             background: var(--bg-dark);
             color: var(--text-light);
+            overflow-x: hidden;
         }
 
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 2rem;
+        /* Particle Animation Effects */
+        .particle-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .quantum-particle {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: var(--primary);
+            border-radius: 50%;
+            animation: float 8s infinite;
+            opacity: 0.3;
+        }
+
+        @keyframes float {
+            0% {
+                transform: translate(0, 0) scale(1);
+                opacity: 0.3;
+            }
+            50% {
+                transform: translate(100px, -100px) scale(1.5);
+                opacity: 0.6;
+            }
+            100% {
+                transform: translate(0, 0) scale(1);
+                opacity: 0.3;
+            }
+        }
+
+        .quantum-wave {
+            position: absolute;
+            border: 2px solid var(--primary);
+            border-radius: 50%;
+            animation: wave 4s infinite;
+            opacity: 0;
+        }
+
+        @keyframes wave {
+            0% {
+                width: 0;
+                height: 0;
+                opacity: 0.5;
+            }
+            100% {
+                width: 200px;
+                height: 200px;
+                opacity: 0;
+            }
         }
 
         .hero {
+            position: relative;
             text-align: center;
-            padding: 4rem 2rem;
+            padding: 6rem 2rem;
             background: linear-gradient(45deg, #1a1a2e, #16213e);
             border-bottom: 2px solid var(--primary);
-            position: relative;
             overflow: hidden;
         }
 
-        .hero::after {
+        .hero::before {
             content: '';
             position: absolute;
             top: 0;
             left: 0;
             right: 0;
             bottom: 0;
-            background: linear-gradient(90deg, 
-                transparent 0%,
-                rgba(0, 240, 255, 0.1) 50%,
-                transparent 100%);
-            animation: quantum-wave 8s linear infinite;
+            background: radial-gradient(
+                circle at 50% 50%,
+                rgba(0, 240, 255, 0.1),
+                transparent 70%
+            );
+            animation: pulse 4s infinite;
         }
 
-        @keyframes quantum-wave {
-            0% { transform: translateX(-100%); }
-            100% { transform: translateX(100%); }
+        @keyframes pulse {
+            0% { transform: scale(1); opacity: 0.5; }
+            50% { transform: scale(1.2); opacity: 0.8; }
+            100% { transform: scale(1); opacity: 0.5; }
         }
 
         .hero h1 {
-            font-size: 2.5rem;
+            font-size: 3rem;
             margin-bottom: 1rem;
             color: var(--primary);
             text-shadow: var(--quantum-glow);
+            position: relative;
+            z-index: 1;
         }
 
         .content {
+            position: relative;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+            z-index: 1;
+        }
+
+        .grid {
             display: grid;
             grid-template-columns: 1fr;
             gap: 2rem;
-            padding: 2rem;
+            margin: 2rem 0;
         }
 
         @media (min-width: 768px) {
-            .content {
+            .grid {
                 grid-template-columns: 1fr 1fr;
             }
         }
@@ -82,7 +190,8 @@
             padding: 2rem;
             border-radius: 8px;
             border: 1px solid rgba(255, 255, 255, 0.1);
-            transition: transform 0.3s ease;
+            backdrop-filter: blur(10px);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
         }
 
         .section:hover {
@@ -98,39 +207,13 @@
             border: 1px solid rgba(0, 240, 255, 0.2);
         }
 
-        .code {
-            background: #1e1e3f;
-            padding: 1rem;
-            border-radius: 4px;
-            overflow-x: auto;
-            font-family: monospace;
-            position: relative;
-        }
-
-        .code::before {
-            content: '>';
-            position: absolute;
-            left: 10px;
-            color: var(--primary);
-            opacity: 0.5;
-        }
-
         .simulation-container {
+            position: relative;
             background: rgba(0, 0, 0, 0.3);
             padding: 1rem;
             border-radius: 8px;
             margin: 2rem 0;
-            position: relative;
-        }
-
-        .simulation-info {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            background: rgba(0, 0, 0, 0.7);
-            padding: 10px;
-            border-radius: 4px;
-            font-size: 0.9em;
+            min-height: 500px;
         }
 
         .controls {
@@ -151,6 +234,7 @@
             display: flex;
             align-items: center;
             gap: 0.5rem;
+            font-weight: 500;
         }
 
         button:hover {
@@ -181,12 +265,6 @@
             border-radius: 50%;
         }
 
-        #root {
-            width: 100%;
-            min-height: 500px;
-            position: relative;
-        }
-
         .metrics-panel {
             position: absolute;
             top: 10px;
@@ -195,45 +273,64 @@
             padding: 1rem;
             border-radius: 4px;
             border: 1px solid var(--primary);
+            font-family: monospace;
         }
 
-        .quantum-badge {
-            display: inline-flex;
-            align-items: center;
-            padding: 0.25rem 0.5rem;
-            background: rgba(0, 240, 255, 0.1);
+        .code {
+            background: #1e1e3f;
+            padding: 1.5rem;
             border-radius: 4px;
-            margin: 0.25rem;
-            font-size: 0.9em;
+            overflow-x: auto;
+            font-family: monospace;
+            line-height: 1.4;
+            margin: 1rem 0;
+        }
+
+        code {
+            color: var(--primary);
+        }
+
+        pre {
+            margin: 0;
+        }
+
+        footer {
+            text-align: center;
+            padding: 2rem;
+            margin-top: 4rem;
+            background: rgba(0, 0, 0, 0.2);
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
         }
     </style>
 </head>
 <body>
-    <div class="hero">
+    <div class="particle-container" id="particles"></div>
+
+    <header class="hero">
         <h1>QHealthX Documentation</h1>
         <p>Quantum-Entangled Nanobots for Blood System Cleaning</p>
-    </div>
+    </header>
 
-    <div class="container">
-        <div class="content">
-            <div class="section">
+    <main class="content">
+        <div class="grid">
+            <section class="section">
                 <h2>Overview</h2>
                 <p>QHealthX implements a revolutionary approach to blood system cleaning using quantum-entangled nanobots. This documentation covers both theoretical foundations and practical implementation details.</p>
                 
                 <div class="highlight">
-                    <h3>Key Technologies:</h3>
-                    <div class="quantum-badges">
-                        <span class="quantum-badge">Quantum Entanglement</span>
-                        <span class="quantum-badge">Zero-Knowledge Proofs</span>
-                        <span class="quantum-badge">Swarm Intelligence</span>
-                        <span class="quantum-badge">Sub-atomic Programming</span>
-                    </div>
+                    <h3>Key Technologies</h3>
+                    <ul>
+                        <li>Quantum Entanglement for Synchronized Operation</li>
+                        <li>Zero-Knowledge Proofs for Secure Communication</li>
+                        <li>Swarm Intelligence for Coordinated Action</li>
+                        <li>Sub-atomic Programming for Precise Control</li>
+                    </ul>
                 </div>
-            </div>
+            </section>
 
-            <div class="section">
+            <section class="section">
                 <h2>Interactive Simulation</h2>
-                <p>Below is a real-time simulation of quantum nanobots cleaning harmful particles from the blood system. The simulation demonstrates key concepts of quantum entanglement and swarm coordination.</p>
+                <p>Below is a real-time simulation of quantum nanobots cleaning harmful particles from the blood system.</p>
                 
                 <div class="simulation-container">
                     <div id="root"></div>
@@ -256,32 +353,17 @@
                         </div>
                     </div>
                 </div>
-            </div>
+            </section>
         </div>
 
-        <div class="section">
+        <section class="section">
             <h2>Technical Implementation</h2>
             
-            <h3>Quantum Entanglement Protocol</h3>
             <div class="code">
-                <pre>
-// Quantum state representation
+                <pre><code>// Quantum state representation
 |ψ⟩ = α|0⟩ + β|1⟩
 
-// ZKP Compression Protocol
-function generateProof(observation) {
-    return zkp.compress(observation);
-}
-
-// Swarm coordination
-function coordinateSwarm(bots) {
-    return quantum.entangle(bots.map(b => b.state));
-}</pre>
-            </div>
-
-            <h3>Core Functions</h3>
-            <div class="highlight">
-                <pre>
+// Core nanobot implementation
 class QuantumNanobot {
     constructor() {
         this.state = superposition(0, 1);
@@ -303,23 +385,14 @@ class QuantumNanobot {
         this.entangledWith = otherBot;
         this.state = 'entangled';
     }
-}</pre>
+}</code></pre>
             </div>
-        </div>
+        </section>
 
-        <div class="section">
+        <section class="section">
             <h2>System Architecture</h2>
-            <p>The system employs a layered architecture with quantum-enhanced features:</p>
-            
-            <ol>
-                <li><strong>Quantum Layer</strong>: Handles entanglement and state management</li>
-                <li><strong>ZKP Layer</strong>: Manages proof generation and verification</li>
-                <li><strong>Control Layer</strong>: Coordinates swarm behavior and cleaning operations</li>
-                <li><strong>Interface Layer</strong>: Provides monitoring and control capabilities</li>
-            </ol>
-
             <div class="highlight">
-                <h3>Key Performance Metrics:</h3>
+                <h3>Key Performance Metrics</h3>
                 <ul>
                     <li>Quantum Coherence Time: >100ms</li>
                     <li>Swarm Coordination Efficiency: 99.9%</li>
@@ -329,13 +402,84 @@ class QuantumNanobot {
                     <li>Real-time Processing Latency: <2ms</li>
                 </ul>
             </div>
-        </div>
-    </div>
+        </section>
+    </main>
 
+    <footer>
+        <p>&copy; 2025 QHealthX. All rights reserved.</p>
+    </footer>
+
+    <script>
+        // Particle animation system
+        function createParticles() {
+            const container = document.getElementById('particles');
+            const particleCount = 50;
+
+            for (let i = 0; i < particleCount; i++) {
+                createParticle(container);
+            }
+        }
+
+        function createParticle(container) {
+            const particle = document.createElement('div');
+            particle.className = 'quantum-particle';
+            
+            // Random position
+            particle.style.left = Math.random() * 100 + 'vw';
+            particle.style.top = Math.random() * 100 + 'vh';
+            particle.style.top = Math.random() * 100 + 'vh';
+            
+            // Random animation delay and duration
+            particle.style.animationDelay = Math.random() * 5 + 's';
+            particle.style.animationDuration = (Math.random() * 5 + 5) + 's';
+            
+            // Add quantum wave effect
+            const wave = document.createElement('div');
+            wave.className = 'quantum-wave';
+            particle.appendChild(wave);
+            
+            container.appendChild(particle);
+
+            // Recreate particle when animation ends
+            particle.addEventListener('animationend', () => {
+                container.removeChild(particle);
+                createParticle(container);
+            });
+        }
+
+        function updateParticles() {
+            const particles = document.querySelectorAll('.quantum-particle');
+            particles.forEach(particle => {
+                // Update quantum wave effect based on simulation state
+                const wave = particle.querySelector('.quantum-wave');
+                if (wave) {
+                    wave.style.borderColor = `hsl(${Math.random() * 180 + 180}, 100%, 70%)`;
+                }
+            });
+        }
+
+        // Initialize particles
+        document.addEventListener('DOMContentLoaded', () => {
+            createParticles();
+            setInterval(updateParticles, 1000);
+        });
+    </script>
+
+    <!-- Simulation Script -->
     <script type="module">
         import { QuantumNanobotSim } from './quantum-sim.js';
+        
+        // Mount simulation
         const root = document.getElementById('root');
         const sim = QuantumNanobotSim.mount(root);
+
+        // Update particle effects based on simulation state
+        sim.onStateChange((state) => {
+            document.documentElement.style.setProperty(
+                '--primary',
+                `hsl(${state.quantumPhase * 180 / Math.PI}, 100%, 50%)`
+            );
+        });
     </script>
 </body>
 </html>
