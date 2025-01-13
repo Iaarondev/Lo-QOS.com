@@ -37,7 +37,7 @@
       text-align: center;
       margin: 20px;
     }
-    .rules, .player-ui {
+    .rules, .player-ui, .ai-guide {
       margin: 20px auto;
       padding: 15px;
       background-color: #fff;
@@ -91,6 +91,10 @@
         <strong>Hints:</strong> <span id="player-hints">Plan your next move carefully.</span>
       </div>
     </div>
+    <div class="ai-guide">
+      <h2>AI Companion:</h2>
+      <p id="ai-guide-text">Welcome to Quantum Chess! I am your AI guide. I will assist you in mastering the complexities of each dimension. Start by making a move!</p>
+    </div>
   </main>
   <footer>
     <p style="text-align: center;">&copy; 2025 Quantum Chess Project</p>
@@ -100,6 +104,29 @@
     let quantumState = false;
     let currentPlayer = "Player 1";
     let dimensions = 1;
+    const aiGuide = document.getElementById("ai-guide-text");
+
+    // Enemy AI for different dimensions
+    const enemyAI = {
+      classicMove(board, dimension) {
+        // Simple AI logic for classic chess
+        console.log(`Enemy AI (Classic) playing on board ${dimension}`);
+        const randomCell = Array.from(board.children).find(cell => !cell.textContent);
+        if (randomCell) {
+          randomCell.textContent = "O";
+          aiGuide.textContent = `Enemy moved on Board ${dimension} in Classic mode.`;
+        }
+      },
+      quantumMove(board, dimension) {
+        // Simple AI logic for quantum chess
+        console.log(`Enemy AI (Quantum) playing on board ${dimension}`);
+        const randomCell = Array.from(board.children).find(cell => !cell.textContent);
+        if (randomCell) {
+          randomCell.textContent = "?";
+          aiGuide.textContent = `Enemy triggered a Quantum move on Board ${dimension}.`;
+        }
+      }
+    };
 
     // Initialize Board
     function createBoard(containerId, boards = 1) {
@@ -121,7 +148,7 @@
             cell.classList.add("cell");
             cell.dataset.position = `${b},${row},${col}`;
             if ((row + col) % 2 === 0) cell.classList.add("dark");
-            cell.addEventListener("click", () => cellClicked(cell));
+            cell.addEventListener("click", () => cellClicked(cell, b));
             board.appendChild(cell);
           }
         }
@@ -129,17 +156,21 @@
       }
     }
 
-    function cellClicked(cell) {
+    function cellClicked(cell, boardIndex) {
       const position = cell.dataset.position;
       const hints = document.getElementById("player-hints");
       if (quantumState) {
         console.log(`Quantum interaction at ${position}`);
         cell.textContent = "?"; // Example of quantum uncertainty
         hints.textContent = "Quantum interaction triggered. Opponent's turn!";
+        aiGuide.textContent = "You performed a quantum interaction. Watch how it affects your opponent!";
+        setTimeout(() => enemyAI.quantumMove(cell.parentElement, boardIndex), 1000);
       } else {
         console.log(`Classic move at ${position}`);
         cell.textContent = "X"; // Example of a classic move
         hints.textContent = "Classic move made. Switch to quantum state for advanced strategies.";
+        aiGuide.textContent = "You made a classic move. Try exploring the quantum state for more strategic options!";
+        setTimeout(() => enemyAI.classicMove(cell.parentElement, boardIndex), 1000);
       }
       switchPlayer();
     }
@@ -148,17 +179,22 @@
       quantumState = !quantumState;
       console.log(`Quantum State: ${quantumState ? "ON" : "OFF"}`);
       alert(`Quantum State is now ${quantumState ? "ON" : "OFF"}`);
+      aiGuide.textContent = quantumState
+        ? "Quantum State activated. Explore possibilities like entanglement and uncertainty."
+        : "Classic State activated. Return to traditional movements and strategies.";
     }
 
     function scaleDimensions() {
       dimensions += 1;
       createBoard("board-container", dimensions);
       document.getElementById("player-hints").textContent = `Dimensions scaled to ${dimensions}. New board added!`;
+      aiGuide.textContent = `You added a new dimension! Manage pieces across multiple boards effectively.`;
     }
 
     function switchPlayer() {
       currentPlayer = currentPlayer === "Player 1" ? "Player 2" : "Player 1";
       document.getElementById("current-player").textContent = currentPlayer;
+      aiGuide.textContent = `${currentPlayer}, it's your turn! Analyze the board carefully.`;
     }
 
     // Example Game Initialization
@@ -173,6 +209,7 @@
       queenCell.textContent = "Q";
 
       document.getElementById("player-hints").textContent = "Game started! Plan your strategy.";
+      aiGuide.textContent = "Game started! I am here to assist you with strategies and mechanics.";
     }
 
     // Load board on initial page load
