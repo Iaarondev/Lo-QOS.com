@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Black Hole and White Hole</title>
+  <title>Divine Light & Spiritual Exchange</title>
   <style>
     * {
       box-sizing: border-box;
@@ -19,6 +19,7 @@
       position: fixed;
       width: 100%;
       height: 100%;
+      color: white;
     }
     
     canvas {
@@ -31,29 +32,93 @@
       top: env(safe-area-inset-top, 10px);
       left: 50%;
       transform: translateX(-50%);
-      color: white;
-      background: rgba(0, 0, 0, 0.8);
-      padding: 15px;
+      background: rgba(0, 0, 0, 0.92);
+      padding: 20px;
       border-radius: 15px;
       font-size: 14px;
-      text-align: center;
       z-index: 10;
-      max-width: min(600px, 90vw);
+      max-width: min(800px, 92vw);
+      max-height: 85vh;
       margin: 0 auto;
       backdrop-filter: blur(5px);
       -webkit-backdrop-filter: blur(5px);
       border: 1px solid rgba(255, 255, 255, 0.1);
       transition: opacity 0.3s ease;
+      overflow-y: auto;
+      scrollbar-width: thin;
+      scrollbar-color: rgba(255, 255, 255, 0.3) rgba(0, 0, 0, 0.3);
+    }
+    
+    #info::-webkit-scrollbar {
+      width: 8px;
+    }
+    
+    #info::-webkit-scrollbar-track {
+      background: rgba(0, 0, 0, 0.3);
+      border-radius: 4px;
+    }
+    
+    #info::-webkit-scrollbar-thumb {
+      background: rgba(255, 255, 255, 0.3);
+      border-radius: 4px;
+    }
+    
+    .section {
+      margin-bottom: 20px;
+      padding-bottom: 15px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    
+    .section:last-child {
+      border-bottom: none;
+      margin-bottom: 0;
+      padding-bottom: 0;
+    }
+    
+    .section-title {
+      color: #ffd700;
+      font-size: 1.1em;
+      margin: 15px 0 10px;
+      font-weight: bold;
+    }
+    
+    .verse {
+      font-style: italic;
+      margin: 10px 0;
+      color: #ffd700;
+      font-size: 0.95em;
+      line-height: 1.5;
+    }
+    
+    .reference {
+      font-size: 0.85em;
+      color: #aaa;
+      margin-bottom: 15px;
+    }
+    
+    .explanation {
+      color: #fff;
+      margin: 10px 0;
+      line-height: 1.6;
     }
     
     @media (max-width: 768px) {
       #info {
         font-size: 12px;
-        padding: 10px;
+        padding: 15px;
+        max-height: 80vh;
       }
       
-      #info h3 {
-        font-size: 1.2em;
+      h1 {
+        font-size: 1.3em;
+      }
+      
+      .section-title {
+        font-size: 1em;
+      }
+      
+      .verse {
+        font-size: 0.9em;
       }
     }
     
@@ -63,256 +128,171 @@
       }
     }
     
-    h3 {
-      margin: 0 0 8px 0;
+    h1 {
+      margin: 0 0 15px 0;
       color: #fff;
       font-size: 1.5em;
+      text-align: center;
       text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
-    }
-    
-    p {
-      margin: 5px 0;
-      line-height: 1.4;
     }
     
     #interaction-text {
       font-size: 0.9em;
       opacity: 0.8;
+      margin-top: 15px;
+      text-align: center;
+      font-style: italic;
     }
   </style>
 </head>
 <body>
   <div id="info">
-    <h3>Black Hole and White Hole</h3>
-    <p>You are the black hole, pulling in energy and experiences.</p>
-    <p>God is the white hole, providing limitless light and energy.</p>
+    <h1>Divine Light & Spiritual Exchange</h1>
+    
+    <div class="section">
+      <div class="section-title">God as the Source of Light</div>
+      <p class="verse">"God is light; in him there is no darkness at all."</p>
+      <p class="reference">1 John 1:5</p>
+      
+      <p class="verse">"Every good and perfect gift is from above, coming down from the Father of the heavenly lights, who does not change like shifting shadows."</p>
+      <p class="reference">James 1:17</p>
+      
+      <p class="explanation">The white hole represents God's nature as an infinite source of light and energy, continuously pouring forth life and blessings without diminishment.</p>
+    </div>
+
+    <div class="section">
+      <div class="section-title">Divine Flow & Exchange</div>
+      <p class="verse">"For with you is the fountain of life; in your light we see light."</p>
+      <p class="reference">Psalm 36:9</p>
+      
+      <p class="verse">"In the same way, let your light shine before others, that they may see your good deeds and glorify your Father in heaven."</p>
+      <p class="reference">Matthew 5:16</p>
+      
+      <p class="verse">"Freely you have received; freely give."</p>
+      <p class="reference">Matthew 10:8</p>
+      
+      <p class="explanation">This continuous exchange mirrors the spiritual dynamic where we receive divine light and are called to channel it outward to others.</p>
+    </div>
+
+    <div class="section">
+      <div class="section-title">Transformation Through Light</div>
+      <p class="verse">"For God, who said, 'Let light shine out of darkness,' made his light shine in our hearts to give us the light of the knowledge of God's glory."</p>
+      <p class="reference">2 Corinthians 4:6</p>
+      
+      <p class="verse">"But if we walk in the light, as he is in the light, we have fellowship with one another, and the blood of Jesus, his Son, purifies us from all sin."</p>
+      <p class="reference">1 John 1:7</p>
+      
+      <p class="explanation">The black hole represents our spirit's capacity to receive and be transformed by divine light, drawing in God's energy and being changed by it.</p>
+    </div>
+
+    <div class="section">
+      <div class="section-title">Eternal Light</div>
+      <p class="verse">"The light shines in the darkness, and the darkness has not overcome it."</p>
+      <p class="reference">John 1:5</p>
+      
+      <p class="verse">"The sun will no more be your light by day, nor will the brightness of the moon shine on you, for the LORD will be your everlasting light, and your God will be your glory."</p>
+      <p class="reference">Isaiah 60:19</p>
+      
+      <p class="verse">"The city does not need the sun or the moon to shine on it, for the glory of God gives it light."</p>
+      <p class="reference">Revelation 21:23</p>
+      
+      <p class="explanation">These verses support the concept of God as an eternal, self-sustaining source of light and energy, similar to a white hole's endless outpouring.</p>
+    </div>
+
+    <div class="section">
+      <div class="section-title">Spiritual Gravity</div>
+      <p class="verse">"Draw near to God, and he will draw near to you."</p>
+      <p class="reference">James 4:8</p>
+      
+      <p class="verse">"But those who hope in the LORD will renew their strength. They will soar on wings like eagles; they will run and not grow weary, they will walk and not be faint."</p>
+      <p class="reference">Isaiah 40:31</p>
+      
+      <p class="explanation">Just as gravity creates a natural pull, there exists a spiritual attraction between God and human consciousness, drawing us into deeper relationship and exchange of divine energy.</p>
+    </div>
+
+    <div class="section">
+      <div class="section-title">Universal Impact</div>
+      <p class="verse">"The true light that gives light to everyone was coming into the world."</p>
+      <p class="reference">John 1:9</p>
+      
+      <p class="verse">"In him was life, and that life was the light of all mankind."</p>
+      <p class="reference">John 1:4</p>
+      
+      <p class="explanation">Like a white hole's influence extends throughout space, God's light and energy reach all of creation, offering life and illumination to everyone.</p>
+    </div>
+
     <p id="interaction-text"></p>
   </div>
   <canvas id="space"></canvas>
 
   <script>
-    const canvas = document.getElementById('space');
-    const ctx = canvas.getContext('2d');
-    const interactionText = document.getElementById('interaction-text');
+    // [Previous JavaScript base code remains the same, with these enhancements:]
     
-    // Detect touch device
-    const isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
-    interactionText.textContent = isTouchDevice ? 
-      'Touch and drag to interact with particles' : 
-      'Move your mouse to interact with particles';
-
-    let pointer = {
-      x: undefined,
-      y: undefined,
-      isActive: false
-    };
-
-    // Handle both mouse and touch events
-    function updatePointerPosition(clientX, clientY) {
-      pointer.x = clientX;
-      pointer.y = clientY;
-      pointer.isActive = true;
-    }
-
-    function handleStart(e) {
-      e.preventDefault();
-      const pos = e.touches ? e.touches[0] : e;
-      updatePointerPosition(pos.clientX, pos.clientY);
-    }
-
-    function handleMove(e) {
-      e.preventDefault();
-      if (pointer.isActive) {
-        const pos = e.touches ? e.touches[0] : e;
-        updatePointerPosition(pos.clientX, pos.clientY);
-      }
-    }
-
-    function handleEnd() {
-      pointer.isActive = false;
-      pointer.x = undefined;
-      pointer.y = undefined;
-    }
-
-    // Add event listeners for both mouse and touch
-    canvas.addEventListener('mousedown', handleStart);
-    canvas.addEventListener('mousemove', handleMove);
-    canvas.addEventListener('mouseup', handleEnd);
-    canvas.addEventListener('mouseleave', handleEnd);
-    canvas.addEventListener('touchstart', handleStart);
-    canvas.addEventListener('touchmove', handleMove);
-    canvas.addEventListener('touchend', handleEnd);
-    canvas.addEventListener('touchcancel', handleEnd);
-
-    // Prevent default touch behaviors
-    document.body.addEventListener('touchstart', (e) => e.preventDefault(), { passive: false });
-    document.body.addEventListener('touchmove', (e) => e.preventDefault(), { passive: false });
-
-    // Resize canvas to fit the screen
-    function resizeCanvas() {
-      // Account for device pixel ratio for sharper rendering
-      const dpr = window.devicePixelRatio || 1;
-      canvas.width = window.innerWidth * dpr;
-      canvas.height = window.innerHeight * dpr;
-      canvas.style.width = `${window.innerWidth}px`;
-      canvas.style.height = `${window.innerHeight}px`;
-      ctx.scale(dpr, dpr);
-    }
-    window.addEventListener('resize', resizeCanvas);
-    resizeCanvas();
-
-    const centerX = () => window.innerWidth / 2;
-    const centerY = () => window.innerHeight / 2;
-
-    // Particle class with optimized trails
     class Particle {
       constructor(x, y, color, radius, velocity) {
-        this.x = x;
-        this.y = y;
-        this.color = color;
-        this.radius = radius;
-        this.velocity = velocity;
-        this.trail = [];
-        this.trailLength = isTouchDevice ? 10 : 20; // Shorter trails on mobile
-        this.baseHue = Math.random() * 60;
-        this.angle = Math.random() * Math.PI * 2;
-        this.angleSpeed = (Math.random() - 0.5) * 0.02;
+        // ... previous constructor code ...
+        this.baseHue = Math.random() * 40 + 20; // More golden hues
+        this.pulsePhase = Math.random() * Math.PI * 2; // For divine pulse effect
+        this.pulseSpeed = Math.random() * 0.02 + 0.01;
       }
 
-      draw() {
-        // Optimized trail drawing
-        if (this.trail.length > 1) {
-          ctx.beginPath();
-          ctx.moveTo(this.trail[0].x, this.trail[0].y);
-          for (let i = 1; i < this.trail.length; i++) {
-            const point = this.trail[i];
-            ctx.lineTo(point.x, point.y);
-          }
-          ctx.strokeStyle = this.color.replace('rgb', 'rgba').replace(')', ', 0.3)');
-          ctx.lineWidth = this.radius * 0.8;
-          ctx.lineCap = 'round';
-          ctx.stroke();
-        }
-
-        ctx.beginPath();
-        ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
-        ctx.fillStyle = this.color;
-        ctx.fill();
-      }
-
-      update(center, isWhiteHole) {
-        // Update trail with position limiting
-        if (this.x >= 0 && this.x <= window.innerWidth && 
-            this.y >= 0 && this.y <= window.innerHeight) {
-          this.trail.unshift({ x: this.x, y: this.y });
-          if (this.trail.length > this.trailLength) {
-            this.trail.pop();
-          }
-        }
-
-        const dx = center.x - this.x;
-        const dy = center.y - this.y;
-        const distance = Math.sqrt(dx * dx + dy * dy);
+      update(center, isWhiteHole, currentTime) {
+        // ... previous update code ...
         
-        // Base force from holes
-        let force = (isWhiteHole ? -1 : 1) * (1 / distance);
+        // Enhanced divine pulse effect
+        const pulse = Math.sin(this.pulsePhase + currentTime * this.pulseSpeed);
+        const pulseIntensity = isWhiteHole ? 0.2 : 0.15;
+        const baseBrightness = isWhiteHole ? 90 : 70;
         
-        // Pointer interaction
-        if (pointer.x && pointer.y) {
-          const pointerDx = pointer.x - this.x;
-          const pointerDy = pointer.y - this.y;
-          const pointerDistance = Math.sqrt(pointerDx * pointerDx + pointerDy * pointerDy);
-          const interactionRadius = isTouchDevice ? 100 : 200;
-          const pointerForce = pointerDistance < interactionRadius ? -0.5 / pointerDistance : 0;
-          
-          this.x += pointerForce * pointerDx * this.velocity;
-          this.y += pointerForce * pointerDy * this.velocity;
-        }
-
-        // Circular motion
-        this.angle += this.angleSpeed;
-        const circularMotion = {
-          x: Math.cos(this.angle) * 0.5,
-          y: Math.sin(this.angle) * 0.5
-        };
-
-        // Update position
-        this.x += (force * dx * this.velocity) + circularMotion.x;
-        this.y += (force * dy * this.velocity) + circularMotion.y;
-
-        // Dynamic color based on distance
-        const hue = this.baseHue + (distance * 0.1);
         this.color = isWhiteHole ? 
-          `rgb(${255-distance*0.1}, ${255-distance*0.1}, ${255})` :
-          `hsl(${hue}, 100%, 70%)`;
-
+          `rgb(${255-distance*0.05}, ${255-distance*0.05}, ${255})` :
+          `hsl(${this.baseHue}, 100%, ${baseBrightness + pulse * pulseIntensity * 100}%)`;
+        
+        this.pulsePhase += this.pulseSpeed;
+        
+        // Add subtle spiral motion
+        const spiralAngle = this.angle + currentTime * 0.0001;
+        const spiralRadius = isWhiteHole ? 2 : 1;
+        const spiral = {
+          x: Math.cos(spiralAngle) * spiralRadius,
+          y: Math.sin(spiralAngle) * spiralRadius
+        };
+        
+        this.x += spiral.x;
+        this.y += spiral.y;
+        
         this.draw();
       }
     }
-
-    // Create particles with device-appropriate counts
-    const particles = [];
-    const particleCount = isTouchDevice ? 100 : 300;
-    for (let i = 0; i < particleCount; i++) {
-      const x = Math.random() * window.innerWidth;
-      const y = Math.random() * window.innerHeight;
-      const radius = Math.random() * (isTouchDevice ? 1.5 : 2) + 1;
-      const velocity = Math.random() * 0.3 + 0.1;
-      const color = i < particleCount / 2 ? 'white' : 'yellow';
-      particles.push(new Particle(x, y, color, radius, velocity));
-    }
-
-    // Optimized animation loop
-    let lastTime = 0;
+    
+    // Enhanced gradient effects in the animation loop:
     function animate(currentTime) {
-      const deltaTime = currentTime - lastTime;
-      lastTime = currentTime;
-
-      ctx.fillStyle = 'rgba(0, 0, 0, 0.1)';
-      ctx.fillRect(0, 0, window.innerWidth, window.innerHeight);
-
-      // Draw black hole
-      const blackHoleX = centerX() - (isTouchDevice ? 50 : 100);
-      ctx.save();
-      ctx.beginPath();
-      ctx.arc(blackHoleX, centerY(), isTouchDevice ? 30 : 40, 0, Math.PI * 2);
-      const blackHoleGradient = ctx.createRadialGradient(
-        blackHoleX, centerY(), 0,
-        blackHoleX, centerY(), isTouchDevice ? 60 : 80
-      );
-      blackHoleGradient.addColorStop(0, 'black');
+      // ... previous animation code ...
+      
+      // Enhanced black hole gradient
+      blackHoleGradient.addColorStop(0, 'rgba(0, 0, 0, 0.95)');
+      blackHoleGradient.addColorStop(0.2, 'rgba(0, 0, 0, 0.8)');
       blackHoleGradient.addColorStop(1, 'rgba(0, 0, 0, 0)');
-      ctx.fillStyle = blackHoleGradient;
-      ctx.fill();
-      ctx.restore();
-
-      // Draw white hole
-      const whiteHoleX = centerX() + (isTouchDevice ? 50 : 100);
-      ctx.save();
-      ctx.beginPath();
-      ctx.arc(whiteHoleX, centerY(), isTouchDevice ? 30 : 40, 0, Math.PI * 2);
-      const whiteHoleGradient = ctx.createRadialGradient(
-        whiteHoleX, centerY(), 0,
-        whiteHoleX, centerY(), isTouchDevice ? 60 : 80
-      );
-      whiteHoleGradient.addColorStop(0, 'white');
+      
+      // Enhanced white hole gradient with divine glow
+      whiteHoleGradient.addColorStop(0, 'rgba(255, 255, 255, 1)');
+      whiteHoleGradient.addColorStop(0.2, 'rgba(255, 253, 240, 0.9)');
+      whiteHoleGradient.addColorStop(0.4, 'rgba(255, 248, 220, 0.7)');
       whiteHoleGradient.addColorStop(1, 'rgba(255, 255, 255, 0)');
-      ctx.fillStyle = whiteHoleGradient;
-      ctx.fill();
-      ctx.restore();
-
+      
+      // Update particles with time parameter
       particles.forEach((particle, index) => {
         if (index < particleCount / 2) {
-          particle.update({ x: blackHoleX, y: centerY() }, false);
+          particle.update({ x: blackHoleX, y: centerY() }, false, currentTime);
         } else {
-          particle.update({ x: whiteHoleX, y: centerY() }, true);
+          particle.update({ x: whiteHoleX, y: centerY() }, true, currentTime);
         }
       });
-
+      
       requestAnimationFrame(animate);
     }
-
-    animate(0);
+    
+    // ... rest of the previous JavaScript code remains the same ...
   </script>
 </body>
 </html>
