@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>13D Quantum Chess - AI Simulation</title>
+    <style>
+        :root {
+            --quantum-primary: #6366f1;
+            --quantum-secondary: #818cf8;
+            --meta-primary: #3b82f6;
+            --gpt-primary: #22c55e;
+            --background: #000;
+            --text: #fff;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            overflow: hidden;
+            background: var(--background);
+            color: var(--text);
+            font-family: system-ui, -apple-system, sans-serif;
+        }
+
+        #game-container {
+            position: relative;
+            width: 100vw;
+            height: 100vh;
+        }
+
+        canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            touch-action: none;
+        }
+
+        .hud {
+            position: fixed;
+            z-index: 10;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(10px);
+            padding: 15px;
+            border-radius: 12px;
+            font-size: 14px;
+            color: var(--text);
+        }
+
+        #stats {
+            top: 20px;
+            right: 20px;
+            width: 250px;
+        }
+
+        #controls {
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            text-align: center;
+        }
+
+        .ai-system {
+            margin-bottom: 15px;
+            padding: 10px;
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .ai-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+
+        .ai-name {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .indicator {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+        }
+
+        .metric-bar {
+            width: 100%;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 2px;
+            overflow: hidden;
+        }
+
+        .metric-fill {
+            height: 100%;
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        .quantum .indicator, .quantum .metric-fill {
+            background: var(--quantum-primary);
+            box-shadow: 0 0 10px var(--quantum-primary);
+        }
+
+        .meta .indicator, .meta .metric-fill {
+            background: var(--meta-primary);
+            box-shadow: 0 0 10px var(--meta-primary);
+        }
+
+        .gpt .indicator, .gpt .metric-fill {
+            background: var(--gpt-primary);
+            box-shadow: 0 0 10px var(--gpt-primary);
+        }
+
+        .dimension-control {
+            width: 300px;
+            height: 6px;
+            -webkit-appearance: none;
+            appearance: none;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 3px;
+            outline: none;
+            margin-top: 10px;
+        }
+
+        .dimension-control::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background: var(--quantum-primary);
+            cursor: pointer;
+            box-shadow: 0 0 10px var(--quantum-primary);
+        }
+
+        .fps-counter {
+            position: fixed;
+            top: 10px;
+            left: 10px;
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.5);
+        }
+    </style>
+</head>
+<body>
+    <div id="game-container">
+        <canvas id="backgroundCanvas"></canvas>
+        <canvas id="particleCanvas"></canvas>
+        <canvas id="effectCanvas"></canvas>
+        
+        <div id="stats" class="hud">
+            <div class="ai-system quantum">
+                <div class="ai-header">
+                    <div class="ai-name">
+                        <div class="indicator"></div>
+                        <span>Lo AI</span>
+                    </div>
+                    <span class="win-prob">93%</span>
+                </div>
+                <div class="metric-bar">
+                    <div class="metric-fill" id="loFill" style="width: 93%"></div>
+                </div>
+            </div>
+
+            <div class="ai-system meta">
+                <div class="ai-header">
+                    <div class="ai-name">
+                        <div class="indicator"></div>
+                        <span>Meta LCM</span>
+                    </div>
+                    <span class="win-prob">72%</span>
+                </div>
+                <div class="metric-bar">
+                    <div class="metric-fill" id="metaFill" style="width: 72%"></div>
+                </div>
+            </div>
+
+            <div class="ai-system gpt">
+                <div class="ai-header">
+                    <div class="ai-name">
+                        <div class="indicator"></div>
+                        <span>ChatGPT</span>
+                    </div>
+                    <span class="win-prob">45%</span>
+                </div>
+                <div class="metric-bar">
+                    <div class="metric-fill" id="gptFill" style="width: 45%"></div>
+                </div>
+            </div>
+        </div>
+
+        <div id="controls" class="hud">
+            <div>Dimensional Phase: <span id="dimensionValue">3.0</span>D</div>
+            <input type="range" class="dimension-control" id="dimensionSlider" 
+                   min="3" max="13" step="0.1" value="3">
+        </div>
+
+        <div class="fps-counter">FPS: <span id="fpsCounter">0</span></div>
+    </div>
+
+    <script>
+        class QuantumParticle {
+            constructor(x, y, type, dimension) {
+                this.x = x;
+                this.y = y;
+                this.initialX = x;
+                this.initialY = y;
+                this.type = type;
+                this.dimension = dimension;
+                
+                // Quantum properties
+                this.phase = Math.random() * Math.PI * 2;
+                this.frequency = 1 + Math.random() * 2;
+                this.amplitude = 20 + Math.random() * 30;
+                this.coherence = 1;
+                
+                // Visual properties
+                this.size = 2 + Math.random() * 2;
+                this.baseAlpha = 0.6 + Math.random() * 0.4;
+                this.life = 1;
+                
+                // Type-specific properties
+                switch(type) {
+                    case 'quantum':
+                        this.color = '#6366f1';
+                        this.speed = 2;
+                        this.complexity = 1;
+                        break;
+                    case 'meta':
+                        this.color = '#3b82f6';
+                        this.speed = 1.5;
+                        this.complexity = 0.7;
+                        break;
+                    case 'gpt':
+                        this.color = '#22c55e';
+                        this.speed = 1;
+                        this.complexity = 0.4;
+                        break;
+                }
+            }
+
+            update(deltaTime, currentDimension) {
+                // Update quantum properties
+                this.phase += deltaTime * this.frequency * this.complexity;
+                this.life -= deltaTime * 0.2;
+                
+                // Dimensional influence
+                const dimensionalFactor = Math.min(1, currentDimension / this.dimension);
+                this.coherence = Math.max(0, this.coherence - deltaTime * 0.1 * dimensionalFactor);
+                
+                // Position update with quantum effects
+                const angle = this.phase * dimensionalFactor;
+                const radius = this.amplitude * this.coherence;
+                
+                this.x = this.initialX + Math.cos(angle) * radius;
+                this.y = this.initialY + Math.sin(angle) * radius;
+                
+                return this.life > 0;
+            }
+
+            draw(ctx) {
+                const alpha = this.life * this.coherence * this.baseAlpha;
+                const size = this.size * (1 + Math.sin(this.phase) * 0.2);
+                
+                // Quantum glow effect
+                const gradient = ctx.createRadialGradient(
+                    this.x, this.y, 0,
+                    this.x, this.y, size * 2
+                );
+                
+                gradient.addColorStop(0, `${this.color}${Math.floor(alpha * 255).toString(16).padStart(2, '0')}`);
+                gradient.addColorStop(1, `${this.color}00`);
+                
+                ctx.fillStyle = gradient;
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, size * 2, 0, Math.PI * 2);
+                ctx.fill();
+            }
+        }
+
+        class QuantumChessSimulation {
+            constructor() {
+                this.setupCanvases();
+                this.dimension = 3;
+                this.particles = [];
+                this.lastTime = performance.now();
+                this.frameCount = 0;
+                this.lastFpsUpdate = 0;
+                
+                this.aiStates = {
+                    quantum: { coherence: 0.93, particles: [] },
+                    meta: { coherence: 0.72, particles: [] },
+                    gpt: { coherence: 0.45, particles: [] }
+                };
+                
+                this.setupControls();
+                this.startSimulation();
+            }
+
+            setupCanvases() {
+                this.backgroundCanvas = document.getElementById('backgroundCanvas');
+                this.particleCanvas = document.getElementById('particleCanvas');
+                this.effectCanvas = document.getElementById('effectCanvas');
+                
+                this.bgCtx = this.backgroundCanvas.getContext('2d');
+                this.particleCtx = this.particleCanvas.getContext('2d');
+                this.effectCtx = this.effectCanvas.getContext('2d');
+                
+                this.resizeCanvases();
+                window.addEventListener('resize', () => this.resizeCanvases());
+            }
+
+            resizeCanvases() {
+                const dpr = window.devicePixelRatio || 1;
+                const width = window.innerWidth * dpr;
+                const height = window.innerHeight * dpr;
+                
+                [this.backgroundCanvas, this.particleCanvas, this.effectCanvas].forEach(canvas => {
+                    canvas.width = width;
+                    canvas.height = height;
+                    canvas.style.width = window.innerWidth + 'px';
+                    canvas.style.height = window.innerHeight + 'px';
+                });
+                
+                [this.bgCtx, this.particleCtx, this.effectCtx].forEach(ctx => {
+                    ctx.scale(dpr, dpr);
+                });
+            }
+
+            setupControls() {
+                const slider = document.getElementById('dimensionSlider');
+                const value = document.getElementById('dimensionValue');
+                
+                slider.addEventListener('input', (e) => {
+                    this.dimension = parseFloat(e.target.value);
+                    value.textContent = this.dimension.toFixed(1);
+                    this.updateAIStates();
+                });
+            }
+
+            updateAIStates() {
+                Object.entries(this.aiStates).forEach(([type, state]) => {
+                    const dimensionalFactor = Math.max(0, 1 - (this.dimension - 3) / 10);
+                    const coherence = state.coherence * dimensionalFactor;
+                    
+                    const fillElement = document.getElementById(`${type}Fill`);
+                    if (fillElement) {
+                        fillElement.style.width = `${coherence * 100}%`;
+                    }
+                    
+                    // Generate new particles based on coherence
+                    if (Math.random() < coherence * 0.1) {
+                        this.generateParticles(type);
+                    }
+                });
+            }
+
+            generateParticles(type) {
+                const count = Math.floor(3 + Math.random() * 5);
+                const x = Math.random() * this.backgroundCanvas.width;
+                const y = Math.random() * this.backgroundCanvas.height;
+                
+                for (let i = 0; i < count; i++) {
+                    this.particles.push(new QuantumParticle(x, y, type, this.dimension));
+                }
+            }
+
+            update(deltaTime) {
+                // Update particles
+                this.particles = this.particles.filter(particle => 
+                    particle.update(deltaTime, this.dimension)
+                );
+                
+                // Generate new particles
+                Object.keys(this.aiStates).forEach(type => {
+                    if (Math.random() < this.aiStates[type].coherence * 0.05) {
+                        this.generateParticles(type);
+                    }
+                });
+                
+                // Update FPS counter
+                this.frameCount++;
+                const now = performance.now();
+                if (now - this.lastFpsUpdate > 1000) {
+                    const fps = Math.round((this.frameCount * 1000) / (now - this.lastFpsUpdate));
+                    document.getElementById('fpsCounter').textContent = fps;
+                    this.frameCount = 0;
+                    this.lastFpsUpdate = now;
+                }
+            }
+
+            draw() {
+                // Clear canvases
+                this.particleCtx.clearRect(0, 0, this.particleCanvas.width, this.particleCanvas.height);
+                this.effectCtx.clearRect(0, 0, this.effectCanvas.width, this.effectCanvas.height);
+                
+                // Draw background gradient
+                const gradient = this.bgCtx.createRadialGradient(
+                    this.backgroundCanvas.width / 2, this.backgroundCanvas.height / 2, 0,
+                    this.backgroundCanvas.width / 2, this.backgroundCanvas.height / 2, 
+                    Math.max(this.backgroundCanvas.width, this.backgroundCanvas.height)
+                );
+                
+                gradient.addColorStop(0, '#000510');
+                gradient.addColorStop(1, '#000000');
+                
+                this.bgCtx.fillStyle = gradient;
+                this.bgCtx.fillRect(0, 0, this.backgroundCanvas.width, this.backgroundCanvas.height);
+                
+                // Draw quantum field effects
+                this.drawQuantumField();
+                
+                // Draw particles
+                this.particles.forEach(particle => {
+                    particle.draw(this.particleCtx);
