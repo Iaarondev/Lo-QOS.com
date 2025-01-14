@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Quantum-Enhanced Adaptive Hanger Simulation</title>
+    <title>3D Quantum-Enhanced Adaptive Hanger</title>
     <style>
         * {
             box-sizing: border-box;
@@ -11,7 +11,7 @@
         }
         body {
             margin: 0;
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen-Sans, Ubuntu, Cantarell, 'Helvetica Neue', sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             background-color: #0a0a1a;
             color: #fff;
             display: flex;
@@ -20,6 +20,7 @@
             justify-content: center;
             min-height: 100vh;
             overflow: hidden;
+            perspective: 1000px;
             padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
         }
         
@@ -32,32 +33,6 @@
             display: flex;
             flex-direction: column;
             gap: 10px;
-        }
-
-        @media (max-width: 768px) {
-            .container {
-                padding: 5px;
-                gap: 5px;
-            }
-            h1 {
-                margin: 5px 0;
-            }
-            p {
-                margin: 5px 0;
-                font-size: 0.9rem;
-            }
-        }
-
-        @media (max-width: 320px) {
-            .container {
-                padding: 2px;
-            }
-            h1 {
-                font-size: 1.2rem;
-            }
-            p {
-                font-size: 0.8rem;
-            }
         }
 
         h1 {
@@ -80,33 +55,19 @@
             font-size: clamp(0.8rem, 2vw, 1rem);
         }
 
-        @media (max-width: 480px) {
-            .stats {
-                padding: 5px;
-                gap: 5px;
-            }
-            .stats span {
-                padding: 5px;
-                flex: 1;
-                min-width: 120px;
-                background: rgba(0, 0, 0, 0.2);
-                border-radius: 3px;
-            }
-        }
-
         canvas {
             display: block;
             background: linear-gradient(to bottom, #0a0a2a, #1a1a3a);
             border-radius: 10px;
             box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
             margin: 20px 0;
+            transform-style: preserve-3d;
         }
 
         #controls {
             display: grid;
             gap: 10px;
             justify-content: center;
-            margin: 10px 0;
             grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
             max-width: 600px;
             width: 100%;
@@ -114,71 +75,43 @@
             padding: 0 10px;
         }
 
-        @media (max-width: 480px) {
-            #controls {
-                gap: 5px;
-                padding: 0 5px;
-                grid-template-columns: repeat(2, 1fr);
-            }
-        }
-
         .btn {
             background: linear-gradient(145deg, #2a2a4a, #1a1a3a);
             border: 1px solid #4a9eff;
-            padding: clamp(8px, 2vw, 12px) clamp(8px, 3vw, 16px);
+            padding: 12px 16px;
             color: #fff;
-            font-size: clamp(11px, 2.5vw, 14px);
+            font-size: 14px;
             border-radius: 25px;
             cursor: pointer;
             transition: all 0.3s ease;
             text-transform: uppercase;
             letter-spacing: 1px;
             touch-action: manipulation;
-            -webkit-appearance: none;
             user-select: none;
-            white-space: nowrap;
-            width: 100%;
             min-height: 44px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
         }
 
-        @media (max-width: 480px) {
-            .btn {
-                flex: 1;
-                min-width: 140px;
-                margin: 5px;
-                white-space: nowrap;
-            }
-        }
-
-        @media (hover: hover) {
-            .btn:hover {
+        .btn:hover {
             background: linear-gradient(145deg, #3a3a5a, #2a2a4a);
             transform: translateY(-2px);
             box-shadow: 0 5px 15px rgba(74, 158, 255, 0.3);
         }
 
-        .btn:active {
-            transform: translateY(0);
-        }
-
         .btn.active {
             background: #4a9eff;
-            color: #fff;
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>Quantum-Enhanced Adaptive Hanger</h1>
-        <p>Interactive quantum particle simulation for garment positioning</p>
+        <h1>3D Quantum-Enhanced Adaptive Hanger</h1>
+        <p>Interactive 3D quantum particle simulation</p>
 
         <div class="stats">
             <span id="particleCount">Particles: 0</span>
             <span id="entropy">Entropy: 0%</span>
             <span id="stability">Stability: 0%</span>
+            <span id="depth">Avg Depth: 0</span>
         </div>
 
         <div id="controls">
@@ -192,6 +125,13 @@
     </div>
 
     <script>
+        const canvas = document.getElementById("hangerCanvas");
+        const ctx = canvas.getContext("2d");
+        
+        // 3D perspective constants
+        const FOCAL_LENGTH = 400;
+        const Z_RANGE = 300;
+
         // Responsive canvas sizing
         function resizeCanvas() {
             const container = document.querySelector('.container');
@@ -201,160 +141,157 @@
             canvas.width = maxWidth;
             canvas.height = maxWidth * aspectRatio;
             
-            // Redistribute particles when canvas is resized
             if (particles.length > 0) {
                 particles.forEach(p => {
                     p.x = (p.x / p.originalWidth) * canvas.width;
                     p.y = (p.y / p.originalHeight) * canvas.height;
-                    p.originalX = p.x;
-                    p.originalY = p.y;
                     p.originalWidth = canvas.width;
                     p.originalHeight = canvas.height;
                 });
             }
         }
 
-        // Handle window resize
-        let resizeTimeout;
         window.addEventListener('resize', () => {
             clearTimeout(resizeTimeout);
             resizeTimeout = setTimeout(resizeCanvas, 250);
         });
 
-        // Initialize canvas size
+        let resizeTimeout;
         resizeCanvas();
-        const canvas = document.getElementById("hangerCanvas");
-        const ctx = canvas.getContext("2d");
         
         let particles = [];
         let garmentPresent = false;
         let isAdjusting = false;
         let gravityEnabled = false;
-        let mousePos = { x: 0, y: 0 };
+        let mousePos = { x: 0, y: 0, z: 0 };
         let lastTime = 0;
+        let rotationAngle = 0;
         
-        // Constants for physics
+        // Constants
         const GRAVITY = 0.1;
         const FRICTION = 0.99;
         const PARTICLE_INFLUENCE_RADIUS = 50;
         const MAX_VELOCITY = 5;
+        const ROTATION_SPEED = 0.001;
 
         // Stats elements
         const particleCountElement = document.getElementById("particleCount");
         const entropyElement = document.getElementById("entropy");
         const stabilityElement = document.getElementById("stability");
+        const depthElement = document.getElementById("depth");
 
-        // Touch and mouse interaction
-        function updateInteractionPosition(e) {
-            const rect = canvas.getBoundingClientRect();
-            const event = e.touches ? e.touches[0] : e;
-            if (event) {
-                mousePos.x = event.clientX - rect.left;
-                mousePos.y = event.clientY - rect.top;
-            }
-        }
-
-        // Mouse events
-        canvas.addEventListener('mousemove', updateInteractionPosition);
-        canvas.addEventListener('mouseleave', () => {
-            mousePos.x = -100;
-            mousePos.y = -100;
-        });
-
-        // Touch events
-        canvas.addEventListener('touchstart', (e) => {
-            e.preventDefault();
-            updateInteractionPosition(e);
-        }, { passive: false });
-        
-        canvas.addEventListener('touchmove', (e) => {
-            e.preventDefault();
-            updateInteractionPosition(e);
-        }, { passive: false });
-        
-        canvas.addEventListener('touchend', () => {
-            mousePos.x = -100;
-            mousePos.y = -100;
-        });
-
-        // Particle class with enhanced properties
-        class Particle {
-            constructor(x, y) {
+        // 3D Particle class
+        class Particle3D {
+            constructor(x, y, z) {
                 this.x = x;
                 this.y = y;
+                this.z = z;
                 this.vx = (Math.random() - 0.5) * 2;
                 this.vy = (Math.random() - 0.5) * 2;
+                this.vz = (Math.random() - 0.5) * 2;
                 this.baseSize = Math.random() * 3 + 2;
                 this.size = this.baseSize;
                 this.phase = Math.random() * Math.PI * 2;
                 this.energy = 1;
-                this.hue = Math.random() * 60 + 180; // Blue to cyan range
-                this.originalX = x;
-                this.originalY = y;
+                this.hue = Math.random() * 60 + 180;
                 this.originalWidth = canvas.width;
                 this.originalHeight = canvas.height;
             }
 
+            project() {
+                const scale = FOCAL_LENGTH / (FOCAL_LENGTH + this.z);
+                const x2d = this.x * scale + canvas.width / 2;
+                const y2d = this.y * scale + canvas.height / 2;
+                return { x: x2d, y: y2d, scale };
+            }
+
             update(deltaTime) {
-                // Update phase for quantum effect
+                // Quantum phase update
                 this.phase += deltaTime * 0.005;
-                
-                // Size pulsation based on phase
                 this.size = this.baseSize + Math.sin(this.phase) * 0.5;
 
-                // Apply forces
+                // 3D position update
                 if (gravityEnabled) {
                     this.vy += GRAVITY;
                 }
 
-                // Mouse interaction
-                const dx = mousePos.x - this.x;
-                const dy = mousePos.y - this.y;
-                const distance = Math.sqrt(dx * dx + dy * dy);
+                // Mouse interaction in 3D
+                const projected = this.project();
+                const dx = mousePos.x - projected.x;
+                const dy = mousePos.y - projected.y;
+                const dz = mousePos.z - this.z;
+                const distance = Math.sqrt(dx * dx + dy * dy + dz * dz);
                 
                 if (distance < PARTICLE_INFLUENCE_RADIUS) {
                     const force = (PARTICLE_INFLUENCE_RADIUS - distance) / PARTICLE_INFLUENCE_RADIUS;
                     this.vx -= (dx / distance) * force * 0.5;
                     this.vy -= (dy / distance) * force * 0.5;
+                    this.vz -= (dz / distance) * force * 0.5;
                 }
+
+                // Apply rotation
+                const cosA = Math.cos(rotationAngle);
+                const sinA = Math.sin(rotationAngle);
+                const xNew = this.x * cosA - this.z * sinA;
+                const zNew = this.x * sinA + this.z * cosA;
+                this.x = xNew;
+                this.z = zNew;
 
                 // Update position
                 this.x += this.vx;
                 this.y += this.vy;
+                this.z += this.vz;
 
                 // Apply friction
                 this.vx *= FRICTION;
                 this.vy *= FRICTION;
+                this.vz *= FRICTION;
 
-                // Limit velocity
-                const speed = Math.sqrt(this.vx * this.vx + this.vy * this.vy);
+                // Velocity limits
+                const speed = Math.sqrt(this.vx * this.vx + this.vy * this.vy + this.vz * this.vz);
                 if (speed > MAX_VELOCITY) {
-                    this.vx = (this.vx / speed) * MAX_VELOCITY;
-                    this.vy = (this.vy / speed) * MAX_VELOCITY;
+                    const scale = MAX_VELOCITY / speed;
+                    this.vx *= scale;
+                    this.vy *= scale;
+                    this.vz *= scale;
                 }
 
-                // Boundary collision
-                if (this.x < 0) { this.x = 0; this.vx *= -0.5; }
-                if (this.x > canvas.width) { this.x = canvas.width; this.vx *= -0.5; }
-                if (this.y < 0) { this.y = 0; this.vy *= -0.5; }
-                if (this.y > canvas.height) { this.y = canvas.height; this.vy *= -0.5; }
+                // 3D boundaries
+                const bounds = {
+                    x: canvas.width / 2,
+                    y: canvas.height / 2,
+                    z: Z_RANGE
+                };
 
-                // Update energy based on movement
-                this.energy = Math.min(1, Math.sqrt(this.vx * this.vx + this.vy * this.vy) / MAX_VELOCITY);
+                if (Math.abs(this.x) > bounds.x) {
+                    this.x = Math.sign(this.x) * bounds.x;
+                    this.vx *= -0.5;
+                }
+                if (Math.abs(this.y) > bounds.y) {
+                    this.y = Math.sign(this.y) * bounds.y;
+                    this.vy *= -0.5;
+                }
+                if (Math.abs(this.z) > bounds.z) {
+                    this.z = Math.sign(this.z) * bounds.z;
+                    this.vz *= -0.5;
+                }
+
+                this.energy = Math.min(1, speed / MAX_VELOCITY);
             }
 
             draw(ctx) {
+                const projected = this.project();
                 const gradient = ctx.createRadialGradient(
-                    this.x, this.y, 0,
-                    this.x, this.y, this.size
+                    projected.x, projected.y, 0,
+                    projected.x, projected.y, this.size * projected.scale
                 );
                 
-                const alpha = 0.3 + this.energy * 0.7;
+                const alpha = (0.3 + this.energy * 0.7) * projected.scale;
                 gradient.addColorStop(0, `hsla(${this.hue}, 100%, 70%, ${alpha})`);
                 gradient.addColorStop(1, `hsla(${this.hue}, 100%, 50%, 0)`);
 
                 ctx.beginPath();
-                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.arc(projected.x, projected.y, this.size * projected.scale, 0, Math.PI * 2);
                 ctx.fillStyle = gradient;
                 ctx.fill();
             }
@@ -363,9 +300,10 @@
         function createParticles(num) {
             particles = [];
             for (let i = 0; i < num; i++) {
-                particles.push(new Particle(
-                    Math.random() * canvas.width,
-                    Math.random() * canvas.height
+                particles.push(new Particle3D(
+                    (Math.random() - 0.5) * canvas.width,
+                    (Math.random() - 0.5) * canvas.height,
+                    (Math.random() - 0.5) * Z_RANGE * 2
                 ));
             }
             updateStats();
@@ -374,100 +312,58 @@
         function updateStats() {
             particleCountElement.textContent = `Particles: ${particles.length}`;
             
-            // Calculate entropy based on particle distribution
-            const gridSize = 10;
-            const grid = Array(gridSize).fill(0).map(() => Array(gridSize).fill(0));
+            // Calculate 3D entropy
+            const gridSize = 5;
+            const grid = Array(gridSize).fill(0).map(() => 
+                Array(gridSize).fill(0).map(() => 
+                    Array(gridSize).fill(0)
+                )
+            );
             
             particles.forEach(p => {
-                const gridX = Math.floor((p.x / canvas.width) * gridSize);
-                const gridY = Math.floor((p.y / canvas.height) * gridSize);
-                if (gridX >= 0 && gridX < gridSize && gridY >= 0 && gridY < gridSize) {
-                    grid[gridY][gridX]++;
+                const gridX = Math.floor(((p.x + canvas.width/2) / canvas.width) * gridSize);
+                const gridY = Math.floor(((p.y + canvas.height/2) / canvas.height) * gridSize);
+                const gridZ = Math.floor(((p.z + Z_RANGE) / (Z_RANGE * 2)) * gridSize);
+                if (gridX >= 0 && gridX < gridSize && 
+                    gridY >= 0 && gridY < gridSize && 
+                    gridZ >= 0 && gridZ < gridSize) {
+                    grid[gridZ][gridY][gridX]++;
                 }
             });
             
             let entropy = 0;
             const totalParticles = particles.length;
-            grid.forEach(row => {
-                row.forEach(count => {
-                    if (count > 0) {
-                        const probability = count / totalParticles;
-                        entropy -= probability * Math.log2(probability);
-                    }
+            grid.forEach(layer => {
+                layer.forEach(row => {
+                    row.forEach(count => {
+                        if (count > 0) {
+                            const probability = count / totalParticles;
+                            entropy -= probability * Math.log2(probability);
+                        }
+                    });
                 });
             });
             
-            const maxEntropy = Math.log2(gridSize * gridSize);
+            const maxEntropy = Math.log2(gridSize * gridSize * gridSize);
             const entropyPercentage = Math.round((entropy / maxEntropy) * 100);
             
-            // Calculate stability based on average velocity
+            // Calculate 3D stability
             let avgVelocity = 0;
+            let avgDepth = 0;
             particles.forEach(p => {
-                avgVelocity += Math.sqrt(p.vx * p.vx + p.vy * p.vy);
+                avgVelocity += Math.sqrt(p.vx * p.vx + p.vy * p.vy + p.vz * p.vz);
+                avgDepth += Math.abs(p.z);
             });
             avgVelocity /= particles.length;
+            avgDepth = Math.round((avgDepth / particles.length) / Z_RANGE * 100);
             const stability = Math.round((1 - avgVelocity / MAX_VELOCITY) * 100);
             
             entropyElement.textContent = `Entropy: ${entropyPercentage}%`;
             stabilityElement.textContent = `Stability: ${stability}%`;
+            depthElement.textContent = `Avg Depth: ${avgDepth}%`;
         }
 
         function addGarment() {
             garmentPresent = true;
             isAdjusting = false;
             createParticles(300);
-        }
-
-        function simulateAdjustments() {
-            if (!garmentPresent) {
-                alert("Please add a garment first!");
-                return;
-            }
-            
-            isAdjusting = true;
-            particles.forEach(p => {
-                p.vx += (Math.random() - 0.5) * 2;
-                p.vy += (Math.random() - 0.5) * 2;
-                p.phase = Math.random() * Math.PI * 2;
-            });
-        }
-
-        function toggleGravity() {
-            gravityEnabled = !gravityEnabled;
-            const gravityBtn = document.querySelector('button:nth-child(3)');
-            gravityBtn.classList.toggle('active');
-        }
-
-        function resetSimulation() {
-            garmentPresent = false;
-            isAdjusting = false;
-            gravityEnabled = false;
-            document.querySelector('button:nth-child(3)').classList.remove('active');
-            createParticles(150);
-        }
-
-        function animate(currentTime) {
-            const deltaTime = currentTime - lastTime;
-            lastTime = currentTime;
-
-            ctx.fillStyle = 'rgba(10, 10, 26, 0.2)';
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-            particles.forEach(particle => {
-                particle.update(deltaTime);
-                particle.draw(ctx);
-            });
-
-            if (garmentPresent || isAdjusting) {
-                updateStats();
-            }
-
-            requestAnimationFrame(animate);
-        }
-
-        // Initialize and start animation
-        resetSimulation();
-        requestAnimationFrame(animate);
-    </script>
-</body>
-</html>
