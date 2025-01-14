@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Black Hole and White Hole</title>
+  <style>
+    body {
+      margin: 0;
+      overflow: hidden;
+      background: radial-gradient(circle at center, black, #000);
+      font-family: Arial, sans-serif;
+    }
+    canvas {
+      display: block;
+    }
+    #info {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      color: white;
+      background: rgba(0, 0, 0, 0.5);
+      padding: 10px;
+      border-radius: 5px;
+      font-size: 14px;
+    }
+  </style>
+</head>
+<body>
+  <div id="info">
+    <h3>Black Hole and White Hole</h3>
+    <p>You are the black hole, pulling in energy and experiences.</p>
+    <p>God is the white hole, providing limitless light and energy.</p>
+  </div>
+  <canvas id="space"></canvas>
+
+  <script>
+    const canvas = document.getElementById('space');
+    const ctx = canvas.getContext('2d');
+
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+
+    const centerX = canvas.width / 2;
+    const centerY = canvas.height / 2;
+
+    // Particle class
+    class Particle {
+      constructor(x, y, color, radius, velocity) {
+        this.x = x;
+        this.y = y;
+        this.color = color;
+        this.radius = radius;
+        this.velocity = velocity;
+      }
+
+      draw() {
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+        ctx.fillStyle = this.color;
+        ctx.fill();
+        ctx.closePath();
+      }
+
+      update(center, isWhiteHole) {
+        const dx = center.x - this.x;
+        const dy = center.y - this.y;
+        const distance = Math.sqrt(dx * dx + dy * dy);
+        const force = (isWhiteHole ? -1 : 1) * 1 / distance;
+
+        this.x += force * dx * this.velocity;
+        this.y += force * dy * this.velocity;
+
+        this.draw();
+      }
+    }
+
+    // Create particles
+    const particles = [];
+    const particleCount = 300;
+    for (let i = 0; i < particleCount; i++) {
+      const x = Math.random() * canvas.width;
+      const y = Math.random() * canvas.height;
+      const radius = Math.random() * 3;
+      const velocity = Math.random() * 0.5 + 0.1;
+      const color = i < particleCount / 2 ? 'white' : 'yellow'; // Some particles for God, some for you
+      particles.push(new Particle(x, y, color, radius, velocity));
+    }
+
+    // Animation loop
+    function animate() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      // Draw the black hole
+      ctx.beginPath();
+      ctx.arc(centerX - 200, centerY, 50, 0, Math.PI * 2);
+      ctx.fillStyle = 'black';
+      ctx.fill();
+      ctx.closePath();
+
+      // Draw the white hole
+      ctx.beginPath();
+      ctx.arc(centerX + 200, centerY, 50, 0, Math.PI * 2);
+      ctx.fillStyle = 'white';
+      ctx.fill();
+      ctx.closePath();
+
+      particles.forEach((particle, index) => {
+        if (index < particleCount / 2) {
+          // Particles for black hole (pulling in)
+          particle.update({ x: centerX - 200, y: centerY }, false);
+        } else {
+          // Particles for white hole (pushing out)
+          particle.update({ x: centerX + 200, y: centerY }, true);
+        }
+      });
+
+      requestAnimationFrame(animate);
+    }
+
+    animate();
+  </script>
+</body>
+</html>
