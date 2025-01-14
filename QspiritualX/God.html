@@ -2,30 +2,82 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>Black Hole and White Hole</title>
   <style>
+    * {
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
+    
     body {
       margin: 0;
       overflow: hidden;
-      background: radial-gradient(circle at center, black, #000);
-      font-family: Arial, sans-serif;
+      background: #000;
+      font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+      touch-action: none;
+      position: fixed;
+      width: 100%;
+      height: 100%;
     }
+    
     canvas {
       display: block;
+      touch-action: none;
     }
+    
     #info {
       position: absolute;
-      top: 10px;
-      left: 10px;
-      right: 10px;
+      top: env(safe-area-inset-top, 10px);
+      left: 50%;
+      transform: translateX(-50%);
       color: white;
-      background: rgba(0, 0, 0, 0.7);
-      padding: 10px;
-      border-radius: 5px;
+      background: rgba(0, 0, 0, 0.8);
+      padding: 15px;
+      border-radius: 15px;
       font-size: 14px;
       text-align: center;
       z-index: 10;
+      max-width: min(600px, 90vw);
+      margin: 0 auto;
+      backdrop-filter: blur(5px);
+      -webkit-backdrop-filter: blur(5px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      transition: opacity 0.3s ease;
+    }
+    
+    @media (max-width: 768px) {
+      #info {
+        font-size: 12px;
+        padding: 10px;
+      }
+      
+      #info h3 {
+        font-size: 1.2em;
+      }
+    }
+    
+    @media (hover: hover) {
+      #info:hover {
+        opacity: 0.2;
+      }
+    }
+    
+    h3 {
+      margin: 0 0 8px 0;
+      color: #fff;
+      font-size: 1.5em;
+      text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+    }
+    
+    p {
+      margin: 5px 0;
+      line-height: 1.4;
+    }
+    
+    #interaction-text {
+      font-size: 0.9em;
+      opacity: 0.8;
     }
   </style>
 </head>
@@ -34,25 +86,85 @@
     <h3>Black Hole and White Hole</h3>
     <p>You are the black hole, pulling in energy and experiences.</p>
     <p>God is the white hole, providing limitless light and energy.</p>
+    <p id="interaction-text"></p>
   </div>
   <canvas id="space"></canvas>
 
   <script>
     const canvas = document.getElementById('space');
     const ctx = canvas.getContext('2d');
+    const interactionText = document.getElementById('interaction-text');
+    
+    // Detect touch device
+    const isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+    interactionText.textContent = isTouchDevice ? 
+      'Touch and drag to interact with particles' : 
+      'Move your mouse to interact with particles';
+
+    let pointer = {
+      x: undefined,
+      y: undefined,
+      isActive: false
+    };
+
+    // Handle both mouse and touch events
+    function updatePointerPosition(clientX, clientY) {
+      pointer.x = clientX;
+      pointer.y = clientY;
+      pointer.isActive = true;
+    }
+
+    function handleStart(e) {
+      e.preventDefault();
+      const pos = e.touches ? e.touches[0] : e;
+      updatePointerPosition(pos.clientX, pos.clientY);
+    }
+
+    function handleMove(e) {
+      e.preventDefault();
+      if (pointer.isActive) {
+        const pos = e.touches ? e.touches[0] : e;
+        updatePointerPosition(pos.clientX, pos.clientY);
+      }
+    }
+
+    function handleEnd() {
+      pointer.isActive = false;
+      pointer.x = undefined;
+      pointer.y = undefined;
+    }
+
+    // Add event listeners for both mouse and touch
+    canvas.addEventListener('mousedown', handleStart);
+    canvas.addEventListener('mousemove', handleMove);
+    canvas.addEventListener('mouseup', handleEnd);
+    canvas.addEventListener('mouseleave', handleEnd);
+    canvas.addEventListener('touchstart', handleStart);
+    canvas.addEventListener('touchmove', handleMove);
+    canvas.addEventListener('touchend', handleEnd);
+    canvas.addEventListener('touchcancel', handleEnd);
+
+    // Prevent default touch behaviors
+    document.body.addEventListener('touchstart', (e) => e.preventDefault(), { passive: false });
+    document.body.addEventListener('touchmove', (e) => e.preventDefault(), { passive: false });
 
     // Resize canvas to fit the screen
     function resizeCanvas() {
-      canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight;
+      // Account for device pixel ratio for sharper rendering
+      const dpr = window.devicePixelRatio || 1;
+      canvas.width = window.innerWidth * dpr;
+      canvas.height = window.innerHeight * dpr;
+      canvas.style.width = `${window.innerWidth}px`;
+      canvas.style.height = `${window.innerHeight}px`;
+      ctx.scale(dpr, dpr);
     }
     window.addEventListener('resize', resizeCanvas);
     resizeCanvas();
 
-    const centerX = () => canvas.width / 2;
-    const centerY = () => canvas.height / 2;
+    const centerX = () => window.innerWidth / 2;
+    const centerY = () => window.innerHeight / 2;
 
-    // Particle class
+    // Particle class with optimized trails
     class Particle {
       constructor(x, y, color, radius, velocity) {
         this.x = x;
@@ -60,73 +172,147 @@
         this.color = color;
         this.radius = radius;
         this.velocity = velocity;
+        this.trail = [];
+        this.trailLength = isTouchDevice ? 10 : 20; // Shorter trails on mobile
+        this.baseHue = Math.random() * 60;
+        this.angle = Math.random() * Math.PI * 2;
+        this.angleSpeed = (Math.random() - 0.5) * 0.02;
       }
 
       draw() {
+        // Optimized trail drawing
+        if (this.trail.length > 1) {
+          ctx.beginPath();
+          ctx.moveTo(this.trail[0].x, this.trail[0].y);
+          for (let i = 1; i < this.trail.length; i++) {
+            const point = this.trail[i];
+            ctx.lineTo(point.x, point.y);
+          }
+          ctx.strokeStyle = this.color.replace('rgb', 'rgba').replace(')', ', 0.3)');
+          ctx.lineWidth = this.radius * 0.8;
+          ctx.lineCap = 'round';
+          ctx.stroke();
+        }
+
         ctx.beginPath();
         ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
         ctx.fillStyle = this.color;
         ctx.fill();
-        ctx.closePath();
       }
 
       update(center, isWhiteHole) {
+        // Update trail with position limiting
+        if (this.x >= 0 && this.x <= window.innerWidth && 
+            this.y >= 0 && this.y <= window.innerHeight) {
+          this.trail.unshift({ x: this.x, y: this.y });
+          if (this.trail.length > this.trailLength) {
+            this.trail.pop();
+          }
+        }
+
         const dx = center.x - this.x;
         const dy = center.y - this.y;
         const distance = Math.sqrt(dx * dx + dy * dy);
-        const force = (isWhiteHole ? -1 : 1) * 1 / distance;
+        
+        // Base force from holes
+        let force = (isWhiteHole ? -1 : 1) * (1 / distance);
+        
+        // Pointer interaction
+        if (pointer.x && pointer.y) {
+          const pointerDx = pointer.x - this.x;
+          const pointerDy = pointer.y - this.y;
+          const pointerDistance = Math.sqrt(pointerDx * pointerDx + pointerDy * pointerDy);
+          const interactionRadius = isTouchDevice ? 100 : 200;
+          const pointerForce = pointerDistance < interactionRadius ? -0.5 / pointerDistance : 0;
+          
+          this.x += pointerForce * pointerDx * this.velocity;
+          this.y += pointerForce * pointerDy * this.velocity;
+        }
 
-        this.x += force * dx * this.velocity;
-        this.y += force * dy * this.velocity;
+        // Circular motion
+        this.angle += this.angleSpeed;
+        const circularMotion = {
+          x: Math.cos(this.angle) * 0.5,
+          y: Math.sin(this.angle) * 0.5
+        };
+
+        // Update position
+        this.x += (force * dx * this.velocity) + circularMotion.x;
+        this.y += (force * dy * this.velocity) + circularMotion.y;
+
+        // Dynamic color based on distance
+        const hue = this.baseHue + (distance * 0.1);
+        this.color = isWhiteHole ? 
+          `rgb(${255-distance*0.1}, ${255-distance*0.1}, ${255})` :
+          `hsl(${hue}, 100%, 70%)`;
 
         this.draw();
       }
     }
 
-    // Create particles
+    // Create particles with device-appropriate counts
     const particles = [];
-    const particleCount = window.innerWidth < 768 ? 150 : 300; // Fewer particles on smaller screens
+    const particleCount = isTouchDevice ? 100 : 300;
     for (let i = 0; i < particleCount; i++) {
-      const x = Math.random() * canvas.width;
-      const y = Math.random() * canvas.height;
-      const radius = Math.random() * 2 + 1; // Smaller particles for mobile
+      const x = Math.random() * window.innerWidth;
+      const y = Math.random() * window.innerHeight;
+      const radius = Math.random() * (isTouchDevice ? 1.5 : 2) + 1;
       const velocity = Math.random() * 0.3 + 0.1;
-      const color = i < particleCount / 2 ? 'white' : 'yellow'; // Some particles for God, some for you
+      const color = i < particleCount / 2 ? 'white' : 'yellow';
       particles.push(new Particle(x, y, color, radius, velocity));
     }
 
-    // Animation loop
-    function animate() {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
+    // Optimized animation loop
+    let lastTime = 0;
+    function animate(currentTime) {
+      const deltaTime = currentTime - lastTime;
+      lastTime = currentTime;
 
-      // Draw the black hole
-      ctx.beginPath();
-      ctx.arc(centerX() - 100, centerY(), 40, 0, Math.PI * 2);
-      ctx.fillStyle = 'black';
-      ctx.fill();
-      ctx.closePath();
+      ctx.fillStyle = 'rgba(0, 0, 0, 0.1)';
+      ctx.fillRect(0, 0, window.innerWidth, window.innerHeight);
 
-      // Draw the white hole
+      // Draw black hole
+      const blackHoleX = centerX() - (isTouchDevice ? 50 : 100);
+      ctx.save();
       ctx.beginPath();
-      ctx.arc(centerX() + 100, centerY(), 40, 0, Math.PI * 2);
-      ctx.fillStyle = 'white';
+      ctx.arc(blackHoleX, centerY(), isTouchDevice ? 30 : 40, 0, Math.PI * 2);
+      const blackHoleGradient = ctx.createRadialGradient(
+        blackHoleX, centerY(), 0,
+        blackHoleX, centerY(), isTouchDevice ? 60 : 80
+      );
+      blackHoleGradient.addColorStop(0, 'black');
+      blackHoleGradient.addColorStop(1, 'rgba(0, 0, 0, 0)');
+      ctx.fillStyle = blackHoleGradient;
       ctx.fill();
-      ctx.closePath();
+      ctx.restore();
+
+      // Draw white hole
+      const whiteHoleX = centerX() + (isTouchDevice ? 50 : 100);
+      ctx.save();
+      ctx.beginPath();
+      ctx.arc(whiteHoleX, centerY(), isTouchDevice ? 30 : 40, 0, Math.PI * 2);
+      const whiteHoleGradient = ctx.createRadialGradient(
+        whiteHoleX, centerY(), 0,
+        whiteHoleX, centerY(), isTouchDevice ? 60 : 80
+      );
+      whiteHoleGradient.addColorStop(0, 'white');
+      whiteHoleGradient.addColorStop(1, 'rgba(255, 255, 255, 0)');
+      ctx.fillStyle = whiteHoleGradient;
+      ctx.fill();
+      ctx.restore();
 
       particles.forEach((particle, index) => {
         if (index < particleCount / 2) {
-          // Particles for black hole (pulling in)
-          particle.update({ x: centerX() - 100, y: centerY() }, false);
+          particle.update({ x: blackHoleX, y: centerY() }, false);
         } else {
-          // Particles for white hole (pushing out)
-          particle.update({ x: centerX() + 100, y: centerY() }, true);
+          particle.update({ x: whiteHoleX, y: centerY() }, true);
         }
       });
 
       requestAnimationFrame(animate);
     }
 
-    animate();
+    animate(0);
   </script>
 </body>
 </html>
