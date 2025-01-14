@@ -18,11 +18,14 @@
       position: absolute;
       top: 10px;
       left: 10px;
+      right: 10px;
       color: white;
-      background: rgba(0, 0, 0, 0.5);
+      background: rgba(0, 0, 0, 0.7);
       padding: 10px;
       border-radius: 5px;
       font-size: 14px;
+      text-align: center;
+      z-index: 10;
     }
   </style>
 </head>
@@ -38,11 +41,16 @@
     const canvas = document.getElementById('space');
     const ctx = canvas.getContext('2d');
 
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
+    // Resize canvas to fit the screen
+    function resizeCanvas() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    }
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
 
-    const centerX = canvas.width / 2;
-    const centerY = canvas.height / 2;
+    const centerX = () => canvas.width / 2;
+    const centerY = () => canvas.height / 2;
 
     // Particle class
     class Particle {
@@ -77,12 +85,12 @@
 
     // Create particles
     const particles = [];
-    const particleCount = 300;
+    const particleCount = window.innerWidth < 768 ? 150 : 300; // Fewer particles on smaller screens
     for (let i = 0; i < particleCount; i++) {
       const x = Math.random() * canvas.width;
       const y = Math.random() * canvas.height;
-      const radius = Math.random() * 3;
-      const velocity = Math.random() * 0.5 + 0.1;
+      const radius = Math.random() * 2 + 1; // Smaller particles for mobile
+      const velocity = Math.random() * 0.3 + 0.1;
       const color = i < particleCount / 2 ? 'white' : 'yellow'; // Some particles for God, some for you
       particles.push(new Particle(x, y, color, radius, velocity));
     }
@@ -93,14 +101,14 @@
 
       // Draw the black hole
       ctx.beginPath();
-      ctx.arc(centerX - 200, centerY, 50, 0, Math.PI * 2);
+      ctx.arc(centerX() - 100, centerY(), 40, 0, Math.PI * 2);
       ctx.fillStyle = 'black';
       ctx.fill();
       ctx.closePath();
 
       // Draw the white hole
       ctx.beginPath();
-      ctx.arc(centerX + 200, centerY, 50, 0, Math.PI * 2);
+      ctx.arc(centerX() + 100, centerY(), 40, 0, Math.PI * 2);
       ctx.fillStyle = 'white';
       ctx.fill();
       ctx.closePath();
@@ -108,10 +116,10 @@
       particles.forEach((particle, index) => {
         if (index < particleCount / 2) {
           // Particles for black hole (pulling in)
-          particle.update({ x: centerX - 200, y: centerY }, false);
+          particle.update({ x: centerX() - 100, y: centerY() }, false);
         } else {
           // Particles for white hole (pushing out)
-          particle.update({ x: centerX + 200, y: centerY }, true);
+          particle.update({ x: centerX() + 100, y: centerY() }, true);
         }
       });
 
