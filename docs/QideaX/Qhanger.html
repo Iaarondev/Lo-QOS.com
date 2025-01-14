@@ -125,245 +125,341 @@
     </div>
 
     <script>
-        const canvas = document.getElementById("hangerCanvas");
-        const ctx = canvas.getContext("2d");
-        
-        // 3D perspective constants
-        const FOCAL_LENGTH = 400;
-        const Z_RANGE = 300;
+    // Get canvas and context
+const canvas = document.getElementById("hangerCanvas");
+const ctx = canvas.getContext("2d");
 
-        // Responsive canvas sizing
-        function resizeCanvas() {
-            const container = document.querySelector('.container');
-            const maxWidth = Math.min(container.clientWidth - 20, 1200);
-            const aspectRatio = 3/4;
-            
-            canvas.width = maxWidth;
-            canvas.height = maxWidth * aspectRatio;
-            
-            if (particles.length > 0) {
-                particles.forEach(p => {
-                    p.x = (p.x / p.originalWidth) * canvas.width;
-                    p.y = (p.y / p.originalHeight) * canvas.height;
-                    p.originalWidth = canvas.width;
-                    p.originalHeight = canvas.height;
-                });
-            }
-        }
+// 3D perspective constants
+const FOCAL_LENGTH = 400;
+const Z_RANGE = 300;
 
-        window.addEventListener('resize', () => {
-            clearTimeout(resizeTimeout);
-            resizeTimeout = setTimeout(resizeCanvas, 250);
+// Responsive canvas sizing
+function resizeCanvas() {
+    const container = document.querySelector('.container');
+    const maxWidth = Math.min(container.clientWidth - 20, 1200);
+    const aspectRatio = 3/4;
+    
+    canvas.width = maxWidth;
+    canvas.height = maxWidth * aspectRatio;
+    
+    if (particles.length > 0) {
+        particles.forEach(p => {
+            p.x = (p.x / p.originalWidth) * canvas.width;
+            p.y = (p.y / p.originalHeight) * canvas.height;
+            p.originalWidth = canvas.width;
+            p.originalHeight = canvas.height;
         });
+    }
+}
 
-        let resizeTimeout;
-        resizeCanvas();
+// State variables
+let particles = [];
+let garmentPresent = false;
+let isAdjusting = false;
+let gravityEnabled = false;
+let mousePos = { x: 0, y: 0, z: 0 };
+let lastTime = 0;
+let rotationAngle = 0;
+let resizeTimeout;
+
+// Constants
+const GRAVITY = 0.1;
+const FRICTION = 0.99;
+const PARTICLE_INFLUENCE_RADIUS = 50;
+const MAX_VELOCITY = 5;
+const ROTATION_SPEED = 0.001;
+
+// 3D Particle class
+class Particle3D {
+    constructor(x, y, z) {
+        this.x = x;
+        this.y = y;
+        this.z = z;
+        this.vx = (Math.random() - 0.5) * 2;
+        this.vy = (Math.random() - 0.5) * 2;
+        this.vz = (Math.random() - 0.5) * 2;
+        this.baseSize = Math.random() * 3 + 2;
+        this.size = this.baseSize;
+        this.phase = Math.random() * Math.PI * 2;
+        this.energy = 1;
+        this.hue = Math.random() * 60 + 180; // Blue to cyan range
+        this.originalWidth = canvas.width;
+        this.originalHeight = canvas.height;
+    }
+
+    project() {
+        const scale = FOCAL_LENGTH / (FOCAL_LENGTH + this.z);
+        const x2d = this.x * scale + canvas.width / 2;
+        const y2d = this.y * scale + canvas.height / 2;
+        return { x: x2d, y: y2d, scale };
+    }
+
+    update(deltaTime) {
+        // Quantum phase update
+        this.phase += deltaTime * 0.005;
+        this.size = this.baseSize + Math.sin(this.phase) * 0.5;
+
+        // Apply forces
+        if (gravityEnabled) {
+            this.vy += GRAVITY;
+        }
+
+        // Mouse interaction in 3D
+        const projected = this.project();
+        const dx = mousePos.x - projected.x;
+        const dy = mousePos.y - projected.y;
+        const dz = mousePos.z - this.z;
+        const distance = Math.sqrt(dx * dx + dy * dy + dz * dz);
         
-        let particles = [];
-        let garmentPresent = false;
-        let isAdjusting = false;
-        let gravityEnabled = false;
-        let mousePos = { x: 0, y: 0, z: 0 };
-        let lastTime = 0;
-        let rotationAngle = 0;
+        if (distance < PARTICLE_INFLUENCE_RADIUS) {
+            const force = (PARTICLE_INFLUENCE_RADIUS - distance) / PARTICLE_INFLUENCE_RADIUS;
+            this.vx -= (dx / distance) * force * 0.5;
+            this.vy -= (dy / distance) * force * 0.5;
+            this.vz -= (dz / distance) * force * 0.5;
+        }
+
+        // Apply rotation
+        const cosA = Math.cos(rotationAngle);
+        const sinA = Math.sin(rotationAngle);
+        const xNew = this.x * cosA - this.z * sinA;
+        const zNew = this.x * sinA + this.z * cosA;
+        this.x = xNew;
+        this.z = zNew;
+
+        // Update position
+        this.x += this.vx;
+        this.y += this.vy;
+        this.z += this.vz;
+
+        // Apply friction
+        this.vx *= FRICTION;
+        this.vy *= FRICTION;
+        this.vz *= FRICTION;
+
+        // Velocity limits
+        const speed = Math.sqrt(this.vx * this.vx + this.vy * this.vy + this.vz * this.vz);
+        if (speed > MAX_VELOCITY) {
+            const scale = MAX_VELOCITY / speed;
+            this.vx *= scale;
+            this.vy *= scale;
+            this.vz *= scale;
+        }
+
+        // 3D boundaries
+        const bounds = {
+            x: canvas.width / 2,
+            y: canvas.height / 2,
+            z: Z_RANGE
+        };
+
+        if (Math.abs(this.x) > bounds.x) {
+            this.x = Math.sign(this.x) * bounds.x;
+            this.vx *= -0.5;
+        }
+        if (Math.abs(this.y) > bounds.y) {
+            this.y = Math.sign(this.y) * bounds.y;
+            this.vy *= -0.5;
+        }
+        if (Math.abs(this.z) > bounds.z) {
+            this.z = Math.sign(this.z) * bounds.z;
+            this.vz *= -0.5;
+        }
+
+        this.energy = Math.min(1, speed / MAX_VELOCITY);
+    }
+
+    draw(ctx) {
+        const projected = this.project();
+        const gradient = ctx.createRadialGradient(
+            projected.x, projected.y, 0,
+            projected.x, projected.y, this.size * projected.scale
+        );
         
-        // Constants
-        const GRAVITY = 0.1;
-        const FRICTION = 0.99;
-        const PARTICLE_INFLUENCE_RADIUS = 50;
-        const MAX_VELOCITY = 5;
-        const ROTATION_SPEED = 0.001;
+        const alpha = (0.3 + this.energy * 0.7) * projected.scale;
+        gradient.addColorStop(0, `hsla(${this.hue}, 100%, 70%, ${alpha})`);
+        gradient.addColorStop(1, `hsla(${this.hue}, 100%, 50%, 0)`);
 
-        // Stats elements
-        const particleCountElement = document.getElementById("particleCount");
-        const entropyElement = document.getElementById("entropy");
-        const stabilityElement = document.getElementById("stability");
-        const depthElement = document.getElementById("depth");
+        ctx.beginPath();
+        ctx.arc(projected.x, projected.y, this.size * projected.scale, 0, Math.PI * 2);
+        ctx.fillStyle = gradient;
+        ctx.fill();
+    }
+}
 
-        // 3D Particle class
-        class Particle3D {
-            constructor(x, y, z) {
-                this.x = x;
-                this.y = y;
-                this.z = z;
-                this.vx = (Math.random() - 0.5) * 2;
-                this.vy = (Math.random() - 0.5) * 2;
-                this.vz = (Math.random() - 0.5) * 2;
-                this.baseSize = Math.random() * 3 + 2;
-                this.size = this.baseSize;
-                this.phase = Math.random() * Math.PI * 2;
-                this.energy = 1;
-                this.hue = Math.random() * 60 + 180;
-                this.originalWidth = canvas.width;
-                this.originalHeight = canvas.height;
-            }
+// Particle creation and management
+function createParticles(num) {
+    particles = [];
+    for (let i = 0; i < num; i++) {
+        particles.push(new Particle3D(
+            (Math.random() - 0.5) * canvas.width,
+            (Math.random() - 0.5) * canvas.height,
+            (Math.random() - 0.5) * Z_RANGE * 2
+        ));
+    }
+    updateStats();
+}
 
-            project() {
-                const scale = FOCAL_LENGTH / (FOCAL_LENGTH + this.z);
-                const x2d = this.x * scale + canvas.width / 2;
-                const y2d = this.y * scale + canvas.height / 2;
-                return { x: x2d, y: y2d, scale };
-            }
+// Stats update
+function updateStats() {
+    const particleCountElement = document.getElementById("particleCount");
+    const entropyElement = document.getElementById("entropy");
+    const stabilityElement = document.getElementById("stability");
+    const depthElement = document.getElementById("depth");
 
-            update(deltaTime) {
-                // Quantum phase update
-                this.phase += deltaTime * 0.005;
-                this.size = this.baseSize + Math.sin(this.phase) * 0.5;
-
-                // 3D position update
-                if (gravityEnabled) {
-                    this.vy += GRAVITY;
-                }
-
-                // Mouse interaction in 3D
-                const projected = this.project();
-                const dx = mousePos.x - projected.x;
-                const dy = mousePos.y - projected.y;
-                const dz = mousePos.z - this.z;
-                const distance = Math.sqrt(dx * dx + dy * dy + dz * dz);
-                
-                if (distance < PARTICLE_INFLUENCE_RADIUS) {
-                    const force = (PARTICLE_INFLUENCE_RADIUS - distance) / PARTICLE_INFLUENCE_RADIUS;
-                    this.vx -= (dx / distance) * force * 0.5;
-                    this.vy -= (dy / distance) * force * 0.5;
-                    this.vz -= (dz / distance) * force * 0.5;
-                }
-
-                // Apply rotation
-                const cosA = Math.cos(rotationAngle);
-                const sinA = Math.sin(rotationAngle);
-                const xNew = this.x * cosA - this.z * sinA;
-                const zNew = this.x * sinA + this.z * cosA;
-                this.x = xNew;
-                this.z = zNew;
-
-                // Update position
-                this.x += this.vx;
-                this.y += this.vy;
-                this.z += this.vz;
-
-                // Apply friction
-                this.vx *= FRICTION;
-                this.vy *= FRICTION;
-                this.vz *= FRICTION;
-
-                // Velocity limits
-                const speed = Math.sqrt(this.vx * this.vx + this.vy * this.vy + this.vz * this.vz);
-                if (speed > MAX_VELOCITY) {
-                    const scale = MAX_VELOCITY / speed;
-                    this.vx *= scale;
-                    this.vy *= scale;
-                    this.vz *= scale;
-                }
-
-                // 3D boundaries
-                const bounds = {
-                    x: canvas.width / 2,
-                    y: canvas.height / 2,
-                    z: Z_RANGE
-                };
-
-                if (Math.abs(this.x) > bounds.x) {
-                    this.x = Math.sign(this.x) * bounds.x;
-                    this.vx *= -0.5;
-                }
-                if (Math.abs(this.y) > bounds.y) {
-                    this.y = Math.sign(this.y) * bounds.y;
-                    this.vy *= -0.5;
-                }
-                if (Math.abs(this.z) > bounds.z) {
-                    this.z = Math.sign(this.z) * bounds.z;
-                    this.vz *= -0.5;
-                }
-
-                this.energy = Math.min(1, speed / MAX_VELOCITY);
-            }
-
-            draw(ctx) {
-                const projected = this.project();
-                const gradient = ctx.createRadialGradient(
-                    projected.x, projected.y, 0,
-                    projected.x, projected.y, this.size * projected.scale
-                );
-                
-                const alpha = (0.3 + this.energy * 0.7) * projected.scale;
-                gradient.addColorStop(0, `hsla(${this.hue}, 100%, 70%, ${alpha})`);
-                gradient.addColorStop(1, `hsla(${this.hue}, 100%, 50%, 0)`);
-
-                ctx.beginPath();
-                ctx.arc(projected.x, projected.y, this.size * projected.scale, 0, Math.PI * 2);
-                ctx.fillStyle = gradient;
-                ctx.fill();
-            }
+    particleCountElement.textContent = `Particles: ${particles.length}`;
+    
+    // Calculate 3D entropy
+    const gridSize = 5;
+    const grid = Array(gridSize).fill(0).map(() => 
+        Array(gridSize).fill(0).map(() => 
+            Array(gridSize).fill(0)
+        )
+    );
+    
+    particles.forEach(p => {
+        const gridX = Math.floor(((p.x + canvas.width/2) / canvas.width) * gridSize);
+        const gridY = Math.floor(((p.y + canvas.height/2) / canvas.height) * gridSize);
+        const gridZ = Math.floor(((p.z + Z_RANGE) / (Z_RANGE * 2)) * gridSize);
+        if (gridX >= 0 && gridX < gridSize && 
+            gridY >= 0 && gridY < gridSize && 
+            gridZ >= 0 && gridZ < gridSize) {
+            grid[gridZ][gridY][gridX]++;
         }
-
-        function createParticles(num) {
-            particles = [];
-            for (let i = 0; i < num; i++) {
-                particles.push(new Particle3D(
-                    (Math.random() - 0.5) * canvas.width,
-                    (Math.random() - 0.5) * canvas.height,
-                    (Math.random() - 0.5) * Z_RANGE * 2
-                ));
-            }
-            updateStats();
-        }
-
-        function updateStats() {
-            particleCountElement.textContent = `Particles: ${particles.length}`;
-            
-            // Calculate 3D entropy
-            const gridSize = 5;
-            const grid = Array(gridSize).fill(0).map(() => 
-                Array(gridSize).fill(0).map(() => 
-                    Array(gridSize).fill(0)
-                )
-            );
-            
-            particles.forEach(p => {
-                const gridX = Math.floor(((p.x + canvas.width/2) / canvas.width) * gridSize);
-                const gridY = Math.floor(((p.y + canvas.height/2) / canvas.height) * gridSize);
-                const gridZ = Math.floor(((p.z + Z_RANGE) / (Z_RANGE * 2)) * gridSize);
-                if (gridX >= 0 && gridX < gridSize && 
-                    gridY >= 0 && gridY < gridSize && 
-                    gridZ >= 0 && gridZ < gridSize) {
-                    grid[gridZ][gridY][gridX]++;
+    });
+    
+    let entropy = 0;
+    const totalParticles = particles.length;
+    grid.forEach(layer => {
+        layer.forEach(row => {
+            row.forEach(count => {
+                if (count > 0) {
+                    const probability = count / totalParticles;
+                    entropy -= probability * Math.log2(probability);
                 }
             });
-            
-            let entropy = 0;
-            const totalParticles = particles.length;
-            grid.forEach(layer => {
-                layer.forEach(row => {
-                    row.forEach(count => {
-                        if (count > 0) {
-                            const probability = count / totalParticles;
-                            entropy -= probability * Math.log2(probability);
-                        }
-                    });
-                });
-            });
-            
-            const maxEntropy = Math.log2(gridSize * gridSize * gridSize);
-            const entropyPercentage = Math.round((entropy / maxEntropy) * 100);
-            
-            // Calculate 3D stability
-            let avgVelocity = 0;
-            let avgDepth = 0;
-            particles.forEach(p => {
-                avgVelocity += Math.sqrt(p.vx * p.vx + p.vy * p.vy + p.vz * p.vz);
-                avgDepth += Math.abs(p.z);
-            });
-            avgVelocity /= particles.length;
-            avgDepth = Math.round((avgDepth / particles.length) / Z_RANGE * 100);
-            const stability = Math.round((1 - avgVelocity / MAX_VELOCITY) * 100);
-            
-            entropyElement.textContent = `Entropy: ${entropyPercentage}%`;
-            stabilityElement.textContent = `Stability: ${stability}%`;
-            depthElement.textContent = `Avg Depth: ${avgDepth}%`;
-        }
+        });
+    });
+    
+    const maxEntropy = Math.log2(gridSize * gridSize * gridSize);
+    const entropyPercentage = Math.round((entropy / maxEntropy) * 100);
+    
+    // Calculate 3D stability and depth
+    let avgVelocity = 0;
+    let avgDepth = 0;
+    particles.forEach(p => {
+        avgVelocity += Math.sqrt(p.vx * p.vx + p.vy * p.vy + p.vz * p.vz);
+        avgDepth += Math.abs(p.z);
+    });
+    avgVelocity /= particles.length;
+    avgDepth = Math.round((avgDepth / particles.length) / Z_RANGE * 100);
+    const stability = Math.round((1 - avgVelocity / MAX_VELOCITY) * 100);
+    
+    entropyElement.textContent = `Entropy: ${entropyPercentage}%`;
+    stabilityElement.textContent = `Stability: ${stability}%`;
+    depthElement.textContent = `Avg Depth: ${avgDepth}%`;
+}
 
-        function addGarment() {
-            garmentPresent = true;
-            isAdjusting = false;
-            createParticles(300);
+// UI interaction functions
+function addGarment() {
+    garmentPresent = true;
+    isAdjusting = false;
+    createParticles(300);
+}
+
+function simulateAdjustments() {
+    if (!garmentPresent) {
+        alert("Please add a garment first!");
+        return;
+    }
+    
+    isAdjusting = true;
+    particles.forEach(p => {
+        p.vx += (Math.random() - 0.5) * 4;
+        p.vy += (Math.random() - 0.5) * 4;
+        p.vz += (Math.random() - 0.5) * 4;
+        p.phase = Math.random() * Math.PI * 2;
+    });
+}
+
+function toggleGravity() {
+    gravityEnabled = !gravityEnabled;
+    const gravityBtn = document.querySelector('button:nth-child(3)');
+    gravityBtn.classList.toggle('active');
+}
+
+function resetSimulation() {
+    garmentPresent = false;
+    isAdjusting = false;
+    gravityEnabled = false;
+    rotationAngle = 0;
+    document.querySelector('button:nth-child(3)').classList.remove('active');
+    createParticles(150);
+}
+
+// Event listeners
+window.addEventListener('resize', () => {
+    clearTimeout(resizeTimeout);
+    resizeTimeout = setTimeout(resizeCanvas, 250);
+});
+
+function updateInteractionPosition(e) {
+    const rect = canvas.getBoundingClientRect();
+    const event = e.touches ? e.touches[0] : e;
+    if (event) {
+        mousePos.x = event.clientX - rect.left;
+        mousePos.y = event.clientY - rect.top;
+        mousePos.z = (event.clientY - rect.top - canvas.height/2) * 0.5;
+    }
+}
+
+canvas.addEventListener('mousemove', updateInteractionPosition);
+canvas.addEventListener('mouseleave', () => {
+    mousePos = { x: -100, y: -100, z: 0 };
+});
+
+canvas.addEventListener('touchstart', (e) => {
+    e.preventDefault();
+    updateInteractionPosition(e);
+}, { passive: false });
+
+canvas.addEventListener('touchmove', (e) => {
+    e.preventDefault();
+    updateInteractionPosition(e);
+}, { passive: false });
+
+canvas.addEventListener('touchend', () => {
+    mousePos = { x: -100, y: -100, z: 0 };
+});
+
+// Animation loop
+function animate(currentTime) {
+    const deltaTime = currentTime - lastTime;
+    lastTime = currentTime;
+
+    // Clear with fade effect
+    ctx.fillStyle = 'rgba(10, 10, 26, 0.2)';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    // Update rotation
+    rotationAngle += ROTATION_SPEED * deltaTime;
+
+    // Sort particles by Z for proper depth rendering
+    particles.sort((a, b) => b.z - a.z);
+
+    // Update and draw particles
+    particles.forEach(particle => {
+        particle.update(deltaTime);
+        particle.draw(ctx);
+    });
+
+    if (garmentPresent || isAdjusting) {
+        updateStats();
+    }
+
+    requestAnimationFrame(animate);
+}
+
+// Initialize and start
+resizeCanvas();
+resetSimulation();
+requestAnimationFrame(animate);
