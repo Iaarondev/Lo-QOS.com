@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quantum-Enhanced Adaptive Hanger Simulation</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background-color: #111;
+            color: #fff;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            overflow: hidden;
+        }
+        canvas {
+            display: block;
+            background: #222;
+            margin-top: 20px;
+        }
+        #controls {
+            text-align: center;
+            margin-top: 10px;
+        }
+        .btn {
+            background-color: #444;
+            border: none;
+            padding: 10px 20px;
+            margin: 5px;
+            color: #fff;
+            font-size: 14px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        .btn:hover {
+            background-color: #666;
+        }
+    </style>
+</head>
+<body>
+    <h1>Quantum-Enhanced Adaptive Hanger</h1>
+    <p>Simulating hanger adjustments with dynamic particle visualization.</p>
+
+    <div id="controls">
+        <button class="btn" onclick="addGarment()">Add Garment</button>
+        <button class="btn" onclick="simulateAdjustments()">Simulate Adjustments</button>
+        <button class="btn" onclick="resetSimulation()">Reset</button>
+    </div>
+
+    <canvas id="hangerCanvas" width="800" height="600"></canvas>
+
+    <script>
+        const canvas = document.getElementById("hangerCanvas");
+        const ctx = canvas.getContext("2d");
+
+        let particles = [];
+        let garmentPresent = false;
+        let isAdjusting = false;
+
+        // Initialize particles
+        function createParticles(num) {
+            particles = [];
+            for (let i = 0; i < num; i++) {
+                particles.push({
+                    x: Math.random() * canvas.width,
+                    y: Math.random() * canvas.height,
+                    vx: (Math.random() - 0.5) * 2,
+                    vy: (Math.random() - 0.5) * 2,
+                    size: Math.random() * 4 + 1,
+                    color: `hsl(${Math.random() * 360}, 70%, 60%)`,
+                });
+            }
+        }
+
+        // Draw particles
+        function drawParticles() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            particles.forEach((p) => {
+                ctx.beginPath();
+                ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+                ctx.fillStyle = p.color;
+                ctx.fill();
+                ctx.closePath();
+            });
+        }
+
+        // Update particle positions
+        function updateParticles() {
+            particles.forEach((p) => {
+                p.x += p.vx;
+                p.y += p.vy;
+
+                // Wrap around edges
+                if (p.x < 0) p.x = canvas.width;
+                if (p.x > canvas.width) p.x = 0;
+                if (p.y < 0) p.y = canvas.height;
+                if (p.y > canvas.height) p.y = 0;
+
+                // Pulsate size to simulate "living particles"
+                p.size += Math.sin(Date.now() / 1000) * 0.05;
+            });
+        }
+
+        // Animation loop
+        function animate() {
+            if (garmentPresent || isAdjusting) {
+                updateParticles();
+            }
+            drawParticles();
+            requestAnimationFrame(animate);
+        }
+
+        // Add garment simulation
+        function addGarment() {
+            garmentPresent = true;
+            isAdjusting = false;
+            createParticles(200); // Add a denser set of particles for garment visualization
+        }
+
+        // Simulate hanger adjustments
+        function simulateAdjustments() {
+            if (!garmentPresent) {
+                alert("Add a garment first!");
+                return;
+            }
+            isAdjusting = true;
+            particles.forEach((p) => {
+                p.vx = (Math.random() - 0.5) * 1; // Reduce motion for precision
+                p.vy = (Math.random() - 0.5) * 1;
+            });
+        }
+
+        // Reset simulation
+        function resetSimulation() {
+            garmentPresent = false;
+            isAdjusting = false;
+            createParticles(100); // Default low-particle state
+        }
+
+        // Initialize and start animation
+        resetSimulation();
+        animate();
+    </script>
+</body>
+</html>
