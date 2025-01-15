@@ -369,7 +369,9 @@
                 
                 // Color based on state and coherence
                 const hue = particle.state * 360;
-                gradient.addColorStop(0, `hsla(${hue}, 100%, 50%, ${particle.coherence})`);
+                const safeState = isNaN(particle.state) ? 0 : particle.state;
+                const safeCoherence = isNaN(particle.coherence) ? 1 : particle.coherence;
+                gradient.addColorStop(0, `hsla(${hue}, 100%, 50%, ${safeCoherence})`);
                 gradient.addColorStop(1, 'transparent');
                 
                 // Draw particle
