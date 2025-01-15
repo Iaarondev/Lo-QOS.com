@@ -305,6 +305,7 @@ class ParticlePool {
 }
 
 // Main Qworm Simulation
+// Main Qworm Simulation
 class QwormSimulation {
     constructor(canvas) {
         // Canvas and rendering setup
@@ -333,6 +334,17 @@ class QwormSimulation {
         
         // Bind event handlers
         this.boundAnimate = this.animate.bind(this);
+        
+        // Add event listeners for buttons
+        document.getElementById('optimizeBtn').addEventListener('click', () => {
+            // Manually trigger optimization
+            this.optimize();
+        });
+        
+        document.getElementById('resetBtn').addEventListener('click', () => {
+            // Reset the simulation
+            this.reset();
+        });
     }
     
     initializeParticles() {
@@ -434,6 +446,17 @@ class QwormSimulation {
             `${this.perfMetrics.cpuLoad.toFixed(1)}%`;
     }
 
+    optimize() {
+        const metrics = {
+            cpuLoad: this.perfMetrics.cpuLoad
+        };
+        const optimization = this.optimizer.optimize(metrics);
+
+        // Update simulation parameters based on optimization
+        this.particles.length = optimization.particleCount;
+        this.updateUIMetrics();
+    }
+
     animate() {
         const now = performance.now();
         const deltaTime = Math.min(
@@ -442,9 +465,7 @@ class QwormSimulation {
         );
         
         // Optimize system
-        const optimization = this.optimizer.optimize({
-            cpuLoad: this.perfMetrics.cpuLoad / 100
-        });
+        this.optimize();
         
         // Update and render
         this.updateParticles(deltaTime);
@@ -482,9 +503,7 @@ class QwormSimulation {
         // Update UI
         this.updateUIMetrics();
     }
-}
-
-// Initialize the simulation when the page loads
+}// Initialize the simulation when the page loads
 document.addEventListener('DOMContentLoaded', () => {
     const canvas = document.getElementById('qwormCanvas');
     const simulation = new QwormSimulation(canvas);
