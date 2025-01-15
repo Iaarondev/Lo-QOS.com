@@ -1,150 +1,107 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Quantum-Enhanced Adaptive Hanger Simulation</title>
-    <style>
-        body {
-            margin: 0;
-            font-family: Arial, sans-serif;
-            background-color: #111;
-            color: #fff;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            height: 100vh;
-            overflow: hidden;
-        }
-        canvas {
-            display: block;
-            background: #222;
-            margin-top: 20px;
-        }
-        #controls {
-            text-align: center;
-            margin-top: 10px;
-        }
-        .btn {
-            background-color: #444;
-            border: none;
-            padding: 10px 20px;
-            margin: 5px;
-            color: #fff;
-            font-size: 14px;
-            border-radius: 5px;
-            cursor: pointer;
-            transition: background 0.3s;
-        }
-        .btn:hover {
-            background-color: #666;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>QPU Emulator</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #282c34;
+      color: white;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      margin: 0;
+    }
+    #console {
+      width: 80%;
+      height: 300px;
+      background: black;
+      color: green;
+      overflow-y: auto;
+      padding: 10px;
+      border: 1px solid #00ff00;
+      font-family: monospace;
+    }
+    button {
+      padding: 10px 20px;
+      background-color: #00ff00;
+      border: none;
+      color: black;
+      cursor: pointer;
+      font-size: 16px;
+      margin: 10px;
+    }
+    button:hover {
+      background-color: #00cc00;
+    }
+  </style>
 </head>
 <body>
-    <h1>Quantum-Enhanced Adaptive Hanger</h1>
-    <p>Simulating hanger adjustments with dynamic particle visualization.</p>
+  <h1>QPU Emulator</h1>
+  <div id="console"></div>
+  <button onclick="initializeQPU()">Initialize QPU</button>
+  <button onclick="entangleQubits()">Entangle Qubits</button>
+  <button onclick="measureQubits()">Measure Qubits</button>
+  <button onclick="resetQPU()">Reset QPU</button>
 
-    <div id="controls">
-        <button class="btn" onclick="addGarment()">Add Garment</button>
-        <button class="btn" onclick="simulateAdjustments()">Simulate Adjustments</button>
-        <button class="btn" onclick="resetSimulation()">Reset</button>
-    </div>
+  <script>
+    const consoleElement = document.getElementById('console');
+    let qubits = [];
 
-    <canvas id="hangerCanvas" width="800" height="600"></canvas>
+    // Utility function to log to the console
+    function log(message) {
+      consoleElement.innerHTML += message + '<br>';
+      consoleElement.scrollTop = consoleElement.scrollHeight;
+    }
 
-    <script>
-        const canvas = document.getElementById("hangerCanvas");
-        const ctx = canvas.getContext("2d");
+    // Initialize the QPU with a given number of qubits
+    function initializeQPU() {
+      qubits = Array.from({ length: 3 }, () => ({
+        state: Math.random() > 0.5 ? '|0⟩' : '|1⟩',
+        superposition: Math.random(),
+      }));
+      log('QPU Initialized with 3 qubits:');
+      qubits.forEach((q, i) => log(`Qubit ${i + 1}: State=${q.state}, Superposition=${q.superposition.toFixed(2)}`));
+    }
 
-        let particles = [];
-        let garmentPresent = false;
-        let isAdjusting = false;
+    // Simulate entanglement of qubits
+    function entangleQubits() {
+      if (qubits.length < 2) {
+        log('Error: Initialize the QPU first.');
+        return;
+      }
 
-        // Initialize particles
-        function createParticles(num) {
-            particles = [];
-            for (let i = 0; i < num; i++) {
-                particles.push({
-                    x: Math.random() * canvas.width,
-                    y: Math.random() * canvas.height,
-                    vx: (Math.random() - 0.5) * 2,
-                    vy: (Math.random() - 0.5) * 2,
-                    size: Math.random() * 4 + 1,
-                    color: `hsl(${Math.random() * 360}, 70%, 60%)`,
-                });
-            }
-        }
+      // Create a simple entanglement between the qubits
+      const correlation = Math.random();
+      qubits.forEach(q => (q.superposition = correlation));
 
-        // Draw particles
-        function drawParticles() {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            particles.forEach((p) => {
-                ctx.beginPath();
-                ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
-                ctx.fillStyle = p.color;
-                ctx.fill();
-                ctx.closePath();
-            });
-        }
+      log('Entanglement created:');
+      qubits.forEach((q, i) => log(`Qubit ${i + 1}: Superposition=${q.superposition.toFixed(2)}`));
+    }
 
-        // Update particle positions
-        function updateParticles() {
-            particles.forEach((p) => {
-                p.x += p.vx;
-                p.y += p.vy;
+    // Measure the qubits and collapse their states
+    function measureQubits() {
+      if (qubits.length === 0) {
+        log('Error: Initialize the QPU first.');
+        return;
+      }
 
-                // Wrap around edges
-                if (p.x < 0) p.x = canvas.width;
-                if (p.x > canvas.width) p.x = 0;
-                if (p.y < 0) p.y = canvas.height;
-                if (p.y > canvas.height) p.y = 0;
+      log('Measuring qubits...');
+      qubits.forEach((q, i) => {
+        q.state = Math.random() < q.superposition ? '|1⟩' : '|0⟩';
+        log(`Qubit ${i + 1} collapsed to: ${q.state}`);
+      });
+    }
 
-                // Pulsate size to simulate "living particles"
-                p.size += Math.sin(Date.now() / 1000) * 0.05;
-            });
-        }
-
-        // Animation loop
-        function animate() {
-            if (garmentPresent || isAdjusting) {
-                updateParticles();
-            }
-            drawParticles();
-            requestAnimationFrame(animate);
-        }
-
-        // Add garment simulation
-        function addGarment() {
-            garmentPresent = true;
-            isAdjusting = false;
-            createParticles(200); // Add a denser set of particles for garment visualization
-        }
-
-        // Simulate hanger adjustments
-        function simulateAdjustments() {
-            if (!garmentPresent) {
-                alert("Add a garment first!");
-                return;
-            }
-            isAdjusting = true;
-            particles.forEach((p) => {
-                p.vx = (Math.random() - 0.5) * 1; // Reduce motion for precision
-                p.vy = (Math.random() - 0.5) * 1;
-            });
-        }
-
-        // Reset simulation
-        function resetSimulation() {
-            garmentPresent = false;
-            isAdjusting = false;
-            createParticles(100); // Default low-particle state
-        }
-
-        // Initialize and start animation
-        resetSimulation();
-        animate();
-    </script>
+    // Reset the QPU to its initial state
+    function resetQPU() {
+      qubits = [];
+      log('QPU reset. All qubits cleared.');
+    }
+  </script>
 </body>
 </html>
