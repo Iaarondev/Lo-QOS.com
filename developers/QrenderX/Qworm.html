@@ -1,155 +1,491 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Qworm Simulation</title>
-  <style>
-    body {
-      margin: 0;
-      background: #000;
-      color: #fff;
-      font-family: Arial, sans-serif;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-    }
-    canvas {
-      display: block;
-      border: 1px solid #444;
-    }
-    .stats {
-      margin: 20px 0;
-      font-size: 14px;
-    }
-    .stat {
-      margin: 5px 0;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Qworm: Advanced Quantum Simulation</title>
+    <style>
+        :root {
+            --quantum-primary: #4a90e2;
+            --quantum-secondary: #6366f1;
+            --quantum-accent: #00bcd4;
+            --background-dark: #121212;
+        }
+        
+        body {
+            margin: 0;
+            background: var(--background-dark);
+            color: #fff;
+            font-family: 'Arial', sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+        
+        canvas {
+            background: rgba(0,0,0,0.5);
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+        
+        .controls {
+            display: flex;
+            gap: 20px;
+            margin-top: 20px;
+        }
+        
+        .stats-container {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+            margin-top: 20px;
+            width: 100%;
+            max-width: 1000px;
+        }
+        
+        .stat-card {
+            background: rgba(255,255,255,0.05);
+            border-radius: 10px;
+            padding: 15px;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+        
+        .stat-card:hover {
+            background: rgba(255,255,255,0.1);
+            transform: scale(1.05);
+        }
+        
+        .stat-value {
+            font-size: 1.5rem;
+            color: var(--quantum-accent);
+            font-weight: bold;
+        }
+        
+        .stat-label {
+            color: rgba(255,255,255,0.7);
+            font-size: 0.9rem;
+            margin-top: 10px;
+        }
+    </style>
 </head>
 <body>
-  <h1>Qworm Simulation</h1>
-  <canvas id="qwormCanvas" width="800" height="600"></canvas>
-  <div class="stats">
-    <div class="stat"><strong>FPS:</strong> <span id="fps">0</span></div>
-    <div class="stat"><strong>CPU Usage:</strong> <span id="cpu">0%</span></div>
-    <div class="stat"><strong>Memory Usage:</strong> <span id="memory">0 MB</span></div>
-    <div class="stat"><strong>Particles:</strong> <span id="particles">0</span></div>
-  </div>
+    <h1>Qworm: Advanced Quantum Simulation</h1>
+    <canvas id="qwormCanvas" width="800" height="600"></canvas>
+    
+    <div class="controls">
+        <button id="optimizeBtn">Optimize</button>
+        <button id="resetBtn">Reset</button>
+    </div>
+    
+    <div class="stats-container">
+        <div class="stat-card">
+            <div class="stat-value" id="fpsValue">0</div>
+            <div class="stat-label">Frames per Second</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-value" id="particleCountValue">0</div>
+            <div class="stat-label">Particle Count</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-value" id="optimizationValue">0.00</div>
+            <div class="stat-label">Optimization Level</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-value" id="cpuLoadValue">0%</div>
+            <div class="stat-label">CPU Load</div>
+        </div>
+    </div>
 
-  <script>
-    // Initialize canvas and context
-    const canvas = document.getElementById('qwormCanvas');
-    const ctx = canvas.getContext('2d');
-
-    // Simulation parameters
-    const particleCount = 1000;
-    const particles = new Float32Array(particleCount * 6); // x, y, dx, dy, life, coherence
-    const phi = (1 + Math.sqrt(5)) / 2; // Golden ratio
-    let lastTime = performance.now();
-    let frameCount = 0;
-
-    // Stats tracking
-    const stats = {
-      fps: 0,
-      cpuUsage: 0,
-      memoryUsage: 0,
-      particleCount
-    };
-
-    // Initialize particles using Fibonacci-based distribution
-    function initializeParticles() {
-      for (let i = 0; i < particleCount; i++) {
-        const angle = i * phi * Math.PI * 2;
-        const radius = Math.sqrt(i) * 5; // Scaling factor for better visualization
-        const x = canvas.width / 2 + Math.cos(angle) * radius;
-        const y = canvas.height / 2 + Math.sin(angle) * radius;
-
-        particles[i * 6 + 0] = x; // x
-        particles[i * 6 + 1] = y; // y
-        particles[i * 6 + 2] = Math.random() * 2 - 1; // dx
-        particles[i * 6 + 3] = Math.random() * 2 - 1; // dy
-        particles[i * 6 + 4] = 1; // coherence
-        particles[i * 6 + 5] = 100 + Math.random() * 100; // life
-      }
-    }
-
-    // Update particles
-    function updateParticles(deltaTime) {
-      for (let i = 0; i < particleCount; i++) {
-        const index = i * 6;
-        particles[index + 0] += particles[index + 2] * deltaTime; // x += dx
-        particles[index + 1] += particles[index + 3] * deltaTime; // y += dy
-        particles[index + 4] *= 0.99; // Reduce coherence
-        particles[index + 5] -= deltaTime * 10; // Reduce life
-
-        // Respawn dead particles
-        if (particles[index + 5] <= 0) {
-          const angle = i * phi * Math.PI * 2;
-          const radius = Math.sqrt(i) * 5;
-          particles[index + 0] = canvas.width / 2 + Math.cos(angle) * radius;
-          particles[index + 1] = canvas.height / 2 + Math.sin(angle) * radius;
-          particles[index + 2] = Math.random() * 2 - 1;
-          particles[index + 3] = Math.random() * 2 - 1;
-          particles[index + 4] = 1;
-          particles[index + 5] = 100 + Math.random() * 100;
+    <script>
+    // Fibonacci Field System
+    class FibonacciField {
+        constructor(centerX, centerY) {
+            this.phi = (1 + Math.sqrt(5)) / 2; // Golden ratio
+            this.center = { x: centerX, y: centerY };
+            this.field = new Float32Array(1024 * 1024);
+            this.resolution = 1024;
         }
-      }
+
+        calculatePosition(index) {
+            const angle = index * this.phi * Math.PI * 2;
+            const radius = Math.sqrt(index) * 10;
+            return {
+                x: this.center.x + radius * Math.cos(angle),
+                y: this.center.y + radius * Math.sin(angle)
+            };
+        }
+
+        getFieldStrength(x, y) {
+            const dx = x - this.center.x;
+            const dy = y - this.center.y;
+            const distance = Math.sqrt(dx * dx + dy * dy);
+            return 1 / (1 + distance * 0.01);
+        }
     }
 
-    // Render particles
-    function renderParticles() {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      for (let i = 0; i < particleCount; i++) {
-        const index = i * 6;
-        const x = particles[index + 0];
-        const y = particles[index + 1];
-        const coherence = particles[index + 4];
+    // Quantum Particle Class
+    class QuantumParticle {
+        constructor(x, y, state = 0.5) {
+            this.position = { x, y };
+            this.state = state;  // 0 = black hole, 1 = white hole
+            this.phase = Math.random() * Math.PI * 2;
+            this.coherence = 1;
+            this.entanglement = null;
+            this.size = 3;
+            this.velocity = { 
+                x: (Math.random() - 0.5) * 2, 
+                y: (Math.random() - 0.5) * 2 
+            };
+        }
 
-        ctx.beginPath();
-        ctx.arc(x, y, 2, 0, Math.PI * 2);
-        ctx.fillStyle = `rgba(99, 102, 241, ${coherence})`;
-        ctx.fill();
-      }
+        update(deltaTime, field) {
+            // Quantum evolution
+            this.phase = (this.phase + deltaTime) % (Math.PI * 2);
+            
+            // Coherence decay
+            this.coherence *= Math.max(0, 1 - deltaTime * 0.1);
+
+            // Field interaction
+            const fieldStrength = field.getFieldStrength(
+                this.position.x, 
+                this.position.y
+            );
+            
+            // Update state based on field strength
+            this.state = this.state * (1 - fieldStrength) + fieldStrength;
+
+            // Quantum-inspired movement
+            const quantumInfluence = Math.sin(this.phase);
+            this.position.x += (this.velocity.x + quantumInfluence) * deltaTime;
+            this.position.y += (this.velocity.y + quantumInfluence) * deltaTime;
+        }
     }
 
-    // Update and display stats
-    function updateStats(deltaTime) {
-      const now = performance.now();
-      const fps = Math.round(1000 / deltaTime);
-      const memoryUsage = performance.memory
-        ? Math.round(performance.memory.usedJSHeapSize / 1024 / 1024)
-        : 0;
+    // Wormhole System
+    class WormholeSystem {
+        constructor(canvasWidth, canvasHeight) {
+            this.blackHole = { 
+                x: canvasWidth * 0.25, 
+                y: canvasHeight * 0.25, 
+                strength: 1 
+            };
+            this.whiteHole = { 
+                x: canvasWidth * 0.75, 
+                y: canvasHeight * 0.75, 
+                strength: 1 
+            };
+            this.field = new FibonacciField(canvasWidth / 2, canvasHeight / 2);
+        }
 
-      stats.fps = fps;
-      stats.cpuUsage = (deltaTime / 16.67).toFixed(2) * 100;
-      stats.memoryUsage = memoryUsage;
-      stats.particleCount = particleCount;
+        calculateForce(particle) {
+            // Black hole attraction
+            const bh = this.getForceVector(
+                particle, 
+                this.blackHole, 
+                -this.blackHole.strength
+            );
 
-      document.getElementById('fps').textContent = fps;
-      document.getElementById('cpu').textContent = `${stats.cpuUsage.toFixed(2)}%`;
-      document.getElementById('memory').textContent = `${memoryUsage} MB`;
-      document.getElementById('particles').textContent = stats.particleCount;
+            // White hole repulsion
+            const wh = this.getForceVector(
+                particle, 
+                this.whiteHole, 
+                this.whiteHole.strength
+            );
+
+            return {
+                x: bh.x + wh.x,
+                y: bh.y + wh.y
+            };
+        }
+
+        getForceVector(particle, hole, strength) {
+            const dx = hole.x - particle.position.x;
+            const dy = hole.y - particle.position.y;
+            const distance = Math.sqrt(dx * dx + dy * dy);
+            const force = strength / (distance * distance + 1);
+            
+            return {
+                x: (dx / (distance + 1)) * force,
+                y: (dy / (distance + 1)) * force
+            };
+        }
     }
 
-    // Main simulation loop
-    function loop() {
-      const now = performance.now();
-      const deltaTime = (now - lastTime) / 1000;
-      lastTime = now;
+    // ZKP Optimizer
+    class ZKPOptimizer {
+        constructor() {
+            this.threshold = 0.1;
+            this.optimizationLevel = 0;
+        }
 
-      updateParticles(deltaTime);
-      renderParticles();
-      updateStats(deltaTime * 1000);
+        optimize(metrics) {
+            const load = metrics.cpuLoad;
+            
+            // Adjust optimization level
+            if (load < this.threshold) {
+                this.optimizationLevel = Math.min(
+                    1, 
+                    this.optimizationLevel + 0.01
+                );
+            } else {
+                this.optimizationLevel = Math.max(
+                    0, 
+                    this.optimizationLevel - 0.02
+                );
+            }
+            
+            return {
+                particleCount: this.calculateOptimalParticles(load),
+                updateFrequency: this.calculateUpdateRate(load),
+                renderQuality: this.calculateRenderQuality(load)
+            };
+        }
 
-      frameCount++;
-      requestAnimationFrame(loop);
+        calculateOptimalParticles(load) {
+            return Math.floor(1000 * (1 - load));
+        }
+
+        calculateUpdateRate(load) {
+            return Math.max(0.1, 1 - load);
+        }
+
+        calculateRenderQuality(load) {
+            return Math.max(0.5, 1 - load);
+        }
     }
 
-    // Initialize and start the simulation
-    initializeParticles();
-    loop();
-  </script>
+    // Particle Pool Management
+    class ParticlePool {
+        constructor(maxSize = 10000) {
+            this.pool = new Array(maxSize);
+            this.active = new Set();
+            this.initialize();
+        }
+
+        initialize() {
+            for (let i = 0; i < this.pool.length; i++) {
+                this.pool[i] = new QuantumParticle(0, 0);
+                this.pool[i].active = false;
+            }
+        }
+
+        acquire(x, y, state) {
+            const particle = this.pool.find(p => !p.active);
+            if (particle) {
+                particle.position.x = x;
+                particle.position.y = y;
+                particle.state = state;
+                particle.active = true;
+                particle.coherence = 1;
+                particle.phase = Math.random() * Math.PI * 2;
+                this.active.add(particle);
+                return particle;
+            }
+            return null;
+        }
+
+        release(particle) {
+            particle.active = false;
+            this.active.delete(particle);
+        }
+    }
+
+    // Main Qworm Simulation
+    class QwormSimulation {
+        constructor(canvas) {
+            // Canvas and rendering setup
+            this.canvas = canvas;
+            this.ctx = canvas.getContext('2d');
+            
+            // Simulation components
+            this.wormholeSystem = new WormholeSystem(canvas.width, canvas.height);
+            this.particlePool = new ParticlePool();
+            this.optimizer = new ZKPOptimizer();
+            
+            // Simulation parameters
+            this.particles = [];
+            this.maxParticles = 1000;
+            
+            // Performance tracking
+            this.perfMetrics = {
+                fps: 0,
+                lastFrameTime: performance.now(),
+                frameCount: 0,
+                cpuLoad: 0
+            };
+            
+            // Initialize particles
+            this.initializeParticles();
+            
+            // Bind event handlers
+            this.boundAnimate = this.animate.bind(this);
+        }
+        
+        initializeParticles() {
+            this.particles = [];
+            for (let i = 0; i < this.maxParticles; i++) {
+                const pos = this.wormholeSystem.field.calculatePosition(i);
+                const particle = this.particlePool.acquire(pos.x, pos.y);
+                if (particle) {
+                    this.particles.push(particle);
+                }
+            }
+        }
+        
+        updateParticles(deltaTime) {
+            for (let particle of this.particles) {
+                // Apply wormhole forces
+                const force = this.wormholeSystem.calculateForce(particle);
+                particle.velocity.x += force.x;
+                particle.velocity.y += force.y;
+                
+                // Update particle
+                particle.update(deltaTime, this.wormholeSystem.field);
+                
+                // Wrap around canvas
+                this.wrapPosition(particle);
+            }
+        }
+        
+        wrapPosition(particle) {
+            if (particle.position.x < 0) particle.position.x = this.canvas.width;
+            if (particle.position.x > this.canvas.width) particle.position.x = 0;
+            if (particle.position.y < 0) particle.position.y = this.canvas.height;
+            if (particle.position.y > this.canvas.height) particle.position.y = 0;
+        }
+        
+        renderParticles() {
+            this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+            
+            for (let particle of this.particles) {
+                // Create gradient based on particle state and coherence
+                const gradient = this.ctx.createRadialGradient(
+                    particle.position.x, particle.position.y, 0,
+                    particle.position.x, particle.position.y, particle.size * 2
+                );
+                
+                // Color based on state and coherence
+                const hue = particle.state * 360;
+                gradient.addColorStop(0, `hsla(${hue}, 100%, 50%, ${particle.coherence})`);
+                gradient.addColorStop(1, 'transparent');
+                
+                // Draw particle
+                this.ctx.beginPath();
+                this.ctx.fillStyle = gradient;
+                this.ctx.arc(
+                    particle.position.x, 
+                    particle.position.y, 
+                    particle.size, 
+                    0, 
+                    Math.PI * 2
+                );
+                this.ctx.fill();
+            }
+        }
+        
+        updatePerformanceMetrics(deltaTime) {
+            const now = performance.now();
+            this.perfMetrics.frameCount++;
+            
+            // Calculate FPS
+            if (now - this.perfMetrics.lastFrameTime >= 1000) {
+                this.perfMetrics.fps = this.perfMetrics.frameCount;
+                this.perfMetrics.frameCount = 0;
+                this.perfMetrics.lastFrameTime = now;
+                
+                // Estimate CPU load (simplified)
+                this.perfMetrics.cpuLoad = Math.min(
+                    100, 
+                    deltaTime * 60 * 100
+                );
+                
+                // Update UI
+                this.updateUIMetrics();
+            }
+        }
+        
+        updateUIMetrics() {
+            document.getElementById('fpsValue').textContent = this.perfMetrics.fps;
+            document.getElementById('particleCountValue').textContent = this.particles.length;
+            document.getElementById('optimizationValue').textContent = 
+                this.optimizer.optimizationLevel.toFixed(2);
+            document.getElementById('cpuLoadValue').textContent = 
+                `${this.perfMetrics.cpuLoad.toFixed(1)}%`;
+        }
+        
+        animate() {
+            const now = performance.now();
+            const deltaTime = (now - this.perfMetrics.lastFrameTime) / 1000;
+            
+            // Optimize system
+            const optimization = this.optimizer.optimize({
+                cpuLoad: this.perfMetrics.cpuLoad / 100
+            });
+            
+            // Update and render
+            this.updateParticles(deltaTime);
+            this.renderParticles();
+            this.updatePerformanceMetrics(deltaTime);
+            
+            // Continue animation
+            requestAnimationFrame(this.boundAnimate);
+        }
+        
+        start() {
+            this.animate();
+        }
+        
+        reset() {
+            // Reset simulation
+            this.particlePool = new ParticlePool();
+            this.wormholeSystem = new WormholeSystem(this.canvas.width, this.canvas.height);
+            this.optimizer = new ZKPOptimizer();
+            
+            // Clear existing particles
+            this.particles = [];
+            
+            // Reinitialize particles
+            this.initializeParticles();
+            
+            // Reset performance metrics
+            this.perfMetrics = {
+                fps: 0,
+                lastFrameTime: performance.now(),
+                frameCount: 0,
+                cpuLoad: 0
+            };
+            
+            // Update UI
+            this.updateUIMetrics();
+        }
+    }
+
+    // Initialize the simulation when the page loads
+    document.addEventListener('DOMContentLoaded', () => {
+        const canvas = document.getElementById('qwormCanvas');
+        const simulation = new QwormSimulation(canvas);
+        
+        // Start the simulation
+        simulation.start();
+        
+        // Add event listeners for buttons
+        document.getElementById('optimizeBtn').addEventListener('click', () => {
+            // Manually trigger optimization
+            const metrics = simulation.perfMetrics;
+            const optimization = simulation.optimizer.optimize({
+                cpuLoad: metrics.cpuLoad / 100
+            });
+            console.log('Optimization Result:', optimization);
+        });
+        
+        document.getElementById('resetBtn').addEventListener('click', () => {
+            // Reset the simulation
+            simulation.reset();
+        });
+    });
+    </script>
 </body>
 </html>
-
