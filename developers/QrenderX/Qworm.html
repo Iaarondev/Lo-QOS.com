@@ -358,35 +358,35 @@
         }
         
         renderParticles() {
-            this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-            
-            for (let particle of this.particles) {
-                // Create gradient based on particle state and coherence
-                const gradient = this.ctx.createRadialGradient(
-                    particle.position.x, particle.position.y, 0,
-                    particle.position.x, particle.position.y, particle.size * 2
-                );
-                
-                // Color based on state and coherence
-                const hue = particle.state * 360;
-                const safeState = isNaN(particle.state) ? 0 : particle.state;
-                const safeCoherence = isNaN(particle.coherence) ? 1 : particle.coherence;
-                gradient.addColorStop(0, `hsla(${hue}, 100%, 50%, ${safeCoherence})`);
-                gradient.addColorStop(1, 'transparent');
-                
-                // Draw particle
-                this.ctx.beginPath();
-                this.ctx.fillStyle = gradient;
-                this.ctx.arc(
-                    particle.position.x, 
-                    particle.position.y, 
-                    particle.size, 
-                    0, 
-                    Math.PI * 2
-                );
-                this.ctx.fill();
-            }
-        }
+    this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+    
+    for (let particle of this.particles) {
+        // Ensure state and coherence are valid
+        const safeState = isNaN(particle.state) ? 0 : particle.state;
+        const safeCoherence = isNaN(particle.coherence) ? 1 : particle.coherence;
+        
+        // Color based on state and coherence
+        const hue = safeState * 360;
+        const gradient = this.ctx.createRadialGradient(
+            particle.position.x, particle.position.y, 0,
+            particle.position.x, particle.position.y, particle.size * 2
+        );
+        gradient.addColorStop(0, `hsla(${hue}, 100%, 50%, ${safeCoherence})`);
+        gradient.addColorStop(1, 'transparent');
+        
+        // Draw particle
+        this.ctx.beginPath();
+        this.ctx.fillStyle = gradient;
+        this.ctx.arc(
+            particle.position.x, 
+            particle.position.y, 
+            particle.size, 
+            0, 
+            Math.PI * 2
+        );
+        this.ctx.fill();
+    }
+}
         
         updatePerformanceMetrics(deltaTime) {
             const now = performance.now();
