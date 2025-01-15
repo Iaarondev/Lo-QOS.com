@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Qworm Simulation</title>
+  <style>
+    body {
+      margin: 0;
+      background: #000;
+      color: #fff;
+      font-family: Arial, sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    canvas {
+      display: block;
+      border: 1px solid #444;
+    }
+    .stats {
+      margin: 20px 0;
+      font-size: 14px;
+    }
+    .stat {
+      margin: 5px 0;
+    }
+  </style>
+</head>
+<body>
+  <h1>Qworm Simulation</h1>
+  <canvas id="qwormCanvas" width="800" height="600"></canvas>
+  <div class="stats">
+    <div class="stat"><strong>FPS:</strong> <span id="fps">0</span></div>
+    <div class="stat"><strong>CPU Usage:</strong> <span id="cpu">0%</span></div>
+    <div class="stat"><strong>Memory Usage:</strong> <span id="memory">0 MB</span></div>
+    <div class="stat"><strong>Particles:</strong> <span id="particles">0</span></div>
+  </div>
+
+  <script>
+    // Initialize canvas and context
+    const canvas = document.getElementById('qwormCanvas');
+    const ctx = canvas.getContext('2d');
+
+    // Simulation parameters
+    const particleCount = 1000;
+    const particles = new Float32Array(particleCount * 6); // x, y, dx, dy, life, coherence
+    const phi = (1 + Math.sqrt(5)) / 2; // Golden ratio
+    let lastTime = performance.now();
+    let frameCount = 0;
+
+    // Stats tracking
+    const stats = {
+      fps: 0,
+      cpuUsage: 0,
+      memoryUsage: 0,
+      particleCount
+    };
+
+    // Initialize particles using Fibonacci-based distribution
+    function initializeParticles() {
+      for (let i = 0; i < particleCount; i++) {
+        const angle = i * phi * Math.PI * 2;
+        const radius = Math.sqrt(i) * 5; // Scaling factor for better visualization
+        const x = canvas.width / 2 + Math.cos(angle) * radius;
+        const y = canvas.height / 2 + Math.sin(angle) * radius;
+
+        particles[i * 6 + 0] = x; // x
+        particles[i * 6 + 1] = y; // y
+        particles[i * 6 + 2] = Math.random() * 2 - 1; // dx
+        particles[i * 6 + 3] = Math.random() * 2 - 1; // dy
+        particles[i * 6 + 4] = 1; // coherence
+        particles[i * 6 + 5] = 100 + Math.random() * 100; // life
+      }
+    }
+
+    // Update particles
+    function updateParticles(deltaTime) {
+      for (let i = 0; i < particleCount; i++) {
+        const index = i * 6;
+        particles[index + 0] += particles[index + 2] * deltaTime; // x += dx
+        particles[index + 1] += particles[index + 3] * deltaTime; // y += dy
+        particles[index + 4] *= 0.99; // Reduce coherence
+        particles[index + 5] -= deltaTime * 10; // Reduce life
+
+        // Respawn dead particles
+        if (particles[index + 5] <= 0) {
+          const angle = i * phi * Math.PI * 2;
+          const radius = Math.sqrt(i) * 5;
+          particles[index + 0] = canvas.width / 2 + Math.cos(angle) * radius;
+          particles[index + 1] = canvas.height / 2 + Math.sin(angle) * radius;
+          particles[index + 2] = Math.random() * 2 - 1;
+          particles[index + 3] = Math.random() * 2 - 1;
+          particles[index + 4] = 1;
+          particles[index + 5] = 100 + Math.random() * 100;
+        }
+      }
+    }
+
+    // Render particles
+    function renderParticles() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      for (let i = 0; i < particleCount; i++) {
+        const index = i * 6;
+        const x = particles[index + 0];
+        const y = particles[index + 1];
+        const coherence = particles[index + 4];
+
+        ctx.beginPath();
+        ctx.arc(x, y, 2, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(99, 102, 241, ${coherence})`;
+        ctx.fill();
+      }
+    }
+
+    // Update and display stats
+    function updateStats(deltaTime) {
+      const now = performance.now();
+      const fps = Math.round(1000 / deltaTime);
+      const memoryUsage = performance.memory
+        ? Math.round(performance.memory.usedJSHeapSize / 1024 / 1024)
+        : 0;
+
+      stats.fps = fps;
+      stats.cpuUsage = (deltaTime / 16.67).toFixed(2) * 100;
+      stats.memoryUsage = memoryUsage;
+      stats.particleCount = particleCount;
+
+      document.getElementById('fps').textContent = fps;
+      document.getElementById('cpu').textContent = `${stats.cpuUsage.toFixed(2)}%`;
+      document.getElementById('memory').textContent = `${memoryUsage} MB`;
+      document.getElementById('particles').textContent = stats.particleCount;
+    }
+
+    // Main simulation loop
+    function loop() {
+      const now = performance.now();
+      const deltaTime = (now - lastTime) / 1000;
+      lastTime = now;
+
+      updateParticles(deltaTime);
+      renderParticles();
+      updateStats(deltaTime * 1000);
+
+      frameCount++;
+      requestAnimationFrame(loop);
+    }
+
+    // Initialize and start the simulation
+    initializeParticles();
+    loop();
+  </script>
+</body>
+</html>
