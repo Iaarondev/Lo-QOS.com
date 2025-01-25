@@ -10,7 +10,13 @@
     <!-- Quantum Theme System -->
     <link rel="stylesheet" href="assets/css/styles.css">
     <style>
-        /* Inline Critical CSS */
+        :root {
+            --quantum-core: #00b4d8;
+            --quantum-void: #03045e;
+            --quantum-accent: #90e0ef;
+            --quantum-text: #caf0f8;
+        }
+
         .quantum-loader {
             position: fixed;
             top: 0;
@@ -23,6 +29,7 @@
             align-items: center;
             z-index: 1000;
         }
+
         .quantum-spinner {
             width: 50px;
             height: 50px;
@@ -31,6 +38,7 @@
             border-radius: 50%;
             animation: quantum-spin 1s linear infinite;
         }
+
         @keyframes quantum-spin {
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
@@ -43,7 +51,7 @@
         <div class="quantum-spinner"></div>
     </div>
 
-    <!-- Quantum Header -->
+    <!-- Quantum Interface -->
     <header class="quantum-header">
         <nav class="quantum-nav">
             <ul>
@@ -55,9 +63,8 @@
         </nav>
     </header>
 
-    <!-- Main Quantum Interface -->
     <main class="quantum-main">
-        <!-- Quantum Environment Section -->
+        <!-- Quantum Environment Visualization -->
         <section id="quantum-environment" class="quantum-section">
             <div class="quantum-visualization">
                 <canvas id="bloch-sphere"></canvas>
@@ -69,14 +76,11 @@
             </div>
         </section>
 
-        <!-- QRGB Conversion System -->
+        <!-- QRGB Conversion Interface -->
         <section id="qrgb-section" class="quantum-section">
             <div class="qrgb-converter">
-                <div class="color-inputs">
-                    <input type="range" id="qrgb-r" min="0" max="255" value="255">
-                    <input type="range" id="qrgb-g" min="0" max="255" value="127">
-                    <input type="range" id="qrgb-b" min="0" max="255" value="63">
-                </div>
+                <input type="color" id="qrgb-input" value="#ff8040">
+                <canvas id="qrgb-waveform"></canvas>
                 <div class="qrgb-output">
                     <div id="qrgb-visualizer"></div>
                     <code id="qrgb-state"></code>
@@ -84,16 +88,16 @@
             </div>
         </section>
 
-        <!-- Quantum Game Interface -->
+        <!-- Quantum Game Canvas -->
         <section id="quantum-game" class="quantum-section">
             <canvas id="gameCanvas"></canvas>
             <div class="game-controls">
-                <div id="game-status" class="quantum-status"></div>
-                <button id="quantum-restart" class="quantum-btn">Q-Reset</button>
+                <div id="game-status"></div>
+                <button id="quantum-restart" class="quantum-btn">Reset Simulation</button>
             </div>
         </section>
 
-        <!-- System Metrics -->
+        <!-- System Metrics Dashboard -->
         <section id="system-metrics" class="quantum-section">
             <div class="quantum-stats">
                 <div class="metric" id="quantum-entanglement">
@@ -108,7 +112,7 @@
         </section>
     </main>
 
-    <!-- Quantum Terminal -->
+    <!-- Quantum Terminal Interface -->
     <aside class="quantum-terminal">
         <div class="terminal-header">QOS Kernel v1.0.0</div>
         <div class="terminal-output" id="system-log"></div>
@@ -118,43 +122,61 @@
         </div>
     </aside>
 
-    <!-- Matrix Overlay -->
-    <canvas class="matrix-overlay"></canvas>
+    <!-- System Initialization and Modules -->
+    <script type="importmap">
+    {
+        "imports": {
+            "@loqos/core": "./assets/js/loqos-core.js",
+            "@quantum/system": "./assets/js/quantum-system.js",
+            "@quantum/media": "./assets/js/media-manager.js",
+            "@quantum/game": "./assets/js/game.js",
+            "@quantum/protocol": "./assets/js/protocol.js"
+        }
+    }
+    </script>
 
-    <!-- Quantum Footer -->
-    <footer class="quantum-footer">
-        <div class="quantum-metrics">
-            <div id="system-stats" class="stats-grid"></div>
-        </div>
-    </footer>
+    <script type="module">
+        import LoQOSSystem from '@loqos/core';
+        import '@quantum/system';
+        import '@quantum/media';
+        import '@quantum/game';
+        import '@quantum/protocol';
 
-    <!-- Quantum Scripts -->
-    <script type="module" src="assets/js/protocol.js" defer></script>
-    <script type="module" src="assets/js/quantum-emulation.js" defer></script>
-    <script type="module" src="assets/js/media-manager.js" defer></script>
-    <script type="module" src="assets/js/theme-manager.js" defer></script>
-    <script type="module" src="assets/js/quantum-system.js" defer></script>
-    <script type="module" src="assets/js/game.js" defer></script>
-    <script type="module" src="assets/js/loqos-core.js" defer></script>
-
-    <!-- Quantum System Initialization -->
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            // Initialize core system
-            window.loqos = new LoQOSSystem();
-            window.loqos.init().catch(error => {
-                console.error('Quantum initialization error:', error);
-                document.querySelector('.quantum-loader').textContent = 
-                    'Quantum Decoherence Detected! Refresh to retry...';
-            });
-
-            // Service Worker Registration
-            if ('serviceWorker' in navigator) {
-                navigator.serviceWorker.register('/sw.js')
-                    .then(reg => console.log('Quantum Service Worker registered:', reg))
-                    .catch(err => console.error('QSW registration failed:', err));
+        class QuantumBootstrap {
+            static async initialize() {
+                try {
+                    // Initialize core system
+                    window.loqos = new LoQOSSystem();
+                    await window.loqos.init();
+                    
+                    // Initialize service worker
+                    if ('serviceWorker' in navigator) {
+                        await navigator.serviceWorker.register('/sw.js');
+                    }
+                    
+                    // Hide loading screen
+                    document.querySelector('.quantum-loader').remove();
+                    
+                    // Start quantum environment
+                    window.dispatchEvent(new CustomEvent('quantum-ready', {
+                        detail: { initialized: true }
+                    }));
+                    
+                } catch (error) {
+                    console.error('Quantum bootstrap failed:', error);
+                    document.querySelector('.quantum-loader').innerHTML = `
+                        <div class="error-panel">
+                            <h2>Quantum Decoherence Detected</h2>
+                            <p>${error.message}</p>
+                            <button onclick="window.location.reload()">Retry Initialization</button>
+                        </div>
+                    `;
+                }
             }
-        });
+        }
+
+        // Start initialization when DOM is ready
+        document.addEventListener('DOMContentLoaded', QuantumBootstrap.initialize);
     </script>
 </body>
 </html>
