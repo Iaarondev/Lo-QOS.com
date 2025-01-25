@@ -137,49 +137,32 @@
   }
 }
 </script>
-    <script type="module">
-        import LoQOSSystem from '@loqos/core';
-        import '@quantum/system';
-        import '@quantum/media';
-        import '@quantum/game';
-        import '@quantum/protocol';
-        import '@quantum/metrics';
+   <script type="module">
+  import LoQOSSystem from '@loqos/core';
+  import '@quantum/system';
+  import '@quantum/media';
+  import '@quantum/theme';
+  import '@quantum/game';
+  import '@quantum/metrics';
+  import '@quantum/protocol';
+  import '@quantum/utils';
 
-        class QuantumBootstrap {
-            static async initialize() {
-                try {
-                    // Initialize core system
-                    window.loqos = new LoQOSSystem();
-                    await window.loqos.init();
-                    
-                    // Initialize service worker
-                    if ('serviceWorker' in navigator) {
-                        await navigator.serviceWorker.register('/sw.js');
-                    }
-                    
-                    // Hide loading screen
-                    document.querySelector('.quantum-loader').remove();
-                    
-                    // Start quantum environment
-                    window.dispatchEvent(new CustomEvent('quantum-ready', {
-                        detail: { initialized: true }
-                    }));
-                    
-                } catch (error) {
-                    console.error('Quantum bootstrap failed:', error);
-                    document.querySelector('.quantum-loader').innerHTML = `
-                        <div class="error-panel">
-                            <h2>Quantum Decoherence Detected</h2>
-                            <p>${error.message}</p>
-                            <button onclick="window.location.reload()">Retry Initialization</button>
-                        </div>
-                    `;
-                }
-            }
-        }
-
-        // Start initialization when DOM is ready
-        document.addEventListener('DOMContentLoaded', QuantumBootstrap.initialize);
-    </script>
+  document.addEventListener('DOMContentLoaded', async () => {
+    try {
+      window.loqos = new LoQOSSystem();
+      await window.loqos.init();
+      document.querySelector('.quantum-loader').remove();
+    } catch (error) {
+      console.error('Quantum initialization failed:', error);
+      document.querySelector('.quantum-loader').innerHTML = `
+        <div class="error">
+          <h2>Quantum Collapse Detected</h2>
+          <p>${error.message}</p>
+          <button onclick="location.reload()">Retry Quantum Boot</button>
+        </div>
+      `;
+    }
+  });
+</script>
 </body>
 </html>
