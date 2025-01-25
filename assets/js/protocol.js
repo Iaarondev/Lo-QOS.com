@@ -1,5 +1,5 @@
 // Lo-QOS Protocol Manager with Enhanced Features
-class ProtocolManager {
+export default class ProtocolManager {
   constructor() {
     this.protocolEnabled = true;
     this.allowedProtocols = new Set(['loqos', 'qos']);
