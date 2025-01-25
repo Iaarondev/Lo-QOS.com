@@ -1,10 +1,14 @@
 // assets/js/loqos-core.js
-import QuantumSystem from './quantum-system.js';
-import QuantumMediaManager from './media-manager.js';
-import ThemeManager from './theme-manager.js';
-import GameEngine from './game-engine.js';
-import PerformanceMonitor from './performance-monitor.js';
+// Change from default import to named import
+import { QuantumMediaManager } from './media-manager.js';
 
+// Verify other imports match their source files' export style
+import { QuantumSystem } from './quantum-system.js';
+import { ThemeManager } from './theme-manager.js';
+import { GameEngine } from './game-engine.js';
+import { PerformanceMonitor } from './performance-monitor.js';
+
+// Rest of the file remains unchanged
 export default class LoQOSSystem {
     constructor() {
         this.state = {
