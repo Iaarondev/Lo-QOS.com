@@ -1,196 +1,134 @@
 <!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<html lang="en" data-theme="quantum">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Lo-QOS - Quantum Computing Operating System</title>
+    <meta name="description" content="Quantum-native OS integrating AI, blockchain, and distributed computing with quantum-safe encryption and advanced dApp support">
+    <meta property="og:image" content="https://lo-qos.com/assets/images/quantum-og.png">
+    
+    <!-- Quantum Theme System -->
+    <link rel="stylesheet" href="assets/css/quantum-theme.css">
+    <style>
+        /* Inline Critical CSS */
+        .quantum-loader {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--quantum-void);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+        .quantum-spinner {
+            width: 50px;
+            height: 50px;
+            border: 4px solid var(--quantum-core);
+            border-top-color: transparent;
+            border-radius: 50%;
+            animation: quantum-spin 1s linear infinite;
+        }
+        @keyframes quantum-spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <!-- Quantum Loading Screen -->
+    <div class="quantum-loader">
+        <div class="quantum-spinner"></div>
+    </div>
 
-    <!-- Meta Tags -->
-    <meta
-      name="description"
-      content="Lo-QOS is a quantum-native operating system that integrates AI, blockchain, and distributed computing. Features quantum-safe encryption, Layer 4 chain architecture, and seamless dApp integration."
-    />
-    <meta
-      name="keywords"
-      content="quantum operating system, Lo-QOS, quantum computing, blockchain OS, AI integration, distributed computing, quantum-safe encryption, dApp platform, quantum dex, layer 4 blockchain"
-    />
-    <meta name="author" content="Lo-QOS Development Team" />
-    <meta name="robots" content="index, follow" />
-
-    <!-- Open Graph Tags -->
-    <meta property="og:type" content="website" />
-    <meta property="og:url" content="https://lo-qos.com/" />
-    <meta
-      property="og:title"
-      content="Lo-QOS - Quantum Computing Operating System"
-    />
-    <meta
-      property="og:description"
-      content="Discover Lo-QOS: A next-generation quantum-native OS combining blockchain, AI, and distributed computing for unparalleled performance."
-    />
-    <meta
-      property="og:image"
-      content="https://lo-qos.com/assets/images/og-image.png"
-    />
-
-    <!-- Preloading Critical Assets -->
-    <link
-      rel="preload"
-      href="assets/fonts/inter-var.woff2"
-      as="font"
-      type="font/woff2"
-      crossorigin
-    />
-    <link rel="preload" href="assets/css/styles.css" as="style" />
-    <link rel="preload" href="assets/images/quantum-sphere.svg" as="image" />
-
-    <!-- Favicons -->
-    <link rel="icon" href="assets/icons/favicon-32x32.png" type="image/png" />
-    <link rel="apple-touch-icon" href="assets/icons/apple-touch-icon.png" />
-
-    <!-- Stylesheet -->
-    <link rel="stylesheet" href="assets/css/styles.css" />
-  </head>
-  <body>
-    <!-- Header -->
-    <header>
-      <h1>Welcome to Lo-QOS</h1>
-      <nav>
-        <ul>
-          <li><a href="/">Home</a></li>
-          <li><a href="/features">Features</a></li>
-          <li><a href="/developers">Developers</a></li>
-          <li><a href="/marketplace">Marketplace</a></li>
-          <li><a href="/docs">Documentation</a></li>
-        </ul>
-      </nav>
+    <!-- Quantum Header -->
+    <header class="quantum-header">
+        <nav class="quantum-nav">
+            <ul>
+                <li><a href="#quantum-environment" data-protocol-link>Quantum Core</a></li>
+                <li><a href="#qrgb-section" data-protocol-link>QRGB System</a></li>
+                <li><a href="#quantum-game" data-protocol-link>Quantum Game</a></li>
+                <li><a href="#system-metrics" data-protocol-link>Metrics</a></li>
+            </ul>
+        </nav>
     </header>
 
-    <!-- Main Content -->
-    <main>
-      <!-- Quantum Environment -->
-      <section id="quantum-environment">
-        <h2>Quantum Environment</h2>
-        <p>Simulate quantum operations with emulated qubits:</p>
-        <div id="quantum-log" class="log-container"></div>
-        <div class="quantum-controls">
-          <button id="simulate-btn" onclick="simulateQuantum()">
-            Simulate Quantum Operation
-          </button>
-        </div>
-      </section>
+    <!-- Main Quantum Interface -->
+    <main class="quantum-main">
+        <!-- Quantum Environment Section -->
+        <section id="quantum-environment" class="quantum-section">
+            <div class="quantum-visualization">
+                <canvas id="bloch-sphere"></canvas>
+                <div class="quantum-controls">
+                    <button class="quantum-btn" data-action="hadamard">H Gate</button>
+                    <button class="quantum-btn" data-action="measure">Measure</button>
+                </div>
+                <div id="quantum-log" class="quantum-log"></div>
+            </div>
+        </section>
 
-      <!-- Video Container -->
-      <div class="video-container">
-        <!-- Video Overlay Canvas -->
-        <canvas class="video-overlay"></canvas>
-      </div>
+        <!-- QRGB Conversion System -->
+        <section id="qrgb-section" class="quantum-section">
+            <div class="qrgb-converter">
+                <div class="color-inputs">
+                    <input type="range" id="qrgb-r" min="0" max="255" value="255">
+                    <input type="range" id="qrgb-g" min="0" max="255" value="127">
+                    <input type="range" id="qrgb-b" min="0" max="255" value="63">
+                </div>
+                <div class="qrgb-output">
+                    <div id="qrgb-visualizer"></div>
+                    <code id="qrgb-state"></code>
+                </div>
+            </div>
+        </section>
 
-      <!-- Media Controls -->
-      <section id="media-controls">
-        <h2>Media Manager</h2>
-        <p>Control audio, video, and visualizations with the Media Manager:</p>
-        <div class="media-controls">
-          <button data-action="play">Play</button>
-          <button data-action="pause">Pause</button>
-          <button data-action="toggle-effects">Toggle Quantum Effects</button>
-          <button data-action="toggle-visualization">
-            Toggle Visualization
-          </button>
-        </div>
-        <canvas id="qmp3-visualizer" width="600" height="300"></canvas>
-        <select id="visualization-mode">
-          <option value="classic">Classic</option>
-          <option value="quantum">Quantum</option>
-          <option value="spiral">Spiral</option>
-          <option value="wave">Wave</option>
-        </select>
-      </section>
+        <!-- Quantum Game Interface -->
+        <section id="quantum-game" class="quantum-section">
+            <canvas id="gameCanvas"></canvas>
+            <div class="game-controls">
+                <div id="game-status" class="quantum-status"></div>
+                <button id="quantum-restart" class="quantum-btn">Q-Reset</button>
+            </div>
+        </section>
 
-      <!-- Superposition Example -->
-      <section id="quantum-superposition">
-        <h2>Quantum Superposition</h2>
-        <p>Visualize a qubit in a superposition state:</p>
-        <button
-          id="simulate-superposition-btn"
-          onclick="simulateSuperposition()"
-        >
-          Simulate Superposition
-        </button>
-        <div id="superposition-log"></div>
-      </section>
-
-      <!-- Entanglement Example -->
-      <section id="quantum-entanglement">
-        <h2>Quantum Entanglement</h2>
-        <p>Simulate entangled qubits and observe their correlation:</p>
-        <button id="simulate-entanglement-btn" onclick="simulateEntanglement()">
-          Simulate Entanglement
-        </button>
-        <div id="entanglement-log"></div>
-      </section>
-      <!-- QRGB Section -->
-      <section id="qrgb-section">
-        <h2>Quantum RGB (QRGB) Simulation</h2>
-        <p>
-          Convert RGB values to QRGB quantum states and visualize the results:
-        </p>
-        <div id="qrgb-converter">
-          <label for="rgb-r">R:</label>
-          <input type="number" id="rgb-r" min="0" max="255" value="255" />
-          <label for="rgb-g">G:</label>
-          <input type="number" id="rgb-g" min="0" max="255" value="128" />
-          <label for="rgb-b">B:</label>
-          <input type="number" id="rgb-b" min="0" max="255" value="64" />
-          <button id="convert-qrgb-btn" onclick="convertToQRGB()">
-            Convert to QRGB
-          </button>
-        </div>
-        <div id="qrgb-output">
-          <h3>QRGB Output:</h3>
-          <pre id="qrgb-result"></pre>
-          <div
-            id="qrgb-visualizer"
-            style="
-              width: 100px;
-              height: 100px;
-              border: 1px solid #000;
-              margin-top: 10px;
-            "
-          ></div>
-        </div>
-      </section>
-
-      <!-- System Metrics -->
-      <section id="system-metrics">
-        <h2>System Metrics</h2>
-        <div id="system-stats" class="quantum-stats">
-          <!-- Stats will be dynamically populated -->
-        </div>
-      </section>
-      <section id="quantum-game">
-        <h2>Quantum Dodge Game</h2>
-        <p>
-          Use your arrow keys to move the quantum particle (`|ψ⟩`) between
-          states (0, 0.5, 1) on the Y-axis. Avoid the incoming entangled
-          obstacles!
-        </p>
-        <canvas id="gameCanvas" width="600" height="400"></canvas>
-        <p id="game-status">Press "Start" to begin!</p>
-        <button id="start-game" onclick="startGame()">Start Game</button>
-      </section>
+        <!-- System Metrics -->
+        <section id="system-metrics" class="quantum-section">
+            <div class="quantum-stats">
+                <div class="metric" id="quantum-entanglement">
+                    <h3>Entanglement Level</h3>
+                    <div class="metric-bar"></div>
+                </div>
+                <div class="metric" id="quantum-coherence">
+                    <h3>Coherence Time</h3>
+                    <div class="metric-bar"></div>
+                </div>
+            </div>
+        </section>
     </main>
 
-    <!-- Footer -->
-    <footer>
-      <p>&copy; 2025 Lo-QOS. All rights reserved.</p>
-      <p>
-        <a href="/privacy">Privacy Policy</a> |
-        <a href="/terms">Terms of Service</a>
-      </p>
+    <!-- Quantum Terminal -->
+    <aside class="quantum-terminal">
+        <div class="terminal-header">QOS Kernel v1.0.0</div>
+        <div class="terminal-output" id="system-log"></div>
+        <div class="terminal-input">
+            <span class="prompt">qos></span>
+            <input type="text" id="quantum-command">
+        </div>
+    </aside>
+
+    <!-- Matrix Overlay -->
+    <canvas class="matrix-overlay"></canvas>
+
+    <!-- Quantum Footer -->
+    <footer class="quantum-footer">
+        <div class="quantum-metrics">
+            <div id="system-stats" class="stats-grid"></div>
+        </div>
     </footer>
 
-    <!-- Scripts -->
+    <!-- Quantum Scripts -->
     <script type="module" src="assets/js/protocol.js" defer></script>
     <script type="module" src="assets/js/quantum-emulation.js" defer></script>
     <script type="module" src="assets/js/media-manager.js" defer></script>
@@ -198,93 +136,25 @@
     <script type="module" src="assets/js/quantum-system.js" defer></script>
     <script type="module" src="assets/js/game.js" defer></script>
     <script type="module" src="assets/js/loqos-core.js" defer></script>
-    <!-- Scripts -->
+
+    <!-- Quantum System Initialization -->
     <script>
-      function playMedia() {
-        const selectedMedia = document.getElementById("media-file").value;
-        const currentMedia = document.getElementById("current-media");
-        const visualizer = document.getElementById("media-visualizer");
+        document.addEventListener('DOMContentLoaded', () => {
+            // Initialize core system
+            window.loqos = new LoQOSSystem();
+            window.loqos.init().catch(error => {
+                console.error('Quantum initialization error:', error);
+                document.querySelector('.quantum-loader').textContent = 
+                    'Quantum Decoherence Detected! Refresh to retry...';
+            });
 
-        // Update the media player output
-        if (selectedMedia === "qmp3") {
-          currentMedia.textContent = "Playing Qmp3: Quantum Audio File...";
-        } else if (selectedMedia === "qmp4") {
-          currentMedia.textContent = "Playing Qmp4: Quantum Video File...";
-        } else if (selectedMedia === "qjpeg") {
-          currentMedia.textContent = "Displaying Qjpeg: Quantum Image File...";
-        } else {
-          currentMedia.textContent = "Unknown media type.";
-        }
-
-        // Show the visualizer
-        visualizer.style.display = "block";
-      }
+            // Service Worker Registration
+            if ('serviceWorker' in navigator) {
+                navigator.serviceWorker.register('/sw.js')
+                    .then(reg => console.log('Quantum Service Worker registered:', reg))
+                    .catch(err => console.error('QSW registration failed:', err));
+            }
+        });
     </script>
-    <!-- Quantum Simulations -->
-    <script>
-      function simulateQuantum() {
-        const log = document.getElementById("quantum-log");
-        const qubitState = Math.random() < 0.5 ? 0 : 1;
-        const message = `Qubit State: ${qubitState}`;
-        const logEntry = document.createElement("div");
-        logEntry.textContent = message;
-        log.appendChild(logEntry);
-      }
-
-      function simulateQFile() {
-        const log = document.getElementById("q-file-log");
-        const fileTypes = ["Qmp3", "Qmp4", "Qjpeg", "Qjs", "Qcss"];
-        const selectedFile =
-          fileTypes[Math.floor(Math.random() * fileTypes.length)];
-        const message = `Simulated File: ${selectedFile}`;
-        const logEntry = document.createElement("div");
-        logEntry.textContent = message;
-        log.appendChild(logEntry);
-      }
-
-      function simulateSuperposition() {
-        const log = document.getElementById("superposition-log");
-        const probZero = Math.random();
-        const probOne = 1 - probZero;
-        const message = `Superposition: |0⟩ with ${Math.round(
-          probZero * 100
-        )}% probability, |1⟩ with ${Math.round(probOne * 100)}% probability`;
-        const logEntry = document.createElement("div");
-        logEntry.textContent = message;
-        log.appendChild(logEntry);
-      }
-
-      function simulateEntanglement() {
-        const log = document.getElementById("entanglement-log");
-        const sharedState = Math.random() < 0.5 ? "0" : "1";
-        const message = `Entangled Qubits: Qubit A = ${sharedState}, Qubit B = ${sharedState}`;
-        const logEntry = document.createElement("div");
-        logEntry.textContent = message;
-        log.appendChild(logEntry);
-      }
-    </script>
-    <!-- Scripts -->
-    <script type="module" src="assets/js/media-manager.js" defer></script>
-    <script>
-      import MediaManager from "./assets/js/media-manager.js";
-
-      document.addEventListener("DOMContentLoaded", () => {
-        const mediaManager = new MediaManager();
-        mediaManager.init();
-
-        // Example usage: Play a demo audio file
-        document
-          .querySelector('[data-action="play"]')
-          ?.addEventListener("click", () => {
-            mediaManager.playMedia("assets/audio/demo.mp3");
-          });
-
-        document
-          .querySelector('[data-action="pause"]')
-          ?.addEventListener("click", () => {
-            mediaManager.pauseMedia();
-          });
-      });
-    </script>
-  </body>
+</body>
 </html>
