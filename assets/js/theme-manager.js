@@ -1,5 +1,5 @@
 // Theme Management System
-class ThemeManager {
+export default class ThemeManager {
     constructor() {
         this.currentTheme = null;
         this.themes = new Map();
