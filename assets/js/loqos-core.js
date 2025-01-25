@@ -1,4 +1,4 @@
-class LoQOSSystem {
+export class LoQOSSystem {
     constructor() {
         this.state = {
             initialized: false,
