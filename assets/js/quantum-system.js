@@ -1,7 +1,9 @@
 // Correct implementation without duplicate exports
 import Complex from './complex.js';  // Ensure this exists
 import StateObservable from './state-observable.js';
-class QuantumSystem {
+
+
+export default class QuantumSystem {
     constructor() {
         this.qubits = new Map();
         this.entangledPairs = new Map();
@@ -211,4 +213,4 @@ function complexMultiply(a, b) {
         a[0]*b[1] + a[1]*b[0]
     ];
 }
-export default QuantumSystem;
+
