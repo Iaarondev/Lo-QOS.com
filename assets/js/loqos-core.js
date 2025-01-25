@@ -1,3 +1,10 @@
+// assets/js/loqos-core.js
+import QuantumSystem from './quantum-system.js';
+import QuantumMediaManager from './media-manager.js';
+import ThemeManager from './theme-manager.js';
+import GameEngine from './game-engine.js';
+import PerformanceMonitor from './performance-monitor.js';
+
 export default class LoQOSSystem {
     constructor() {
         this.state = {
