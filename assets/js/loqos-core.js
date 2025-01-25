@@ -1,4 +1,4 @@
-export class LoQOSSystem {
+export default class LoQOSSystem {
     constructor() {
         this.state = {
             initialized: false,
@@ -247,4 +247,3 @@ document.addEventListener('quantum-ready', async () => {
     }
 });
 
-export default LoQOSSystem;
