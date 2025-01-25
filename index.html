@@ -125,28 +125,18 @@
     <!-- System Initialization and Modules -->
     <script type="importmap">
 {
-    "imports": {
-        "@loqos/core": "./assets/js/loqos-core.js",
-        "@quantum/system": "./assets/js/quantum-system.js",
-        "@quantum/media": "./assets/js/media-manager.js",
-        "@quantum/theme": "./assets/js/theme-manager.js",
-        "@quantum/game": "./assets/js/game-engine.js",
-        "@quantum/metrics": "./assets/js/performance-monitor.js"
-    }
+  "imports": {
+    "@loqos/core": "./assets/js/loqos-core.js",
+    "@quantum/system": "./assets/js/quantum-system.js",
+    "@quantum/media": "./assets/js/media-manager.js",
+    "@quantum/theme": "./assets/js/theme-manager.js",
+    "@quantum/game": "./assets/js/game-engine.js",
+    "@quantum/metrics": "./assets/js/performance-monitor.js",
+    "@quantum/protocol": "./assets/js/protocol.js",
+    "@quantum/utils": "./assets/js/state-observable.js"
+  }
 }
 </script>
-
-<script type="module">
-    import LoQOSSystem from '@loqos/core';
-    import '@quantum/system';
-    import '@quantum/media';
-    import '@quantum/theme';
-    import '@quantum/game';
-    import '@quantum/metrics';
-
-    // Rest of initialization code remains the same
-</script>
-
     <script type="module">
         import LoQOSSystem from '@loqos/core';
         import '@quantum/system';
