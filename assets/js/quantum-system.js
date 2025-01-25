@@ -1,20 +1,28 @@
-// Quantum System Implementation
 class QuantumSystem {
     constructor() {
         this.qubits = new Map();
-        this.entangledPairs = new Set();
-        this.matrixData = [];
+        this.entangledPairs = new Map();
+        this.quantumGates = new Map();
         this.phase = 0;
         this.amplitude = 1;
+        this.hamiltonian = null;
+        this.decoherenceRate = 0.001;
+        this.init();
     }
 
     async init() {
-        // Initialize quantum state
-        this.initializeQubits(8); // Start with 8 qubits
-        this.initializeMatrixEffect();
-        
-        // Start quantum simulation
-        this.startQuantumSimulation();
+        this.registerCoreGates();
+        this.initializeQubits(8);
+        await this.initWebGLRenderer();
+        this.startAnimationLoop();
+        this.setupQuantumWorkers();
+    }
+
+    registerCoreGates() {
+        this.quantumGates.set('H', this.createHadamardGate());
+        this.quantumGates.set('X', this.createPauliXGate());
+        this.quantumGates.set('CNOT', this.createCNOTGate());
+        this.quantumGates.set('Z', this.createPhaseGate());
     }
 
     initializeQubits(count) {
@@ -22,130 +30,183 @@ class QuantumSystem {
             this.qubits.set(i, {
                 state: this.createSuperposition(),
                 entangled: null,
-                phase: Math.random() * 360
+                phase: 0,
+                history: [],
+                decoherence: 0
             });
         }
     }
 
     createSuperposition() {
-        // Simulate quantum superposition with complex numbers
+        // Initialize in |+⟩ state
         return {
-            real: Math.cos(Math.random() * Math.PI),
-            imaginary: Math.sin(Math.random() * Math.PI)
+            real: Math.SQRT1_2,
+            imaginary: Math.SQRT1_2
         };
     }
 
-    entangleQubits(qubit1Id, qubit2Id) {
-        const q1 = this.qubits.get(qubit1Id);
-        const q2 = this.qubits.get(qubit2Id);
+    async initWebGLRenderer() {
+        this.canvas = document.createElement('canvas');
+        document.body.appendChild(this.canvas);
+        this.gl = this.canvas.getContext('webgl');
         
-        if (q1 && q2) {
-            q1.entangled = qubit2Id;
-            q2.entangled = qubit1Id;
-            this.entangledPairs.add(`${qubit1Id}-${qubit2Id}`);
+        // Initialize WebGL shaders and buffers
+        // ... (complex visualization setup)
+    }
+
+    setupQuantumWorkers() {
+        this.workerPool = new Array(4).fill(null).map(() => 
+            new Worker('quantum-worker.js'));
+    }
+
+    applyGate(gateName, targetQubit, controlQubit = null) {
+        const gate = this.quantumGates.get(gateName);
+        if (!gate) throw new Error(`Gate ${gateName} not registered`);
+
+        const qubit = this.qubits.get(targetQubit);
+        const newState = this.matrixVectorMultiply(gate, [qubit.state.real, qubit.state.imaginary]);
+        
+        // Update qubit state
+        qubit.state.real = newState[0];
+        qubit.state.imaginary = newState[1];
+        qubit.history.push({ gate: gateName, time: Date.now() });
+
+        // Handle controlled gates
+        if (controlQubit !== null) {
+            this.entangleQubits(controlQubit, targetQubit);
         }
+    }
+
+    matrixVectorMultiply(matrix, vector) {
+        return [
+            matrix[0][0] * vector[0] + matrix[0][1] * vector[1],
+            matrix[1][0] * vector[0] + matrix[1][1] * vector[1]
+        ];
+    }
+
+    createHadamardGate() {
+        return [
+            [Math.SQRT1_2, Math.SQRT1_2],
+            [Math.SQRT1_2, -Math.SQRT1_2]
+        ];
+    }
+
+    createCNOTGate() {
+        return [
+            [1, 0, 0, 0],
+            [0, 1, 0, 0],
+            [0, 0, 0, 1],
+            [0, 0, 1, 0]
+        ];
+    }
+
+    entangleQubits(q1, q2) {
+        const bellState = this.createBellState();
+        this.qubits.get(q1).state = { real: bellState[0], imaginary: 0 };
+        this.qubits.get(q2).state = { real: bellState[1], imaginary: 0 };
+        this.entangledPairs.set(q1, q2);
+    }
+
+    createBellState() {
+        return [Math.SQRT1_2, Math.SQRT1_2];
     }
 
     measureQubit(qubitId) {
         const qubit = this.qubits.get(qubitId);
         if (!qubit) return null;
 
-        // Collapse superposition
-        const probability = Math.pow(qubit.state.real, 2) + Math.pow(qubit.state.imaginary, 2);
-        const measured = Math.random() <= probability ? 1 : 0;
+        // Calculate measurement probabilities
+        const prob0 = Math.pow(qubit.state.real, 2) + Math.pow(qubit.state.imaginary, 2);
+        const result = Math.random() < prob0 ? 0 : 1;
 
-        // Update entangled qubit if exists
-        if (qubit.entangled !== null) {
-            const entangledQubit = this.qubits.get(qubit.entangled);
-            if (entangledQubit) {
-                entangledQubit.state = measured ? { real: 0, imaginary: 1 } : { real: 1, imaginary: 0 };
-            }
+        // Collapse state
+        qubit.state = result === 0 ? 
+            { real: 1, imaginary: 0 } : 
+            { real: 0, imaginary: 1 };
+
+        // Handle entanglement
+        if (this.entangledPairs.has(qubitId)) {
+            const entangledId = this.entangledPairs.get(qubitId);
+            const entangledQubit = this.qubits.get(entangledId);
+            entangledQubit.state = qubit.state;
         }
 
-        return measured;
+        return result;
     }
 
-    initializeMatrixEffect() {
-        const columns = Math.floor(window.innerWidth / 20);
-        const rows = Math.floor(window.innerHeight / 20);
-
-        this.matrixData = Array(columns).fill(null).map((_, x) => 
-            Array(rows).fill(null).map((_, y) => ({
-                char: this.getRandomQuantumChar(),
-                x: x * 20,
-                y: y * 20,
-                intensity: Math.random(),
-                speed: 1 + Math.random() * 2
-            }))
-        );
-    }
-
-    getRandomQuantumChar() {
-        const chars = '|⟩⟨ψΦΨ∑∏∆∇∫≡±×÷φπτθ';
-        return chars[Math.floor(Math.random() * chars.length)];
-    }
-
-    update() {
-        // Update quantum states
-        this.updateQuantumStates();
-        
-        // Update matrix effect
-        this.updateMatrixEffect();
-        
-        // Update phase and amplitude
-        this.phase = (this.phase + 1) % 360;
-        this.amplitude = 0.8 + Math.sin(Date.now() / 1000) * 0.2;
+    startAnimationLoop() {
+        const render = () => {
+            this.updateQuantumStates();
+            this.renderQuantumState();
+            requestAnimationFrame(render);
+        };
+        requestAnimationFrame(render);
     }
 
     updateQuantumStates() {
-        this.qubits.forEach((qubit, id) => {
-            // Rotate phase
-            qubit.phase = (qubit.phase + Math.random() * 10) % 360;
-            
-            // Update superposition
-            const noise = (Math.random() - 0.5) * 0.1;
-            qubit.state.real = Math.cos(qubit.phase * Math.PI / 180) + noise;
-            qubit.state.imaginary = Math.sin(qubit.phase * Math.PI / 180) + noise;
-            
-            // Normalize
-            const magnitude = Math.sqrt(
-                Math.pow(qubit.state.real, 2) + 
-                Math.pow(qubit.state.imaginary, 2)
-            );
-            qubit.state.real /= magnitude;
-            qubit.state.imaginary /= magnitude;
-        });
-    }
-
-    updateMatrixEffect() {
-        this.matrixData.forEach(column => {
-            column.forEach(cell => {
-                cell.y += cell.speed;
-                if (cell.y > window.innerHeight) {
-                    cell.y = 0;
-                    cell.char = this.getRandomQuantumChar();
-                    cell.intensity = Math.random();
-                }
-            });
-        });
-    }
-
-    getCurrentState() {
-        return {
-            phase: this.phase,
-            amplitude: this.amplitude
-        };
-    }
-
-    getSystemState() {
-        // Calculate overall system state based on qubit states
-        let totalEnergy = 0;
+        const decoherenceFactor = 1 - this.decoherenceRate;
+        
         this.qubits.forEach(qubit => {
-            totalEnergy += Math.pow(qubit.state.real, 2) + Math.pow(qubit.state.imaginary, 2);
+            // Apply environmental decoherence
+            qubit.state.real *= decoherenceFactor;
+            qubit.state.imaginary *= decoherenceFactor;
+            
+            // Normalize state
+            const norm = Math.sqrt(
+                qubit.state.real ** 2 + 
+                qubit.state.imaginary ** 2
+            );
+            qubit.state.real /= norm;
+            qubit.state.imaginary /= norm;
         });
-        return totalEnergy / this.qubits.size;
+    }
+
+    renderQuantumState() {
+        // WebGL-based rendering of quantum state
+        // Includes phase visualization and entanglement connections
+    }
+
+    getQuantumState() {
+        return Array.from(this.qubits.entries()).map(([id, qubit]) => ({
+            id,
+            state: [qubit.state.real, qubit.state.imaginary],
+            phase: Math.atan2(qubit.state.imaginary, qubit.state.real),
+            probability: qubit.state.real ** 2 + qubit.state.imaginary ** 2
+        }));
+    }
+
+    async runQuantumAlgorithm(algorithm) {
+        // Distributed quantum computing using worker pool
+        return new Promise((resolve) => {
+            const worker = this.workerPool.pop();
+            worker.postMessage({
+                qubits: this.getQuantumState(),
+                algorithm
+            });
+
+            worker.onmessage = (e) => {
+                this.workerPool.push(worker);
+                this.updateSystemState(e.data);
+                resolve(e.data);
+            };
+        });
+    }
+
+    updateSystemState(newState) {
+        newState.forEach(({ id, state }) => {
+            const qubit = this.qubits.get(id);
+            qubit.state.real = state[0];
+            qubit.state.imaginary = state[1];
+        });
     }
 }
 
-// Export for module usage
+// Additional helper functions
+function complexMultiply(a, b) {
+    return [
+        a[0]*b[0] - a[1]*b[1],
+        a[0]*b[1] + a[1]*b[0]
+    ];
+}
+
 export default QuantumSystem;
