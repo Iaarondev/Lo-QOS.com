@@ -209,4 +209,3 @@ function complexMultiply(a, b) {
     ];
 }
 
-export default QuantumSystem;
