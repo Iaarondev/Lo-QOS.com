@@ -1,4 +1,4 @@
-class QuantumMediaManager {
+export class QuantumMediaManager {
     constructor() {
         this.audioContext = null;
         this.audioWorklet = null;
