@@ -1,4 +1,4 @@
-class QuantumEnvironment {
+export default class QuantumEnvironment {
   constructor() {
     this.qubits = new Map();
     this.entanglements = new Map();
