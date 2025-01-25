@@ -1,4 +1,4 @@
-class QuantumSystem {
+export default class QuantumSystem {
     constructor() {
         this.qubits = new Map();
         this.entangledPairs = new Map();
