@@ -1,100 +1,68 @@
-// Media Management System
-class MediaManager {
+class QuantumMediaManager {
     constructor() {
         this.audioContext = null;
         this.videoContext = null;
         this.visualizer = null;
         this.currentMedia = null;
         this.quantumEffectsEnabled = true;
+        this.mediaStreams = new Map();
+        this.playbackState = {
+            paused: false,
+            position: 0,
+            startTime: 0
+        };
     }
 
-    init() {
-        this.initAudioContext();
+    async init() {
+        await this.initAudioContext();
         this.initVideoContext();
         this.setupVisualizer();
         this.setupControls();
+        this.setupResizeHandler();
     }
 
-    initAudioContext() {
+    async initAudioContext() {
         try {
             this.audioContext = new (window.AudioContext || window.webkitAudioContext)();
             this.gainNode = this.audioContext.createGain();
             this.analyser = this.audioContext.createAnalyser();
             
-            // Configure analyzer
+            // Quantum audio processing
+            this.quantumProcessor = this.audioContext.createScriptProcessor(4096, 1, 1);
+            this.quantumProcessor.onaudioprocess = this.applyQuantumEffects.bind(this);
+            
             this.analyser.fftSize = 2048;
             this.bufferLength = this.analyser.frequencyBinCount;
             this.dataArray = new Uint8Array(this.bufferLength);
             
-            // Connect nodes
             this.gainNode.connect(this.analyser);
-            this.analyser.connect(this.audioContext.destination);
+            this.analyser.connect(this.quantumProcessor);
+            this.quantumProcessor.connect(this.audioContext.destination);
         } catch (e) {
-            console.error('Failed to initialize audio context:', e);
+            console.error('Quantum audio initialization failed:', e);
         }
     }
 
-    initVideoContext() {
-        const videoContainer = document.querySelector('.video-container');
-        if (!videoContainer) return;
-
-        this.videoContext = {
-            container: videoContainer,
-            canvas: document.createElement('canvas'),
-            ctx: null
-        };
-
-        this.videoContext.canvas.className = 'video-overlay';
-        this.videoContext.ctx = this.videoContext.canvas.getContext('2d');
-        videoContainer.appendChild(this.videoContext.canvas);
-    }
-
-    setupVisualizer() {
-        const visualizer = document.getElementById('qmp3-visualizer');
-        if (!visualizer) return;
-
-        this.visualizer = {
-            canvas: visualizer,
-            ctx: visualizer.getContext('2d'),
-            mode: 'classic',
-            lastFrame: 0
-        };
-
-        this.startVisualizerLoop();
-    }
-
-    setupControls() {
-        // Audio controls
-        document.querySelectorAll('.media-controls button').forEach(button => {
-            button.addEventListener('click', (e) => {
-                const action = e.target.getAttribute('data-action');
-                if (action) this.handleMediaAction(action);
-            });
-        });
-
-        // Visualization mode selector
-        const modeSelect = document.getElementById('visualization-mode');
-        if (modeSelect) {
-            modeSelect.addEventListener('change', (e) => {
-                this.visualizer.mode = e.target.value;
-            });
-        }
-    }
-
-    handleMediaAction(action) {
-        switch (action) {
-            case 'play':
-                this.playMedia();
-                break;
-            case 'pause':
-                this.pauseMedia();
-                break;
-            case 'toggle-effects':
-                this.toggleQuantumEffects();
-                break;
-            case 'toggle-visualization':
-                this.toggleVisualization();
-                break;
+    applyQuantumEffects(audioProcessingEvent) {
+        if (!this.quantumEffectsEnabled) return;
+        
+        const inputBuffer = audioProcessingEvent.inputBuffer;
+        const outputBuffer = audioProcessingEvent.outputBuffer;
+        const quantum = window.loqos?.quantum;
+        
+        for (let channel = 0; channel < outputBuffer.numberOfChannels; channel++) {
+            const inputData = inputBuffer.getChannelData(channel);
+            const outputData = outputBuffer.getChannelData(channel);
+            
+            // Apply quantum superposition effect
+            if (quantum) {
+                const state = quantum.getAudioState();
+                for (let i = 0; i < inputData.length; i++) {
+                    outputData[i] = inputData[i] * Math.sin(state.phase * i);
+                }
+            } else {
+                outputData.set(inputData);
+            }
         }
     }
 
@@ -102,181 +70,125 @@ class MediaManager {
         if (!this.audioContext) return;
 
         try {
-            if (typeof source === 'string') {
-                // Load audio file
-                const response = await fetch(source);
-                const arrayBuffer = await response.arrayBuffer();
-                const audioBuffer = await this.audioContext.decodeAudioData(arrayBuffer);
-                
-                // Create source
-                const sourceNode = this.audioContext.createBufferSource();
-                sourceNode.buffer = audioBuffer;
-                sourceNode.connect(this.gainNode);
-                
-                this.currentMedia = sourceNode;
-                this.currentMedia.start(0);
+            if (this.currentMedia) {
+                this.currentMedia.stop();
+                this.mediaStreams.delete(this.currentMedia);
             }
+
+            const { sourceNode, audioBuffer } = await this.loadMedia(source);
+            sourceNode.connect(this.gainNode);
+            
+            this.currentMedia = sourceNode;
+            this.mediaStreams.set(sourceNode, {
+                buffer: audioBuffer,
+                startTime: this.audioContext.currentTime,
+                offset: 0
+            });
+            
+            sourceNode.start(0, this.playbackState.position);
+            this.playbackState.paused = false;
+            this.playbackState.startTime = this.audioContext.currentTime;
+
         } catch (e) {
-            console.error('Failed to play media:', e);
+            console.error('Quantum media playback failed:', e);
+            throw new Error('MEDIA_PLAYBACK_FAILED');
+        }
+    }
+
+    async loadMedia(source) {
+        try {
+            const response = await fetch(source);
+            const arrayBuffer = await response.arrayBuffer();
+            const audioBuffer = await this.audioContext.decodeAudioData(arrayBuffer);
+            
+            const sourceNode = this.audioContext.createBufferSource();
+            sourceNode.buffer = audioBuffer;
+            return { sourceNode, audioBuffer };
+        } catch (e) {
+            throw new Error('MEDIA_LOAD_FAILED');
         }
     }
 
     pauseMedia() {
-        if (this.currentMedia) {
-            this.currentMedia.stop();
-            this.currentMedia = null;
-        }
+        if (!this.currentMedia || this.playbackState.paused) return;
+
+        this.playbackState.position += this.audioContext.currentTime - this.playbackState.startTime;
+        this.currentMedia.stop();
+        this.playbackState.paused = true;
     }
 
-    toggleQuantumEffects() {
-        this.quantumEffectsEnabled = !this.quantumEffectsEnabled;
-        if (this.videoContext) {
-            this.videoContext.canvas.style.display = 
-                this.quantumEffectsEnabled ? 'block' : 'none';
-        }
+    resumeMedia() {
+        if (!this.playbackState.paused || !this.mediaStreams.has(this.currentMedia)) return;
+
+        const sourceNode = this.audioContext.createBufferSource();
+        const streamInfo = this.mediaStreams.get(this.currentMedia);
+        
+        sourceNode.buffer = streamInfo.buffer;
+        sourceNode.connect(this.gainNode);
+        sourceNode.start(0, this.playbackState.position % streamInfo.buffer.duration);
+        
+        this.currentMedia = sourceNode;
+        this.mediaStreams.set(sourceNode, { ...streamInfo, startTime: this.audioContext.currentTime });
+        this.playbackState.paused = false;
+        this.playbackState.startTime = this.audioContext.currentTime;
     }
 
-    startVisualizerLoop() {
-        const draw = (timestamp) => {
-            if (!this.visualizer) return;
-
-            // Calculate delta time
-            const delta = timestamp - this.visualizer.lastFrame;
-            this.visualizer.lastFrame = timestamp;
-
-            // Clear canvas
-            const { ctx, canvas } = this.visualizer;
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-            // Get audio data
-            this.analyser.getByteFrequencyData(this.dataArray);
-
-            // Draw based on mode
-            switch (this.visualizer.mode) {
-                case 'quantum':
-                    this.drawQuantumVisualization(delta);
-                    break;
-                case 'spiral':
-                    this.drawSpiralVisualization(delta);
-                    break;
-                case 'wave':
-                    this.drawWaveVisualization(delta);
-                    break;
-                default:
-                    this.drawClassicVisualization(delta);
-            }
-
-            requestAnimationFrame(draw);
-        };
-
-        requestAnimationFrame(draw);
-    }
-
+    // Enhanced visualization methods
     drawQuantumVisualization(delta) {
         const { ctx, canvas } = this.visualizer;
         const quantum = window.loqos?.quantum;
         
+        ctx.fillStyle = 'rgba(0, 0, 0, 0.1)';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        
         if (!quantum) return this.drawClassicVisualization(delta);
 
-        const state = quantum.getCurrentState();
-        const centerX = canvas.width / 2;
-        const centerY = canvas.height / 2;
-
-        // Draw quantum interference pattern
-        ctx.beginPath();
+        const state = quantum.getVisualState();
         ctx.strokeStyle = `hsl(${state.phase}, 70%, 60%)`;
-        ctx.lineWidth = 2;
-
-        for (let i = 0; i < this.bufferLength; i++) {
-            const value = this.dataArray[i] / 128.0;
-            const angle = (i * Math.PI * 2) / this.bufferLength;
-            const radius = value * canvas.height / 3;
-
-            const x = centerX + Math.cos(angle + state.phase * Math.PI / 180) * radius;
-            const y = centerY + Math.sin(angle + state.phase * Math.PI / 180) * radius;
-
-            if (i === 0) {
-                ctx.moveTo(x, y);
-            } else {
-                ctx.lineTo(x, y);
-            }
-        }
-
-        ctx.closePath();
-        ctx.stroke();
-    }
-
-    drawSpiralVisualization(delta) {
-        const { ctx, canvas } = this.visualizer;
-        const centerX = canvas.width / 2;
-        const centerY = canvas.height / 2;
         
-        ctx.strokeStyle = 'rgba(144, 224, 239, 0.8)';
-        ctx.lineWidth = 2;
-        
-        let angle = 0;
-        let radius = 0;
-        
+        // Create quantum interference pattern
         ctx.beginPath();
         for (let i = 0; i < this.bufferLength; i++) {
-            const value = this.dataArray[i] / 255.0;
-            angle += Math.PI * 2 / 50;
-            radius += 0.5;
+            const amplitude = this.dataArray[i] / 255;
+            const angle = (i / this.bufferLength) * Math.PI * 2 + state.phase;
+            const radius = amplitude * canvas.height / 2;
             
-            const x = centerX + Math.cos(angle) * radius * value * 50;
-            const y = centerY + Math.sin(angle) * radius * value * 50;
+            const x = canvas.width/2 + Math.cos(angle) * radius;
+            const y = canvas.height/2 + Math.sin(angle) * radius;
             
-            if (i === 0) {
-                ctx.moveTo(x, y);
-            } else {
-                ctx.lineTo(x, y);
-            }
+            if (i === 0) ctx.moveTo(x, y);
+            else ctx.lineTo(x, y);
         }
         ctx.stroke();
     }
 
-    drawWaveVisualization(delta) {
-        const { ctx, canvas } = this.visualizer;
-        
-        ctx.lineWidth = 2;
-        ctx.strokeStyle = 'rgb(0, 180, 216)';
-        
-        ctx.beginPath();
-        const sliceWidth = canvas.width / this.bufferLength;
-        let x = 0;
-        
-        for (let i = 0; i < this.bufferLength; i++) {
-            const v = this.dataArray[i] / 128.0;
-            const y = v * canvas.height / 2;
-            
-            if (i === 0) {
-                ctx.moveTo(x, y);
-            } else {
-                ctx.lineTo(x, y);
+    setupResizeHandler() {
+        window.addEventListener('resize', () => {
+            if (this.visualizer) {
+                this.visualizer.canvas.width = this.visualizer.canvas.offsetWidth;
+                this.visualizer.canvas.height = this.visualizer.canvas.offsetHeight;
             }
-            
-            x += sliceWidth;
-        }
-        
-        ctx.lineTo(canvas.width, canvas.height / 2);
-        ctx.stroke();
+            if (this.videoContext) {
+                this.videoContext.canvas.width = this.videoContext.container.offsetWidth;
+                this.videoContext.canvas.height = this.videoContext.container.offsetHeight;
+            }
+        });
     }
 
-    drawClassicVisualization(delta) {
-        const { ctx, canvas } = this.visualizer;
-        const barWidth = canvas.width / this.bufferLength * 2.5;
-        let x = 0;
+    async destroy() {
+        this.pauseMedia();
+        this.mediaStreams.clear();
         
-        for (let i = 0; i < this.bufferLength; i++) {
-            const barHeight = this.dataArray[i] / 2;
-            
-            ctx.fillStyle = `rgb(${barHeight + 100}, 180, 216)`;
-            ctx.fillRect(x, canvas.height - barHeight, barWidth, barHeight);
-            
-            x += barWidth + 1;
+        if (this.audioContext) {
+            await this.audioContext.close();
         }
+        
+        if (this.videoContext) {
+            this.videoContext.canvas.remove();
+        }
+        
+        window.removeEventListener('resize', this.handleResize);
     }
 }
 
-// Export for module usage
-export default MediaManager;
+export default QuantumMediaManager;
