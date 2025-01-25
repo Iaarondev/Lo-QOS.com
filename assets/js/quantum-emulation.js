@@ -1,4 +1,3 @@
-// Quantum Environment Emulation with Enhanced Features
 class QuantumEnvironment {
   constructor() {
     this.qubits = new Map();
@@ -6,7 +5,9 @@ class QuantumEnvironment {
     this.operations = [];
     this.history = [];
     this.visualizationEnabled = true;
-    this.init();
+    this.canvas = null;
+    this.ctx = null;
+    this.gates = {};
   }
 
   init() {
@@ -17,15 +18,19 @@ class QuantumEnvironment {
   }
 
   setupCanvas() {
+    const container = document.querySelector('#quantum-environment');
+    if (!container) throw new Error('Missing #quantum-environment container');
+    
     this.canvas = document.createElement('canvas');
+    this.canvas.className = 'quantum-visualization';
     this.canvas.width = 400;
     this.canvas.height = 400;
-    this.canvas.className = 'quantum-visualization';
-    document.querySelector('#quantum-environment').appendChild(this.canvas);
+    container.appendChild(this.canvas);
     this.ctx = this.canvas.getContext('2d');
   }
 
   setupControls() {
+    const container = document.querySelector('#quantum-environment');
     const controls = document.createElement('div');
     controls.className = 'quantum-controls';
     
@@ -36,16 +41,33 @@ class QuantumEnvironment {
       controls.appendChild(btn);
     });
 
-    document.querySelector('#quantum-environment').appendChild(controls);
+    container.appendChild(controls);
   }
 
   registerCoreGates() {
     this.gates = {
-      'H': this.createHadamardGate(),
-      'X': [[0, 1], [1, 0]],
-      'Y': [[0, -1j], [1j, 0]],
-      'Z': [[1, 0], [0, -1]],
-      'CNOT': this.createCnotGate()
+      'H': [
+        [new Complex(1/Math.sqrt(2), 0), new Complex(1/Math.sqrt(2), 0)],
+        [new Complex(1/Math.sqrt(2), 0), new Complex(-1/Math.sqrt(2), 0)]
+      ],
+      'X': [
+        [new Complex(0, 0), new Complex(1, 0)],
+        [new Complex(1, 0), new Complex(0, 0)]
+      ],
+      'Y': [
+        [new Complex(0, 0), new Complex(0, -1)],
+        [new Complex(0, 1), new Complex(0, 0)]
+      ],
+      'Z': [
+        [new Complex(1, 0), new Complex(0, 0)],
+        [new Complex(0, 0), new Complex(-1, 0)]
+      ],
+      'CNOT': [
+        [new Complex(1, 0), new Complex(0, 0), new Complex(0, 0), new Complex(0, 0)],
+        [new Complex(0, 0), new Complex(1, 0), new Complex(0, 0), new Complex(0, 0)],
+        [new Complex(0, 0), new Complex(0, 0), new Complex(0, 0), new Complex(1, 0)],
+        [new Complex(0, 0), new Complex(0, 0), new Complex(1, 0), new Complex(0, 0)]
+      ]
     };
   }
 
@@ -56,7 +78,6 @@ class QuantumEnvironment {
       entangledWith: null,
       measurements: []
     };
-    
     this.qubits.set(id, qubit);
     this.log(`Created qubit ${id}`);
     return id;
@@ -71,49 +92,72 @@ class QuantumEnvironment {
     this.log(`Applied gate to ${qubitId}`);
   }
 
+  applyNamedGate(gateName, qubitId) {
+    const gate = this.gates[gateName];
+    if (!gate) throw new Error(`Gate ${gateName} not found`);
+    this.applyGate(qubitId, gate);
+  }
+
   measure(qubitId) {
     const qubit = this.qubits.get(qubitId);
+    if (!qubit) throw new Error('Qubit not found');
+    
     const probabilities = this.calculateProbabilities(qubit.state);
     const result = Math.random() < probabilities[0] ? 0 : 1;
     
+    // Collapse state
     qubit.state = result === 0 ? 
       [new Complex(1, 0), new Complex(0, 0)] : 
       [new Complex(0, 0), new Complex(1, 0)];
     
-    this.updateEntangledQubits(qubit, result);
+    // Update entangled qubits
+    if (qubit.entangledWith) {
+      this.entanglements.get(qubit.entangledWith.id)?.qubits.forEach(id => {
+        if (id !== qubitId) {
+          const eq = this.qubits.get(id);
+          if (eq) eq.state = qubit.state;
+        }
+      });
+    }
+    
     this.log(`Measured ${qubitId}: ${result}`);
     return result;
   }
 
   entangleQubits(qubitIds) {
-    const entangledState = this.createEntangledState(qubitIds);
+    const entangledState = {
+      id: crypto.randomUUID(),
+      qubits: qubitIds,
+      state: this.createBellState()
+    };
+    
     qubitIds.forEach(id => {
       const qubit = this.qubits.get(id);
-      qubit.entangledWith = entangledState;
+      if (qubit) qubit.entangledWith = entangledState;
     });
+    
     this.entanglements.set(entangledState.id, entangledState);
   }
 
-  visualize() {
-    this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-    
-    // Draw Bloch Sphere
-    this.ctx.beginPath();
-    this.ctx.arc(200, 200, 150, 0, Math.PI * 2);
-    this.ctx.strokeStyle = '#00b4d8';
-    this.ctx.stroke();
-    
-    // Draw Qubit States
-    this.qubits.forEach((qubit, id) => {
-      const position = this.calculateBlochPosition(qubit.state);
-      this.ctx.beginPath();
-      this.ctx.arc(200 + position.x * 150, 200 + position.y * 150, 5, 0, Math.PI * 2);
-      this.ctx.fillStyle = '#90e0ef';
-      this.ctx.fill();
-    });
+  createBellState() {
+    return [
+      new Complex(1/Math.sqrt(2), 0),
+      new Complex(0, 0),
+      new Complex(0, 0),
+      new Complex(1/Math.sqrt(2), 0)
+    ];
   }
 
-  // Core quantum operations
+  calculateBlochPosition(state) {
+    const [alpha, beta] = state;
+    return {
+      x: 2 * (alpha.real * beta.real + alpha.imag * beta.imag),
+      y: 2 * (alpha.imag * beta.real - alpha.real * beta.imag),
+      z: alpha.real**2 + alpha.imag**2 - beta.real**2 - beta.imag**2
+    };
+  }
+
+  // Core quantum math functions
   calculateProbabilities(state) {
     return state.map(c => c.magnitude() ** 2);
   }
@@ -131,7 +175,26 @@ class QuantumEnvironment {
     return state.map(c => c.divide(norm));
   }
 
-  // Visualization loop
+  // Visualization
+  visualize() {
+    this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+    
+    // Draw Bloch Sphere
+    this.ctx.beginPath();
+    this.ctx.arc(200, 200, 150, 0, Math.PI * 2);
+    this.ctx.strokeStyle = '#00b4d8';
+    this.ctx.stroke();
+    
+    // Draw qubit states
+    this.qubits.forEach((qubit, id) => {
+      const pos = this.calculateBlochPosition(qubit.state);
+      this.ctx.beginPath();
+      this.ctx.arc(200 + pos.x * 150, 200 + pos.y * 150, 5, 0, Math.PI * 2);
+      this.ctx.fillStyle = '#90e0ef';
+      this.ctx.fill();
+    });
+  }
+
   startVisualizationLoop() {
     const animate = () => {
       if (this.visualizationEnabled) this.visualize();
@@ -159,9 +222,8 @@ class QuantumEnvironment {
   }
 }
 
-// Complex number implementation
 class Complex {
-  constructor(real, imag) {
+  constructor(real, imag = 0) {
     this.real = real;
     this.imag = imag;
   }
@@ -186,14 +248,25 @@ class Complex {
   }
 }
 
-// Initialize quantum environment
+// Initialize after DOM load
 document.addEventListener('DOMContentLoaded', () => {
-  const qe = new QuantumEnvironment();
-  window.quantumEnv = qe;
-  
-  // Example usage
-  const q1 = qe.createQubit();
-  const q2 = qe.createQubit();
-  qe.entangleQubits([q1, q2]);
-  qe.applyNamedGate('H', q1);
+  try {
+    const qe = new QuantumEnvironment();
+    window.quantumEnv = qe;
+    qe.init();
+    
+    // Example usage
+    const q1 = qe.createQubit();
+    const q2 = qe.createQubit();
+    qe.entangleQubits([q1, q2]);
+    qe.applyNamedGate('H', q1);
+  } catch (error) {
+    console.error('Quantum environment initialization failed:', error);
+    document.querySelector('#quantum-environment').innerHTML = `
+      <div class="quantum-error">
+        <h2>Quantum Decoherence Detected</h2>
+        <p>${error.message}</p>
+      </div>
+    `;
+  }
 });
