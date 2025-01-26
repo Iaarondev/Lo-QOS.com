@@ -5,8 +5,8 @@ import { ThemeManager } from './theme-manager.js';
 import { GameEngine } from './game-engine.js';
 import { PerformanceMonitor } from './performance-monitor.js';
 import { StateObservable } from './state-observable.js';
-import { Complex } from './complex.js';
-import { QuantumGates } from './quantum-gates.js';
+//import { Complex } from './complex.js';
+//import { QuantumGates } from './quantum-gates.js';
 
 
 
