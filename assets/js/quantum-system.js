@@ -1,6 +1,6 @@
 // Correct implementation without duplicate exports
-import { Complex } from './complex.js';  // Ensure this exists
-import { StateObservable } from './state-observable.js';
+//import { Complex } from './complex.js';  // Ensure this exists
+//import { StateObservable } from './state-observable.js';
 
 
 export class QuantumSystem {

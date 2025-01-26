@@ -1,5 +1,5 @@
 import { Complex } from './complex.js';
-import { QuantumGates } from './quantum-gates.js';
+//import { QuantumGates } from './quantum-gates.js';
 
 export class EntanglementManager {
     constructor() {
