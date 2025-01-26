@@ -5,9 +5,11 @@ import { ThemeManager } from './theme-manager.js';
 import { GameEngine } from './game-engine.js';
 import { PerformanceMonitor } from './performance-monitor.js';
 import { StateObservable } from './state-observable.js';
-import { TelemetryService } from './telemetry-service.js'; // Ensure this is imported
-import { QuantumUpdateService } from './quantum-update-service.js'; // Ensure this is imported
-import { SecurityMonitor } from './security-monitor.js'; // Ensure this is imported
+import { TelemetryService } from './telemetry-service.js';
+import { QuantumUpdateService } from './quantum-update-service.js';
+import { SecurityMonitor } from './security-monitor.js';
+import { QuantumNotification } from './quantum-notification.js'; // Add this import
+
 export default class LoQOSSystem {
     constructor() {
         this.state = {
