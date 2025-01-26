@@ -5,10 +5,6 @@ import { ThemeManager } from './theme-manager.js';
 import { GameEngine } from './game-engine.js';
 import { PerformanceMonitor } from './performance-monitor.js';
 import { StateObservable } from './state-observable.js';
-//import { Complex } from './complex.js';
-//import { QuantumGates } from './quantum-gates.js';
-
-
 
 export default class LoQOSSystem {
     constructor() {
@@ -26,7 +22,8 @@ export default class LoQOSSystem {
                 quantumEntanglement: true,
                 securityLevel: 'high'
             },
-            observables: new StateObservable()
+            observables: new StateObservable(),
+            services: {} // Initialize services object
         };
 
         this.init = this.init.bind(this);
@@ -37,11 +34,11 @@ export default class LoQOSSystem {
         if (this.state.initialized) return;
 
         try {
+            // Start services first
+            this.startServices();
+
             // Initialize core subsystems
             await this.initializeCoreSubsystems();
-            
-            // Start services
-            this.startServices();
             
             // Initialize state management
             this.setupStateObservables();
@@ -258,4 +255,3 @@ document.addEventListener('quantum-ready', async () => {
         console.error('Boot sequence failed:', error);
     }
 });
-
