@@ -1,8 +1,3 @@
-// Correct implementation without duplicate exports
-//import { Complex } from './complex.js';  // Ensure this exists
-//import { StateObservable } from './state-observable.js';
-
-
 export class QuantumSystem {
     constructor() {
         this.qubits = new Map();
@@ -43,7 +38,6 @@ export class QuantumSystem {
     }
 
     createSuperposition() {
-        // Initialize in |+⟩ state
         return {
             real: Math.SQRT1_2,
             imaginary: Math.SQRT1_2
@@ -51,12 +45,74 @@ export class QuantumSystem {
     }
 
     async initWebGLRenderer() {
-        this.canvas = document.createElement('canvas');
-        document.body.appendChild(this.canvas);
-        this.gl = this.canvas.getContext('webgl');
-        
-        // Initialize WebGL shaders and buffers
-        // ... (complex visualization setup)
+        try {
+            this.canvas = document.createElement('canvas');
+            document.body.appendChild(this.canvas);
+            this.gl = this.canvas.getContext('webgl');
+
+            if (!this.gl) {
+                throw new Error('WebGL not supported');
+            }
+
+            // Vertex shader
+            const vsSource = `
+                attribute vec4 aVertexPosition;
+                void main() {
+                    gl_Position = aVertexPosition;
+                }
+            `;
+
+            // Fragment shader
+            const fsSource = `
+                void main() {
+                    gl_FragColor = vec4(1.0, 1.0, 1.0, 1.0);
+                }
+            `;
+
+            // Initialize shaders
+            const vertexShader = this.loadShader(this.gl.VERTEX_SHADER, vsSource);
+            const fragmentShader = this.loadShader(this.gl.FRAGMENT_SHADER, fsSource);
+
+            // Create shader program
+            this.shaderProgram = this.gl.createProgram();
+            this.gl.attachShader(this.shaderProgram, vertexShader);
+            this.gl.attachShader(this.shaderProgram, fragmentShader);
+            this.gl.linkProgram(this.shaderProgram);
+
+            if (!this.gl.getProgramParameter(this.shaderProgram, this.gl.LINK_STATUS)) {
+                throw new Error('Shader program failed to link');
+            }
+
+            // Set up buffers
+            this.positionBuffer = this.gl.createBuffer();
+            this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.positionBuffer);
+
+            const positions = [
+                -1.0,  1.0,
+                 1.0,  1.0,
+                -1.0, -1.0,
+                 1.0, -1.0,
+            ];
+
+            this.gl.bufferData(this.gl.ARRAY_BUFFER, new Float32Array(positions), this.gl.STATIC_DRAW);
+        } catch (error) {
+            console.error('WebGL initialization failed:', error);
+            throw error;
+        }
+    }
+
+    loadShader(type, source) {
+        const shader = this.gl.createShader(type);
+        this.gl.shaderSource(shader, source);
+        this.gl.compileShader(shader);
+
+        if (!this.gl.getShaderParameter(shader, this.gl.COMPILE_STATUS)) {
+            console.error('Shader compilation failed:', this.gl.getShaderInfoLog(shader));
+            this.gl.deleteShader(shader);
+            return null;
+        }
+
+        return shader;
     }
 
     setupQuantumWorkers() {
@@ -71,22 +127,41 @@ export class QuantumSystem {
         const qubit = this.qubits.get(targetQubit);
         const newState = this.matrixVectorMultiply(gate, [qubit.state.real, qubit.state.imaginary]);
         
-        // Update qubit state
         qubit.state.real = newState[0];
         qubit.state.imaginary = newState[1];
         qubit.history.push({ gate: gateName, time: Date.now() });
 
-        // Handle controlled gates
         if (controlQubit !== null) {
             this.entangleQubits(controlQubit, targetQubit);
         }
     }
 
     matrixVectorMultiply(matrix, vector) {
-        return [
-            matrix[0][0] * vector[0] + matrix[0][1] * vector[1],
-            matrix[1][0] * vector[0] + matrix[1][1] * vector[1]
-        ];
+        const result = [0, 0];
+
+        for (let i = 0; i < 2; i++) {
+            for (let j = 0; j < 2; j++) {
+                const matrixElement = matrix[i][j];
+                const vectorElement = vector[j];
+
+                if (typeof matrixElement === 'number') {
+                    // Real number multiplication
+                    result[i] += matrixElement * vectorElement;
+                } else {
+                    // Complex number multiplication
+                    result[i] += this.complexMultiply(matrixElement, vectorElement);
+                }
+            }
+        }
+
+        return result;
+    }
+
+    complexMultiply(a, b) {
+        return {
+            real: a.real * b.real - a.imaginary * b.imaginary,
+            imaginary: a.real * b.imaginary + a.imaginary * b.real
+        };
     }
 
     createHadamardGate() {
@@ -96,12 +171,26 @@ export class QuantumSystem {
         ];
     }
 
+    createPauliXGate() {
+        return [
+            [0, 1],
+            [1, 0]
+        ];
+    }
+
     createCNOTGate() {
         return [
             [1, 0, 0, 0],
             [0, 1, 0, 0],
             [0, 0, 0, 1],
             [0, 0, 1, 0]
+        ];
+    }
+
+    createPhaseGate(phase = Math.PI) {
+        return [
+            [1, 0],
+            [0, { real: Math.cos(phase), imaginary: Math.sin(phase) }]
         ];
     }
 
@@ -120,16 +209,13 @@ export class QuantumSystem {
         const qubit = this.qubits.get(qubitId);
         if (!qubit) return null;
 
-        // Calculate measurement probabilities
         const prob0 = Math.pow(qubit.state.real, 2) + Math.pow(qubit.state.imaginary, 2);
         const result = Math.random() < prob0 ? 0 : 1;
 
-        // Collapse state
         qubit.state = result === 0 ? 
             { real: 1, imaginary: 0 } : 
             { real: 0, imaginary: 1 };
 
-        // Handle entanglement
         if (this.entangledPairs.has(qubitId)) {
             const entangledId = this.entangledPairs.get(qubitId);
             const entangledQubit = this.qubits.get(entangledId);
@@ -152,11 +238,9 @@ export class QuantumSystem {
         const decoherenceFactor = 1 - this.decoherenceRate;
         
         this.qubits.forEach(qubit => {
-            // Apply environmental decoherence
             qubit.state.real *= decoherenceFactor;
             qubit.state.imaginary *= decoherenceFactor;
             
-            // Normalize state
             const norm = Math.sqrt(
                 qubit.state.real ** 2 + 
                 qubit.state.imaginary ** 2
@@ -168,7 +252,6 @@ export class QuantumSystem {
 
     renderQuantumState() {
         // WebGL-based rendering of quantum state
-        // Includes phase visualization and entanglement connections
     }
 
     getQuantumState() {
@@ -181,9 +264,13 @@ export class QuantumSystem {
     }
 
     async runQuantumAlgorithm(algorithm) {
-        // Distributed quantum computing using worker pool
-        return new Promise((resolve) => {
+        return new Promise((resolve, reject) => {
             const worker = this.workerPool.pop();
+            if (!worker) {
+                reject(new Error('No available workers'));
+                return;
+            }
+
             worker.postMessage({
                 qubits: this.getQuantumState(),
                 algorithm
@@ -193,6 +280,11 @@ export class QuantumSystem {
                 this.workerPool.push(worker);
                 this.updateSystemState(e.data);
                 resolve(e.data);
+            };
+
+            worker.onerror = (error) => {
+                this.workerPool.push(worker);
+                reject(error);
             };
         });
     }
@@ -205,12 +297,3 @@ export class QuantumSystem {
         });
     }
 }
-
-// Additional helper functions
-function complexMultiply(a, b) {
-    return [
-        a[0]*b[0] - a[1]*b[1],
-        a[0]*b[1] + a[1]*b[0]
-    ];
-}
-
