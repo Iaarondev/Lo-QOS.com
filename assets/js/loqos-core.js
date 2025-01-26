@@ -8,7 +8,7 @@ import { StateObservable } from './state-observable.js';
 import { TelemetryService } from './telemetry-service.js';
 import { QuantumUpdateService } from './quantum-update-service.js';
 import { SecurityMonitor } from './security-monitor.js';
-import { QuantumNotification } from './quantum-notification.js'; // Add this import
+import { QuantumNotification } from './quantum-notification.js';
 
 export default class LoQOSSystem {
     constructor() {
@@ -61,11 +61,16 @@ export default class LoQOSSystem {
         }
     }
 
+    enterRecoveryMode() {
+        console.log('Entering recovery mode...');
+        // Add recovery logic here
+    }
+
     async initializeCoreSubsystems() {
         const initPromises = [
             this.state.subsystems.quantum.init(),
             this.state.subsystems.metrics.connect(),
-            this.state.subsystems.media.initializeWebGL()
+            this.state.subsystems.media.initializeWebGL() // Ensure this method exists
         ];
 
         await Promise.all(initPromises);
@@ -77,13 +82,13 @@ export default class LoQOSSystem {
     }
 
     startServices() {
-        console.log('Starting services...'); // Debug log
+        console.log('Starting services...');
         this.state.services = {
             telemetry: new TelemetryService(),
             updateManager: new QuantumUpdateService(),
             security: new SecurityMonitor()
         };
-        console.log('Services initialized:', this.state.services); // Debug log
+        console.log('Services initialized:', this.state.services);
     }
 
     setupStateObservables() {
@@ -189,7 +194,7 @@ export default class LoQOSSystem {
         if (this.state.services.telemetry) {
             this.state.services.telemetry.logError(errorData);
         } else {
-            console.error('Telemetry service not initialized:', errorData); // Debug log
+            console.error('Telemetry service not initialized:', errorData);
         }
         
         // Show user notification
@@ -232,7 +237,7 @@ export default class LoQOSSystem {
         if (this.state.services.telemetry) {
             this.state.services.telemetry.reportMetrics(metrics);
         } else {
-            console.error('Telemetry service not initialized:', metrics); // Debug log
+            console.error('Telemetry service not initialized:', metrics);
         }
     }
 
