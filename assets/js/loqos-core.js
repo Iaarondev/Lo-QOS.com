@@ -5,6 +5,9 @@ import { ThemeManager } from './theme-manager.js';
 import { GameEngine } from './game-engine.js';
 import { PerformanceMonitor } from './performance-monitor.js';
 import { StateObservable } from './state-observable.js';
+import { TelemetryService } from './telemetry-service.js'; // Ensure this is imported
+import { QuantumUpdateService } from './quantum-update-service.js'; // Ensure this is imported
+import { SecurityMonitor } from './security-monitor.js'; // Ensure this is imported
 
 export default class LoQOSSystem {
     constructor() {
@@ -73,16 +76,13 @@ export default class LoQOSSystem {
     }
 
     startServices() {
-        // Start background services
+        console.log('Starting services...'); // Debug log
         this.state.services = {
             telemetry: new TelemetryService(),
             updateManager: new QuantumUpdateService(),
             security: new SecurityMonitor()
         };
-
-        // Initialize service workers
-        this.serviceWorker = new Worker('/sw/quantum-sw.js');
-        this.setupServiceWorkerMessaging();
+        console.log('Services initialized:', this.state.services); // Debug log
     }
 
     setupStateObservables() {
@@ -185,7 +185,11 @@ export default class LoQOSSystem {
         };
 
         // Log to error tracking service
-        this.state.services.telemetry.logError(errorData);
+        if (this.state.services.telemetry) {
+            this.state.services.telemetry.logError(errorData);
+        } else {
+            console.error('Telemetry service not initialized:', errorData); // Debug log
+        }
         
         // Show user notification
         const notification = new QuantumNotification(
@@ -224,13 +228,19 @@ export default class LoQOSSystem {
         };
 
         this.state.observables.getStream('performance').update(metrics);
-        this.state.services.telemetry.reportMetrics(metrics);
+        if (this.state.services.telemetry) {
+            this.state.services.telemetry.reportMetrics(metrics);
+        } else {
+            console.error('Telemetry service not initialized:', metrics); // Debug log
+        }
     }
 
     destroy() {
         // Cleanup resources
         this.state.subsystems.quantum.shutdown();
-        this.state.services.telemetry.disconnect();
+        if (this.state.services.telemetry) {
+            this.state.services.telemetry.disconnect();
+        }
         WebGLRenderer.cleanup();
         
         // Terminate workers
