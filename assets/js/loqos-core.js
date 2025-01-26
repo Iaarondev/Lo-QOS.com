@@ -35,6 +35,7 @@ export default class LoQOSSystem {
     }
 
     async init() {
+        console.log('Initializing LoQOSSystem...'); // Debug log
         if (this.state.initialized) return;
 
         try {
@@ -57,6 +58,7 @@ export default class LoQOSSystem {
             this.loadPlugins();
 
         } catch (error) {
+            console.error('Initialization error:', error); // Debug log
             this.handleError(error, true);
         }
     }
@@ -67,6 +69,7 @@ export default class LoQOSSystem {
     }
 
     async initializeCoreSubsystems() {
+        console.log('Initializing core subsystems...'); // Debug log
         const initPromises = [
             this.state.subsystems.quantum.init(),
             this.state.subsystems.metrics.connect(),
