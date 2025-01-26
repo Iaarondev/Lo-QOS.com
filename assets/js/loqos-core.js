@@ -8,7 +8,6 @@ import { StateObservable } from './state-observable.js';
 import { TelemetryService } from './telemetry-service.js'; // Ensure this is imported
 import { QuantumUpdateService } from './quantum-update-service.js'; // Ensure this is imported
 import { SecurityMonitor } from './security-monitor.js'; // Ensure this is imported
-
 export default class LoQOSSystem {
     constructor() {
         this.state = {
