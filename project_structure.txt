@@ -1,0 +1,395 @@
+Project Structure Report
+Generated at: Sun Jan 26 00:00:39 UTC 2025
+======================================
+
+Directory Structure:
+assets/js
+├── complex.js
+├── entanglement-manager.js
+├── game-engine.js
+├── game.js
+├── loqos-core.js
+├── main.js
+├── media-manager.js
+├── performance-monitor.js
+├── protocol.js
+├── quantum-emulation.js
+├── quantum-gates.js
+├── quantum-processor.js
+├── quantum-system.js
+├── state-observable.js
+└── theme-manager.js
+
+0 directories, 15 files
+
+
+File Headers:
+
+
+=== File: assets/js/media-manager.js ===
+First 20 lines:
+export class QuantumMediaManager {
+    constructor() {
+        this.audioContext = null;
+        this.audioWorklet = null;
+        this.mediaStreams = new Map();
+        this.visualizationModes = new Map();
+        this.activeVisualizers = new Set();
+        this.quantumState = {
+            phase: 0,
+            entanglement: 0,
+            superposition: 0.5
+        };
+        this.visualizationContainer = null;
+    }
+
+    async init() {
+        try {
+            await this.initQuantumAudioContext();
+            this.setupVisualizationContainer();
+            this.registerCoreVisualizations();
+--------------------------------------
+
+
+=== File: assets/js/state-observable.js ===
+First 20 lines:
+import Complex from './complex.js';
+
+export default class StateObservable {
+    constructor() {
+        this.observers = new Map();
+        this.stateHistory = [];
+        this.errorStreams = new Set();
+    }
+
+    createStream(name, initialState) {
+        this.observers.set(name, {
+            subscribers: new Set(),
+            currentState: initialState
+        });
+    }
+
+    subscribe(streamName, callback) {
+        const stream = this.observers.get(streamName);
+        if (stream) {
+            stream.subscribers.add(callback);
+--------------------------------------
+
+
+=== File: assets/js/main.js ===
+First 20 lines:
+document.addEventListener('DOMContentLoaded', () => {
+    // Initialize all components
+    initializeSphericalParticles();
+    initializeSphericalAnimations();
+    initializeStaking();
+    initializeDEX();
+    initializeProtocolDemo();
+    initializeThemeToggle();
+    initializeNotifications();
+});
+
+// Spherical Particles Animation
+function initializeSphericalParticles() {
+    if (document.getElementById('particles-js')) {
+        particlesJS('particles-js', {
+            particles: {
+                number: {
+                    value: 50,
+                    density: {
+                        enable: true,
+--------------------------------------
+
+
+=== File: assets/js/entanglement-manager.js ===
+First 20 lines:
+import Complex from './complex.js';
+import QuantumGates from './quantum-gates.js';
+
+export default class EntanglementManager {
+    constructor() {
+        this.entangledPairs = new Map();
+        this.entangledGroups = new Map();
+    }
+
+    entangleQubits(qubitIds, system) {
+        const entangledState = this.createBellState(qubitIds.length);
+        this.entangledGroups.set(entangledState.id, {
+            state: entangledState,
+            qubits: qubitIds
+        });
+
+        qubitIds.forEach(id => {
+            const qubit = system.getQubit(id);
+            qubit.entangled = entangledState.id;
+        });
+--------------------------------------
+
+
+=== File: assets/js/quantum-processor.js ===
+First 20 lines:
+// quantum-processor.js
+class QuantumProcessor extends AudioWorkletProcessor {
+  process(inputs, outputs, parameters) {
+    const input = inputs[0];
+    const output = outputs[0];
+    
+    if (input.length > 0) {
+      const phase = Math.random() * Math.PI * 2;
+      
+      for (let i = 0; i < input[0].length; i++) {
+        output[0][i] = input[0][i] * Math.sin(phase);
+      }
+      
+      this.port.postMessage({ phase });
+    }
+    
+    return true;
+  }
+}
+
+--------------------------------------
+
+
+=== File: assets/js/performance-monitor.js ===
+First 20 lines:
+export default class PerformanceMonitor {
+  constructor() {
+    this.metrics = new Map();
+  }
+
+  connect() {
+    console.log('Quantum metrics monitoring activated');
+    return Promise.resolve();
+  }
+
+  reportMetrics(data) {
+    console.log('Reporting quantum metrics:', data);
+  }
+}
+--------------------------------------
+
+
+=== File: assets/js/game-engine.js ===
+First 20 lines:
+export default class GameEngine {  // Add 'default' export
+    constructor() {
+        this.quantumState = null;
+        this.players = new Map();
+    }
+
+    init(quantumSystem) {
+        this.quantumState = quantumSystem;
+        console.log('Quantum game engine initialized');
+    }
+
+    update(deltaTime) {
+        // Quantum game state updates
+        this.players.forEach(player => {
+            player.updateQuantumState(deltaTime);
+        });
+    }
+
+    addPlayer(playerId, initialState) {
+        this.players.set(playerId, {
+--------------------------------------
+
+
+=== File: assets/js/complex.js ===
+First 20 lines:
+// assets/js/complex.js
+export default class Complex {
+    constructor(real, imag = 0) {
+        this.real = real;
+        this.imag = imag;
+    }
+
+    add(other) {
+        return new Complex(this.real + other.real, this.imag + other.imag);
+    }
+
+    multiply(other) {
+        return new Complex(
+            this.real * other.real - this.imag * other.imag,
+            this.real * other.imag + this.imag * other.real
+        );
+    }
+
+    magnitude() {
+        return Math.sqrt(this.real ** 2 + this.imag ** 2);
+--------------------------------------
+
+
+=== File: assets/js/loqos-core.js ===
+First 20 lines:
+// assets/js/loqos-core.js
+// Change from default import to named import
+import { QuantumMediaManager } from './media-manager.js';
+
+// Verify other imports match their source files' export style
+import { QuantumSystem } from './quantum-system.js';
+import { ThemeManager } from './theme-manager.js';
+import { GameEngine } from './game-engine.js';
+import { PerformanceMonitor } from './performance-monitor.js';
+
+// Rest of the file remains unchanged
+export default class LoQOSSystem {
+    constructor() {
+        this.state = {
+            initialized: false,
+            subsystems: {
+                quantum: new QuantumSystem(),
+                theme: new ThemeManager(),
+                media: new QuantumMediaManager(),
+                game: new GameEngine(),
+--------------------------------------
+
+
+=== File: assets/js/theme-manager.js ===
+First 20 lines:
+// Theme Management System
+export default class ThemeManager {
+    constructor() {
+        this.currentTheme = null;
+        this.themes = new Map();
+        this.observers = new Set();
+    }
+
+    init() {
+        // Initialize default themes
+        this.initializeDefaultThemes();
+        
+        // Set up color pickers
+        this.initializeColorPickers();
+        
+        // Load saved theme
+        this.loadSavedTheme();
+        
+        // Set up theme preview
+        this.initializePreview();
+--------------------------------------
+
+
+=== File: assets/js/quantum-emulation.js ===
+First 20 lines:
+export default class QuantumEnvironment {
+  constructor() {
+    this.qubits = new Map();
+    this.entanglements = new Map();
+    this.operations = [];
+    this.history = [];
+    this.visualizationEnabled = true;
+    this.canvas = null;
+    this.ctx = null;
+    this.gates = {};
+  }
+
+  init() {
+    this.setupCanvas();
+    this.setupControls();
+    this.registerCoreGates();
+    this.startVisualizationLoop();
+  }
+
+  setupCanvas() {
+--------------------------------------
+
+
+=== File: assets/js/protocol.js ===
+First 20 lines:
+// Lo-QOS Protocol Manager with Enhanced Features
+export default class ProtocolManager {
+  constructor() {
+    this.protocolEnabled = true;
+    this.allowedProtocols = new Set(['loqos', 'qos']);
+    this.basePath = '/quantum';
+    this.init();
+  }
+
+  init() {
+    this.loadPreference();
+    this.bindElements();
+    this.setupNotifications();
+  }
+
+  bindElements() {
+    // Protocol links handler
+    document.querySelectorAll('[data-protocol-link]').forEach(link => {
+      link.addEventListener('click', this.handleProtocolLink.bind(this));
+    });
+--------------------------------------
+
+
+=== File: assets/js/game.js ===
+First 20 lines:
+let canvas, ctx;
+let particles = [];
+const QUANTUM_STATES = [0, 0.5, 1];
+let playerState = 0.5;
+let obstacles = [];
+let gameInterval;
+let isRunning = false;
+let score = 0;
+let energy = 100;
+let isSuperposed = false;
+let activePowerUps = new Set();
+
+function startGame() {
+    canvas = document.getElementById("gameCanvas");
+    ctx = canvas.getContext("2d");
+    
+    // Initialize quantum field
+    initializeQuantumField();
+    
+    // Reset game state
+--------------------------------------
+
+
+=== File: assets/js/quantum-system.js ===
+First 20 lines:
+// Correct implementation without duplicate exports
+import Complex from './complex.js';  // Ensure this exists
+import StateObservable from './state-observable.js';
+
+
+export default class QuantumSystem {
+    constructor() {
+        this.qubits = new Map();
+        this.entangledPairs = new Map();
+        this.quantumGates = new Map();
+        this.phase = 0;
+        this.amplitude = 1;
+        this.hamiltonian = null;
+        this.decoherenceRate = 0.001;
+        this.init();
+    }
+
+    async init() {
+        this.registerCoreGates();
+        this.initializeQubits(8);
+--------------------------------------
+
+
+=== File: assets/js/quantum-gates.js ===
+First 20 lines:
+import Complex from './complex.js';
+
+export default class QuantumGates {
+    static get H() {
+        const sqrt = new Complex(1 / Math.sqrt(2), 0);
+        return [
+            [sqrt, sqrt],
+            [sqrt, sqrt.multiply(new Complex(-1, 0))]
+        ];
+    }
+
+    static get X() {
+        return [
+            [new Complex(0), new Complex(1)],
+            [new Complex(1), new Complex(0)]
+        ];
+    }
+
+    static get Y() {
+        return [
+--------------------------------------
