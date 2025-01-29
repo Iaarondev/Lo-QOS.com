@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quantum Clock Stream Overlay</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #0f172a;
+            color: #e2e8f0;
+            font-family: 'Courier New', monospace;
+            overflow: hidden;
+        }
+
+        .container {
+            position: relative;
+            width: 100vw;
+            height: 100vh;
+        }
+
+        .particle-canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: 0;
+        }
+
+        .quantum-clock {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 1;
+        }
+
+        .clock-face {
+            width: 300px;
+            height: 300px;
+            border-radius: 50%;
+            background: rgba(15, 23, 42, 0.8);
+            border: 2px solid #818cf8;
+            position: relative;
+            box-shadow: 0 0 50px rgba(129, 140, 248, 0.2);
+        }
+
+        .quantum-field {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle, rgba(129, 140, 248, 0.2), rgba(99, 102, 241, 0.1));
+            border-radius: 50%;
+            animation: pulse 3s infinite alternate;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); opacity: 0.5; }
+            100% { transform: scale(1.2); opacity: 0.8; }
+        }
+
+        .hand {
+            position: absolute;
+            bottom: 50%;
+            left: 50%;
+            transform-origin: bottom;
+            background: #818cf8;
+            border-radius: 4px;
+            box-shadow: 0 0 10px rgba(129, 140, 248, 0.5);
+        }
+
+        .hour-hand { width: 4px; height: 60px; }
+        .minute-hand { width: 3px; height: 80px; }
+        .second-hand { width: 2px; height: 90px; background: #6366f1; }
+
+        .center-dot {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 10px;
+            height: 10px;
+            background: #6366f1;
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        .digital-time {
+            position: absolute;
+            bottom: -60px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 24px;
+            color: #818cf8;
+            text-shadow: 0 0 10px rgba(129, 140, 248, 0.5);
+            animation: glitch 1s infinite;
+        }
+
+        @keyframes glitch {
+            0% { transform: translateX(-50%); }
+            20% { transform: translateX(calc(-50% - 2px)); }
+            40% { transform: translateX(calc(-50% + 2px)); }
+            60% { transform: translateX(calc(-50% - 1px)); }
+            80% { transform: translateX(calc(-50% + 1px)); }
+            100% { transform: translateX(-50%); }
+        }
+
+        .quantum-info {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background: rgba(15, 23, 42, 0.8);
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid #818cf8;
+        }
+
+        .mode-switch {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 10px;
+        }
+
+        .mode-btn {
+            background: rgba(15, 23, 42, 0.8);
+            color: #818cf8;
+            border: 1px solid #818cf8;
+            padding: 8px 16px;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .mode-btn.active {
+            background: #818cf8;
+            color: #0f172a;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <canvas class="particle-canvas"></canvas>
+        <div class="quantum-clock">
+            <div class="clock-face">
+                <div class="quantum-field"></div>
+                <div class="hand hour-hand"></div>
+                <div class="hand minute-hand"></div>
+                <div class="hand second-hand"></div>
+                <div class="center-dot"></div>
+            </div>
+            <div class="digital-time"></div>
+        </div>
+        <div class="quantum-info">
+            <div class="quantum-state">Quantum Flux: <span id="quantum-value">0.00</span>Ƕ</div>
+            <div class="quantum-state">Entanglement: <span id="coherence-value">100%</span></div>
+        </div>
+        <div class="mode-switch">
+            <button class="mode-btn active" data-mode="normal">Stable</button>
+            <button class="mode-btn" data-mode="chaos">Chaos</button>
+            <button class="mode-btn" data-mode="quantum">Quantum</button>
+        </div>
+    </div>
+
+    <script>
+        class Particle {
+            constructor(canvas, ctx) {
+                this.canvas = canvas;
+                this.ctx = ctx;
+                this.reset();
+            }
+
+            reset() {
+                this.x = Math.random() * this.canvas.width;
+                this.y = Math.random() * this.canvas.height;
+                this.size = Math.random() * 2 + 1;
+                this.speedX = (Math.random() - 0.5) * 2;
+                this.speedY = (Math.random() - 0.5) * 2;
+                this.color = `hsl(${Math.random() * 360}, 70%, 60%)`;
+                this.alpha = Math.random() * 0.5 + 0.2;
+            }
+
+            update() {
+                this.x += this.speedX;
+                this.y += this.speedY;
+                
+                if (this.x < 0 || this.x > this.canvas.width || 
+                    this.y < 0 || this.y > this.canvas.height) {
+                    this.reset();
+                }
+            }
+
+            draw() {
+                this.ctx.fillStyle = this.color;
+                this.ctx.globalAlpha = this.alpha;
+                this.ctx.beginPath();
+                this.ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                this.ctx.fill();
+                this.ctx.globalAlpha = 1;
+            }
+        }
+
+        class QuantumClock {
+            constructor() {
+                this.clockFace = document.querySelector('.clock-face');
+                this.hourHand = document.querySelector('.hour-hand');
+                this.minuteHand = document.querySelector('.minute-hand');
+                this.secondHand = document.querySelector('.second-hand');
+                this.digitalTime = document.querySelector('.digital-time');
+                this.mode = 'normal';
+            }
+
+            update() {
+                const now = new Date();
+                const hours = now.getHours() % 12;
+                const minutes = now.getMinutes();
+                const seconds = now.getSeconds();
+                const milliseconds = now.getMilliseconds();
+
+                // Add quantum jitter
+                const jitter = this.mode === 'quantum' ? Math.random() * 4 - 2 : 0;
+                
+                const hourDeg = (hours * 30) + (minutes * 0.5) + jitter;
+                const minuteDeg = (minutes * 6) + (seconds * 0.1) + jitter;
+                const secondDeg = (seconds * 6) + (milliseconds * 0.006) + jitter;
+
+                this.hourHand.style.transform = `rotate(${hourDeg}deg)`;
+                this.minuteHand.style.transform = `rotate(${minuteDeg}deg)`;
+                this.secondHand.style.transform = `rotate(${secondDeg}deg)`;
+
+                const timeString = now.toLocaleTimeString('en-US', { 
+                    hour: '2-digit', 
+                    minute: '2-digit',
+                    second: '2-digit'
+                });
+                this.digitalTime.textContent = timeString.replace(/AM|PM/, '');
+            }
+        }
+
+        // Initialize
+        const canvas = document.querySelector('.particle-canvas');
+        const ctx = canvas.getContext('2d');
+        const particles = [];
+        const clock = new QuantumClock();
+
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+
+        function createParticles() {
+            for (let i = 0; i < 100; i++) {
+                particles.push(new Particle(canvas, ctx));
+            }
+        }
+
+        function animate() {
+            ctx.fillStyle = 'rgba(15, 23, 42, 0.05)';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            particles.forEach(particle => {
+                particle.update();
+                particle.draw();
+            });
+
+            clock.update();
+            requestAnimationFrame(animate);
+        }
+
+        // Mode switching
+        document.querySelectorAll('.mode-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                clock.mode = btn.dataset.mode;
+                
+                particles.forEach(p => {
+                    if (clock.mode === 'chaos') {
+                        p.speedX *= 3;
+                        p.speedY *= 3;
+                    } else if (clock.mode === 'quantum') {
+                        p.speedX = (Math.random() - 0.5) * 4;
+                        p.speedY = (Math.random() - 0.5) * 4;
+                    } else {
+                        p.speedX = (Math.random() - 0.5) * 2;
+                        p.speedY = (Math.random() - 0.5) * 2;
+                    }
+                });
+            });
+        });
+
+        // Quantum info updates
+        setInterval(() => {
+            document.getElementById('quantum-value').textContent = 
+                (Math.random() * 100).toFixed(2);
+            document.getElementById('coherence-value').textContent = 
+                `${Math.floor(100 - Math.random() * 20)}%`;
+        }, 500);
+
+        // Start everything
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+        createParticles();
+        animate();
+    </script>
+</body>
+</html>
