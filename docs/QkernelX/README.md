@@ -233,20 +233,20 @@ make swarm_test ITERATIONS=1000 QBA_TESTS=yes
 
 ### **Development Roadmap**
 
-1.  **Phase 1 (2024 Q3):**
+1.  **Phase 1 (2025 Q1):**
     *   Swarm consensus protocol stabilization.
     *   Golden ratio scheduler for ARM/RISC-V architectures.
     *   Basic QBA implementation with a limited instruction set.
     *   Initial ZKP integration (using a simplified proof system).
 
-2.  **Phase 2 (2024 Q4):**
+2.  **Phase 2 (2025 Q2):**
     *   Hardware entanglement mapping (FPGA acceleration for dependency analysis).
     *   Neuromorphic swarm acceleration.
     *   Expanded QBA instruction set, supporting more complex operations.
     *   Integration of a robust ZKP library (e.g., libsnark).
     *  explore qpu usage for true processing
 
-3.  **Phase 3 (2025 Q1):**
+3.  **Phase 3 (2025 Q3):**
     *   Quantum co-processor integration (for specialized quantum-inspired algorithms).
     *   Self-healing memory allocator (using QBA and swarm intelligence).
     *   Formal verification of the QBA and ZKP components.
