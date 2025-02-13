@@ -1,0 +1,255 @@
+<svg width="800" height="600" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+  <title>Kernel Subsystem Entanglement Map</title>
+  <description>Interactive visualization of kernel subsystem dependencies.  Click on a node to highlight its connections.  Hover to show details.</description>
+
+  <!-- Styling (CSS within SVG) -->
+  <style>
+    .node {
+      stroke: #fff;
+      stroke-width: 1.5px;
+      cursor: pointer;
+      transition: fill 0.2s ease, stroke 0.2s ease; /* Smooth transitions */
+    }
+    .node:hover {
+      stroke: #000;
+      stroke-width: 2.5px;
+    }
+    .node.active {
+      fill: #f00; /* Highlight color */
+    }
+    .node.related {
+      fill: #ff9900;
+    }
+
+    .link {
+      stroke: #999;
+      stroke-width: 2px;
+      stroke-opacity: 0.6;
+      transition: stroke-opacity 0.2s ease, stroke-width 0.2s ease;
+    }
+    .link.active {
+      stroke-opacity: 1;
+      stroke: #f00;  /* Highlight color for active link*/
+    }
+
+    .label {
+      font-family: sans-serif;
+      font-size: 12px;
+      pointer-events: none; /* Prevent text from interfering with clicks */
+      text-anchor: middle;
+      dominant-baseline: central;
+      fill: #333;
+    }
+    .tooltip {
+        visibility: hidden;
+        position: absolute;
+        background-color: rgba(0, 0, 0, 0.8);
+        color: #fff;
+        padding: 5px;
+        border-radius: 4px;
+        font-size: 10px;
+        pointer-events: none; /* Prevent tooltip from capturing mouse events*/
+
+    }
+      /* Style for highlighting connected nodes and links */
+    .highlighted-link {
+      stroke: #007bff; /* Or any color you prefer */
+      stroke-width: 3px;
+      stroke-opacity: 1;
+    }
+
+    .highlighted-node {
+      fill: #007bff; /* Or any color you prefer */
+      stroke: #0056b3;
+      stroke-width: 2.5px;
+    }
+  </style>
+
+  <!-- Definitions (Reusable elements) -->
+  <defs>
+    <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="8" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#999" />
+    </marker>
+  </defs>
+
+  <!-- Groups for Nodes and Links -->
+  <g id="links"></g>
+  <g id="nodes"></g>
+
+    <!-- Tooltip Element (Initially Hidden) -->
+   <rect id="tooltip-bg" class="tooltip" x="0" y="0" width="120" height="40" rx="5" ry="5"/>
+   <text id="tooltip-text" class="tooltip" x="10" y="20"></text>
+  
+  <!-- JavaScript (Embedded within SVG) -->
+  <script type="text/ecmascript"><![CDATA[
+    // Data (Replace with your actual kernel subsystem data)
+    const data = {
+      nodes: [
+        { id: "scheduler", name: "Scheduler", x: 100, y: 100 , details: "Manages task scheduling and execution."},
+        { id: "memory_manager", name: "Memory Manager", x: 300, y: 100, details: "Handles memory allocation and deallocation." },
+        { id: "filesystem", name: "File System", x: 500, y: 100 , details: "Manages file storage and access."},
+        { id: "network_stack", name: "Network Stack", x: 100, y: 300 , details: "Handles network communication."},
+        { id: "device_drivers", name: "Device Drivers", x: 300, y: 300, details: "Interfaces with hardware devices." },
+        { id: "interrupt_handler", name: "Interrupt Handler", x: 500, y: 300, details: "Handles hardware and software interrupts." },
+        { id: "security_module", name: "Security Module", x: 700, y: 200 , details: "Enforces security policies."},
+        { id: "ipc", name: "IPC", x: 300, y: 500 , details: "Handles communication between processes"}
+      ],
+      links: [
+        { source: "scheduler", target: "memory_manager", type: "strong" },
+        { source: "scheduler", target: "interrupt_handler", type: "medium" },
+        { source: "scheduler", target: "ipc", type: "medium" }, // scheduler to ipc
+        { source: "memory_manager", target: "filesystem", type: "strong" },
+        { source: "memory_manager", target: "device_drivers", type: "medium" },
+        { source: "filesystem", target: "device_drivers", type: "strong" },
+        { source: "network_stack", target: "device_drivers", type: "strong" },
+        { source: "device_drivers", target: "interrupt_handler", type: "strong" },
+        { source: "security_module", target: "scheduler", type: "weak" },
+        { source: "security_module", target: "memory_manager", type: "weak" },
+        { source: "security_module", target: "filesystem", type: "weak" },
+        { source: "security_module", target: "ipc", type: "strong" },
+        { source: "ipc", target: "memory_manager", type: "medium" }, //ipc to mem manager
+        { source: "ipc", target: "filesystem", type: "medium" } //ipc to filesystem
+
+      ]
+    };
+
+    // Get SVG elements
+    const linksGroup = document.getElementById("links");
+    const nodesGroup = document.getElementById("nodes");
+    const tooltipBg = document.getElementById("tooltip-bg");
+    const tooltipText = document.getElementById("tooltip-text");
+
+
+    // Function to create links
+    function createLinks() {
+      data.links.forEach(link => {
+        const sourceNode = data.nodes.find(n => n.id === link.source);
+        const targetNode = data.nodes.find(n => n.id === link.target);
+
+        if (sourceNode && targetNode) {
+          const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
+          line.setAttribute("class", "link");
+          line.setAttribute("x1", sourceNode.x);
+          line.setAttribute("y1", sourceNode.y);
+          line.setAttribute("x2", targetNode.x);
+          line.setAttribute("y2", targetNode.y);
+          line.setAttribute("marker-end", "url(#arrowhead)"); // Add arrowhead
+          line.dataset.source = link.source;  //store for highlight
+          line.dataset.target = link.target;  //store for highlight
+          linksGroup.appendChild(line);
+        }
+      });
+    }
+
+    // Function to create nodes
+    function createNodes() {
+      data.nodes.forEach(node => {
+        const circle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+        circle.setAttribute("class", "node");
+        circle.setAttribute("r", 20);
+        circle.setAttribute("cx", node.x);
+        circle.setAttribute("cy", node.y);
+        circle.setAttribute("id", node.id); // Set the ID
+        circle.addEventListener("click", () => highlightNode(node.id));
+        circle.addEventListener("mouseover", (event) => showTooltip(event, node));
+        circle.addEventListener("mouseout", hideTooltip);
+        nodesGroup.appendChild(circle);
+
+        const label = document.createElementNS("http://www.w3.org/2000/svg", "text");
+        label.setAttribute("class", "label");
+        label.setAttribute("x", node.x);
+        label.setAttribute("y", node.y);
+        label.textContent = node.name;
+        nodesGroup.appendChild(label);
+      });
+    }
+
+    // Function to highlight a node and its connections
+   function highlightNode(nodeId) {
+      // Reset all nodes and links
+      resetHighlight();
+
+      const clickedNode = document.getElementById(nodeId);
+      if (!clickedNode) return;
+
+      clickedNode.classList.add("highlighted-node");
+
+
+       // Highlight connected links (both incoming and outgoing)
+       const allLinks = Array.from(linksGroup.getElementsByClassName("link"));
+       allLinks.forEach(link => {
+          if (link.dataset.source === nodeId || link.dataset.target === nodeId) {
+            link.classList.add("highlighted-link");
+
+            //highlight target
+            const targetNode = document.getElementById(link.dataset.target);
+            if(targetNode){
+               targetNode.classList.add("highlighted-node")
+            }
+
+            //highlight source
+            const sourceNode = document.getElementById(link.dataset.source);
+            if(sourceNode){
+               sourceNode.classList.add("highlighted-node");
+            }
+
+          }
+      });
+
+    }
+
+    // Function to reset highlighting on all nodes and links
+    function resetHighlight() {
+      const allNodes = Array.from(nodesGroup.getElementsByClassName("node"));
+      allNodes.forEach(node => node.classList.remove("highlighted-node", "related"));
+
+      const allLinks = Array.from(linksGroup.getElementsByClassName("link"));
+      allLinks.forEach(link => link.classList.remove("highlighted-link", "active"));
+    }
+
+    // Tooltip functions
+    function showTooltip(event, node) {
+      tooltipText.textContent = `${node.name}: ${node.details}`;
+
+      // Calculate the width of the text
+      const textWidth = tooltipText.getComputedTextLength();
+
+
+      tooltipBg.setAttribute("width", textWidth + 20); // Add some padding
+
+
+      tooltipBg.setAttribute("visibility", "visible");
+      tooltipText.setAttribute("visibility", "visible");
+
+        // Position the tooltip - adjust as needed
+        const x = event.clientX + 15; // Offset a little from the cursor
+        const y = event.clientY + 15;
+        tooltipBg.setAttribute("x", x);
+        tooltipBg.setAttribute("y", y);
+        tooltipText.setAttribute("x", x + 10);  //add padding
+        tooltipText.setAttribute("y", y + 20 ); // Center text vertically
+
+
+
+    }
+
+    function hideTooltip() {
+        tooltipBg.setAttribute("visibility", "hidden");
+        tooltipText.setAttribute("visibility", "hidden");
+    }
+
+
+
+
+    // Initialize: Create nodes and links
+    createLinks();
+    createNodes();
+   // Add a global click listener to reset highlighting when clicking anywhere else
+    document.addEventListener("click", (event) => {
+        if (!event.target.classList.contains("node")) {
+          resetHighlight();
+        }
+    });
+
+  ]]></script>
+</svg>
