@@ -1,4 +1,4 @@
-<svg width="1200" height="700" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<svg width="1200" height="750" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
   <title>Q-Kernel vs. Traditional Kernel Subsystem Map</title>
   <description>
     Comparison of Q-Kernel's "entanglement map" with a traditional kernel's subsystem layout.
@@ -27,7 +27,7 @@
       stroke-width: 1.5px;
       cursor: pointer;
       transition: fill 0.2s ease, stroke 0.2s ease;
-      fill: #eee;
+      fill: #eee; /* Default fill */
     }
     .node:hover {
       stroke: #000;
@@ -44,9 +44,15 @@
       font-size: 12px;
       pointer-events: none;
       text-anchor: middle;
-      dominant-baseline: central;
+      dominant-baseline: text-after-edge; /* Default: Below the node */
       fill: #333;
     }
+     /* Position labels above for Q-Kernel nodes */
+    .q-label {
+        dominant-baseline: text-before-edge; /* Above the node */
+        font-weight: bold;
+    }
+
     .tooltip {
         visibility: hidden;
         position: absolute;
@@ -56,6 +62,8 @@
         border-radius: 4px;
         font-size: 10px;
         pointer-events: none;
+        white-space: pre-line; /* Allow line breaks in tooltip */
+
     }
     .highlighted-link {
       stroke: #007bff;
@@ -89,23 +97,22 @@
 
     /* Styles for Traditional Kernel */
     .traditional-node {
-        fill: #f0f0d0; /* Light Beige */
+        fill: #add8e6; /* Light Blue */
     }
     .traditional-link {
         stroke: #d0d0b0; /* Lighter Gray */
     }
     .traditional-label{
         font-style: italic;
+
     }
 
     /* Styles for Q-Kernel */
      .q-node {
-      /* No style change, it will inherit base .node */
+      fill: #90ee90; /* Light Green */
     }
    /* Link colors defined by type*/
-    .q-label{
-         font-weight: bold;
-    }
+
 
   </style>
 
@@ -116,8 +123,8 @@
   </defs>
 
   <!-- Left Side: Traditional Kernel -->
-  <g id="traditional-kernel" transform="translate(0,0)">
-    <text x="250" y="30" class="legend-label" text-anchor="middle">Traditional Kernel</text>
+  <g id="traditional-kernel" transform="translate(0,50)">
+    <text x="250" y="-20" class="legend-label" text-anchor="middle">Traditional Kernel</text>
 
     <g id="traditional-links"></g>
     <g id="traditional-nodes"></g>
@@ -125,8 +132,8 @@
 
 
   <!-- Right Side: Q-Kernel -->
-    <g id="q-kernel" transform="translate(600,0)">
-      <text x="250" y="30" class="legend-label" text-anchor="middle">Q-Kernel</text>
+    <g id="q-kernel" transform="translate(600,50)">
+      <text x="250" y="-20" class="legend-label" text-anchor="middle">Q-Kernel</text>
       <g id="q-links"></g>
       <g id="q-nodes"></g>
   </g>
@@ -136,17 +143,17 @@
    <text id="tooltip-text" class="tooltip" x="10" y="20"></text>
 
   <!-- Dividing Line -->
-  <line x1="600" y1="0" x2="600" y2="700" stroke="#ccc" stroke-width="2" stroke-dasharray="5, 5" />
+  <line x1="600" y1="0" x2="600" y2="750" stroke="#ccc" stroke-width="2" stroke-dasharray="5, 5" />
 
   <script type="text/ecmascript"><![CDATA[
     // Data for Traditional Kernel (Simplified)
    const traditionalData = {
       nodes: [
-        { id: "t_scheduler", name: "Scheduler", x: 100, y: 100 , details: "Traditional scheduler, often priority-based or round-robin.  Less adaptable to dynamic workloads.", class:"traditional-node" },
-        { id: "t_memory_manager", name: "Memory Manager", x: 300, y: 100, details: "Standard memory management techniques. May not optimize for global system efficiency.",class:"traditional-node" },
-        { id: "t_filesystem", name: "File System", x: 100, y: 250 , details: "Traditional file system, e.g., ext4, NTFS.  Focuses on individual file operations.", class:"traditional-node"},
-        { id: "t_network_stack", name: "Network Stack", x: 300, y: 250 , details: "Standard network stack implementation.  Optimizations often target specific protocols.", class:"traditional-node" },
-        { id: "t_device_drivers", name: "Device Drivers", x: 200, y: 400, details: "Drivers for hardware devices.  Typically operate independently.",class:"traditional-node" },
+        { id: "t_scheduler", name: "Scheduler", x: 100, y: 100 , details: "Traditional scheduler,\noften priority-based or\nround-robin.  Less adaptable\nto dynamic workloads.", class:"traditional-node" },
+        { id: "t_memory_manager", name: "Memory Manager", x: 300, y: 100, details: "Standard memory\nmanagement techniques.\nMay not optimize for\nglobal system efficiency.",class:"traditional-node" },
+        { id: "t_filesystem", name: "File System", x: 100, y: 250 , details: "Traditional file system,\ne.g., ext4, NTFS.\nFocuses on individual\nfile operations.", class:"traditional-node"},
+        { id: "t_network_stack", name: "Network Stack", x: 300, y: 250 , details: "Standard network stack\nimplementation.  Optimizations\noften target specific\nprotocols.", class:"traditional-node" },
+        { id: "t_device_drivers", name: "Device Drivers", x: 200, y: 400, details: "Drivers for hardware\ndevices. Typically operate\nindependently.",class:"traditional-node" },
       ],
       links: [
         { source: "t_scheduler", target: "t_memory_manager", type:"medium" },
@@ -156,45 +163,45 @@
       ]
     };
 
-    // Data for Q-Kernel (As in previous example, but with class added)
+    // Data for Q-Kernel
     const qData = {
       nodes: [
-        { id: "q_scheduler", name: "Scheduler", x: 100, y: 100 , details: "Manages task scheduling with Golden Ratio optimization. Affects responsiveness and throughput.", class:"q-node" },
-        { id: "q_memory_manager", name: "Memory Manager", x: 300, y: 100, details: "Handles memory, optimized by QBA. Prevents leaks and improves efficiency.", class:"q-node"},
-        { id: "q_filesystem", name: "File System", x: 500, y: 100 , details: "Manages file storage, impacting data access speed. QBA optimizes caching.", class:"q-node" },
-        { id: "q_network_stack", name: "Network Stack", x: 100, y: 300 , details: "Handles network communication. Optimizations improve latency/bandwidth.", class:"q-node" },
-        { id: "q_device_drivers", name: "Device Drivers", x: 300, y: 300, details: "Interfaces with hardware. ZKP verifies driver QBA instructions.", class:"q-node" },
-        { id: "q_interrupt_handler", name: "Interrupt Handler", x: 500, y: 300, details: "Handles interrupts. Efficiency is key to minimizing latency." , class:"q-node" },
-        { id: "q_security_module", name: "Security Module", x: 400, y: 500 , details: "Enforces security, using ZKP for QBA validation. Strong entanglement.",class:"q-node" },
-        { id: "q_ipc", name: "IPC", x: 200, y: 500 , details: "Handles Inter-Process Communication. Efficiency enhances multi-process apps.", class:"q-node"}
+        { id: "q_scheduler", name: "Scheduler", x: 100, y: 100 , details: "Manages task scheduling\nwith Golden Ratio\noptimization. Affects\nresponsiveness and\nthroughput.", class:"q-node" },
+        { id: "q_memory_manager", name: "Memory Manager", x: 300, y: 100, details: "Handles memory,\n optimized by QBA.\nPrevents leaks and\nimproves efficiency.", class:"q-node"},
+        { id: "q_filesystem", name: "File System", x: 100, y: 250, details: "Interacts with storage,\nuses QBA for I/O\nscheduling. Improves\ndata access times.", class:"q-node" },
+        { id: "q_network_stack", name: "Network Stack", x: 300, y: 250, details: "Manages network\ncommunication, QBA\noptimizes packet routing\nand flow control." , class:"q-node"},
+        { id: "q_device_drivers", name: "Device Drivers", x: 100, y: 400, details: "Interfaces with hardware,\nQBA optimizes driver\ninteractions for latency\nand power.", class:"q-node" },
+        { id: "q_ipc", name: "IPC", x: 300, y: 400, details: "Handles inter-process\ncommunication.  Uses\nQBA and ZKP for secure\nand efficient messaging.", class:"q-node" },
+        { id: "q_security_module", name: "Security Module", x: 200, y: 550, details: "Enforces security policies.\nLeverages ZKP for secure\nkernel operations and\ndata verification.", class:"q-node" },
+        { id: "q_interrupt_handler", name: "Interrupt Handler", x:450, y: 250, details: "manages signals and \n hardware interrupts, \n and improves response times.", class:"q-node"}
+
       ],
       links: [
         { source: "q_scheduler", target: "q_memory_manager", type: "strong" },
-        { source: "q_scheduler", target: "q_interrupt_handler", type: "medium" },
+        { source: "q_scheduler", target: "q_filesystem", type: "medium" },
         { source: "q_scheduler", target: "q_ipc", type: "medium" },
         { source: "q_memory_manager", target: "q_filesystem", type: "strong" },
         { source: "q_memory_manager", target: "q_device_drivers", type: "medium" },
         { source: "q_filesystem", target: "q_device_drivers", type: "strong" },
-        { source: "q_network_stack", target: "q_device_drivers", type: "strong" },
-        { source: "q_device_drivers", target: "q_interrupt_handler", type: "strong" },
-        { source: "q_security_module", target: "q_scheduler", type: "weak" },
-        { source: "q_security_module", target: "q_memory_manager", type: "weak" },
-        { source: "q_security_module", target: "q_filesystem", type: "weak" },
-        { source: "q_security_module", target: "q_ipc", type: "strong" },
-        { source: "q_ipc", target: "q_memory_manager", type: "medium" },
-        { source: "q_ipc", target: "q_filesystem", type: "medium" }
+        { source: "q_network_stack", target: "q_device_drivers", type: "medium" },
+        { source: "q_network_stack", target: "q_ipc", type: "medium" },
+        { source: "q_ipc", target: "q_security_module", type: "strong" },
+        { source: "q_device_drivers", target: "q_security_module", type: "medium" },
+        { source: "q_device_drivers", target: "q_interrupt_handler", type: "medium" },
+        { source: "q_network_stack", target: "q_interrupt_handler", type: "medium"},
+        { source: "q_memory_manager", target: "q_interrupt_handler", type: "medium"},
+        { source: "q_filesystem", target: "q_interrupt_handler", type: "medium"}
       ]
     };
 
-    // Get SVG element groups
-    const traditionalLinksGroup = document.getElementById("traditional-links");
-    const traditionalNodesGroup = document.getElementById("traditional-nodes");
+    // Get SVG groups (defined in the HTML)
+    const traditionalLinksGroup   = document.getElementById("traditional-links");
+    const traditionalNodesGroup   = document.getElementById("traditional-nodes");
     const qLinksGroup = document.getElementById("q-links");
-    const qNodesGroup = document.getElementById("q-nodes");
-    const tooltipBg = document.getElementById("tooltip-bg");
+    const qNodesGroup      = document.getElementById("q-nodes");
+    const tooltipBg   = document.getElementById("tooltip-bg");
     const tooltipText = document.getElementById("tooltip-text");
 
-    // Function to create links (Generalized)
 // Function to create links (Generalized)
 function createLinks(data, linksGroup) {
   data.links.forEach(link => {
@@ -256,7 +263,7 @@ function createNodes(data, nodesGroup) {
         const isTraditional = nodesGroup.id.startsWith("traditional");
         label.setAttribute("class", isTraditional ? "label traditional-label" : "label q-label" );
         label.setAttribute("x", node.x);
-        label.setAttribute("y", node.y);
+        label.setAttribute("y", isTraditional ? node.y + 25 : node.y - 25); // Position below or above
         label.textContent = node.name;
         nodesGroup.appendChild(label);
   });
@@ -308,25 +315,28 @@ function highlightNode(nodeId) {
 }
 
 
-    // Tooltip functions (No changes needed)
-    function showTooltip(event, node) {
-      tooltipText.textContent = `${node.name}: ${node.details}`;
-      const textWidth = tooltipText.getComputedTextLength();
-      tooltipBg.setAttribute("width", textWidth + 20); // Add some padding
-      tooltipBg.setAttribute("visibility", "visible");
-      tooltipText.setAttribute("visibility", "visible");
-        const x = event.clientX + 15;
-        const y = event.clientY + 15;
-        tooltipBg.setAttribute("x", x);
-        tooltipBg.setAttribute("y", y);
-        tooltipText.setAttribute("x", x + 10);
-        tooltipText.setAttribute("y", y + 20 );
-    }
+// Tooltip functions
+function showTooltip(event, node) {
+    tooltipText.textContent = node.details; // Use pre-formatted details
+    const bbox = tooltipText.getBBox(); // Get bounding box *after* setting text
+    tooltipBg.setAttribute("width", bbox.width + 20);
+    tooltipBg.setAttribute("height", bbox.height + 20);
+    tooltipBg.setAttribute("visibility", "visible");
+    tooltipText.setAttribute("visibility", "visible");
 
-    function hideTooltip() {
-        tooltipBg.setAttribute("visibility", "hidden");
-        tooltipText.setAttribute("visibility", "hidden");
-    }
+    const x = event.clientX + 15; // Adjust for cursor
+    const y = event.clientY + 15;
+
+    tooltipBg.setAttribute("x", x);
+    tooltipBg.setAttribute("y", y);
+    tooltipText.setAttribute("x", x + 10);
+    tooltipText.setAttribute("y", y + 15 ); // Adjust baseline for first line
+}
+
+function hideTooltip() {
+    tooltipBg.setAttribute("visibility", "hidden");
+    tooltipText.setAttribute("visibility", "hidden");
+}
 
     // Reset highlight (for both sides)
    function resetHighlight() {
