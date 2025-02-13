@@ -3,7 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Q-Kernel vs. Traditional Kernel Subsystem Map</title>
+    <title>Q-Kernel vs. Traditional Kernel: Subsystem Dependency Map</title>
+    <meta name="description" content="Explore the conceptual differences between a traditional operating system kernel and a hypothetical Q-Kernel leveraging quantum computing principles. This interactive diagram visualizes subsystem dependencies and highlights potential quantum enhancements.">
+    <meta name="keywords" content="Q-Kernel, quantum computing, operating system, kernel, scheduler, memory manager, IPC, security, interrupts, entanglement, superposition, quantum algorithms, traditional kernel, subsystem, dependency map, visualization">
+    <meta name="robots" content="index, follow">  <!--  for SEO -->
+
     <style>
         body {
             font-family: sans-serif;
@@ -34,10 +38,21 @@
             text-align: left; /* Align text to the left */
             margin-top: 20px; /* Space above description */
         }
+       /* SVG Container for side by side */       
+        #svg-container {
+            display: flex;
+            justify-content: space-around;  /* Distribute space evenly */
+            width: 100%;
+            max-width: 1200px;  /* Maximum width */
+            margin: 0 auto; /* Center the container */
+        }
 
          /* Optional: For smaller screens, adjust SVG size */
          @media (max-width: 800px) {
-            #kernel-map-svg{
+            #svg-container{
+                flex-direction: column;
+            }
+            #kernel-map-svg-traditional, #kernel-map-svg-qkernel {
                 width: 95vw; /* Adjust as needed */
                 height: auto; /* Maintain aspect ratio */
             }
@@ -77,6 +92,7 @@
           .q-label {
               dominant-baseline: text-before-edge; /* Above the node */
               font-weight: bold;
+              font-size: 14px; /* Larger font for Q-Kernel labels */
           }
 
           .tooltip {
@@ -109,33 +125,45 @@
           }
           /* Styles for Link Types */
           .strong-link {
-              stroke-width: 3;
-              stroke: #555;
+              stroke-width: 4; /* Increased thickness */
+              stroke: #228B22; /* Forest Green */
           }
           .medium-link {
-              stroke-width: 2;
-              stroke: #999;
+              stroke-width: 2.5;
+              stroke: #3CB371;  /* Medium Sea Green */
           }
           .weak-link {
-              stroke-dasharray: 5, 5;
-              stroke: #bbb;
+              stroke-dasharray: 5, 5; /* Dashed line */
+              stroke: #90EE90;     /* Light Green */
           }
 
           /* Styles for Traditional Kernel */
           .traditional-node {
-              fill: #add8e6; /* Light Blue */
+              fill: #ADD8E6; /* Light Blue */
+              stroke: #4682B4; /* Steel Blue (for border) */
           }
           .traditional-link {
-              stroke: #d0d0b0; /* Lighter Gray */
+              stroke: #778899; /* Light Slate Gray */
+             
           }
           .traditional-label{
               font-style: italic;
+              font-size:14px;
 
           }
 
+            /* Titles */
+          .kernel-title {
+                font-family: sans-serif;
+                font-size: 18px;
+                font-weight: bold;
+                text-anchor: middle;
+           }
+
           /* Styles for Q-Kernel */
             .q-node {
-            fill: #90ee90; /* Light Green */
+            fill: #90EE90; /* Light Green */
+                stroke: #006400; /* Dark Green (for border) */
           }
         /* Link colors defined by type*/
 
@@ -144,265 +172,278 @@
 </head>
 <body>
     <div id="container">
-        <svg id="kernel-map-svg" width="1200" height="750" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-            <title>Q-Kernel vs. Traditional Kernel Subsystem Map</title>
-            <!-- Description moved outside the SVG -->
-
+        <div id="svg-container">
+        <!-- Traditional Kernel SVG -->
+        <svg id="kernel-map-svg-traditional" width="600" height="400" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+             <title>Traditional Kernel Subsystems</title>
             <defs>
                 <!-- Tooltip -->
-                <rect id="tooltip-bg" rx="4" ry="4" fill="rgba(0,0,0,0.8)" />
-                <text id="tooltip-text" fill="#fff" x="0" y="0"></text>
-                <marker id="arrow" viewBox="0 0 10 10" refX="5" refY="5"
+                <rect id="tooltip-bg-traditional" rx="4" ry="4" fill="rgba(0,0,0,0.8)" />
+                <text id="tooltip-text-traditional" fill="#fff" x="0" y="0"></text>
+                <marker id="arrow-traditional" viewBox="0 0 10 10" refX="5" refY="5"
                         markerWidth="6" markerHeight="6"
                         orient="auto-start-reverse">
-                        <path d="M 0 0 L 10 5 L 0 10 z" fill="#999" />
+                    <path d="M 0 0 L 10 5 L 0 10 z" fill="#778899" /> <!-- Match traditional link color -->
                 </marker>
-
             </defs>
 
-            <!-- Legend -->
-                 <g id="legend">
-                    <rect x="10" y="10" width="20" height="20" class="traditional-node"/>
-                    <text x="40" y="25" class="legend-label">Traditional Kernel Node</text>
 
-                    <rect x="10" y="40" width="20" height="20" class="q-node" />
-                    <text x="40" y="55" class="legend-label">Q-Kernel Node</text>
+              <!-- Traditional Kernel Title -->
+              <text x="300" y="30" class="kernel-title">Traditional Kernel</text>
 
-                     <!-- Link Type Legend(removed marker for read)-->
-                      <line x1="10" y1="80" x2="30" y2="80" class="strong-link"/>
-                      <text x="40" y="85" class="legend-label">Strong Dependency</text>
 
-                      <line x1="10" y1="110" x2="30" y2="110" class="medium-link" />
-                      <text x="40" y="115" class="legend-label">Medium Dependency</text>
-
-                      <line x1="10" y1="140" x2="30" y2="140" class="weak-link" />
-                      <text x="40" y="145" class="legend-label">Weak Dependency</text>
-
-                </g>
-
-           <!-- Separator line -->
-            <line x1="600" y1="0" x2="600" y2="750" style="stroke:lightgray;stroke-width:2; stroke-dasharray: 5,5" />
-
-            <!-- Titles for each section -->
-            <text x="300" y="30" text-anchor="middle" font-weight="bold" font-size="18">Traditional Kernel</text>
-            <text x="900" y="30" text-anchor="middle" font-weight="bold" font-size="18">Q-Kernel</text>
-           <!-- Traditional Kernel Section -->
-            <g id="traditional-kernel">
-                <g id="traditional-nodes"></g>
-                <g id="traditional-links"></g>
-            </g>
-
-           <!-- Q-Kernel Section -->
-            <g id="q-kernel" transform="translate(600, 0)">
-              <g id="q-nodes"></g>
-              <g id="q-links"></g>
-            </g>
+            <g id="traditional-links"></g>
+            <g id="traditional-nodes"></g>
 
         </svg>
-    </div>
 
-      <div id="description">
-        <p>
-          This interactive diagram compares the subsystem dependencies of a traditional kernel with a hypothetical
-          "Q-Kernel" that leverages quantum computing principles.
-        </p>
-        <p>
-            <strong>Traditional Kernel:</strong> Represents a standard monolithic or microkernel architecture.  Nodes
-            represent subsystems, and lines indicate dependencies.
-        </p>
-        <p>
-          <strong>Q-Kernel:</strong> Explores how quantum phenomena like superposition and entanglement could *potentially*
-          be used to manage kernel operations.  This is a conceptual model, as a fully functional quantum kernel
-          is currently theoretical.
-        </p>
+        <!-- Q-Kernel SVG -->
+        <svg id="kernel-map-svg-qkernel" width="600" height="700" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+             <title>Q-Kernel Subsystems (Conceptual)</title>
+            <defs>
+               <!-- Tooltip -->
+              <rect id="tooltip-bg-qkernel" rx="4" ry="4" fill="rgba(0,0,0,0.8)" />
+              <text id="tooltip-text-qkernel" fill="#fff" x="0" y="0"></text>
+              <marker id="arrow-qkernel" viewBox="0 0 10 10" refX="5" refY="5"
+                    markerWidth="6" markerHeight="6"
+                    orient="auto-start-reverse">
+                <path d="M 0 0 L 10 5 L 0 10 z" fill="#999" /> <!-- Default fill, will be overridden by link type -->
+            </marker>
+
+            </defs>
+             <!-- Q-Kernel Title -->
+            <text x="300" y="30" class="kernel-title">Q-Kernel</text>
+
+            <g id="q-links"></g>
+            <g id="q-nodes"></g>
+
+        </svg>
+      </div>
+
+        <!-- Legend -->
+        <svg width="1200" height="100"> <!-- Separate SVG for the legend -->
+            <g id="legend">
+                <rect x="40" y="10" width="20" height="20" class="traditional-node"/>
+                <text x="70" y="26" class="legend-label">Traditional Kernel Node</text>
+
+                <rect x="40" y="50" width="20" height="20" class="q-node"/>
+                <text x="70" y="66" class="legend-label">Q-Kernel Node</text>
+
+                <line x1="300" y1="20" x2="340" y2="20" class="strong-link"/>
+                <text x="350" y="26" class="legend-label">Strong Dependency</text>
+
+                <line x1="300" y1="50" x2="340" y2="50" class="medium-link"/>
+                <text x="350" y="66" class="legend-label">Medium Dependency</text>
+
+                <line x1="590" y1="20" x2="630" y2="20" class="weak-link"/>
+                <text x="640" y="26" class="legend-label">Weak Dependency</text>
+             </g>
+        </svg>
+
+
+    </div> <!-- End container -->
+    <div id="description">
+        <p>This interactive diagram compares the subsystem dependencies of a traditional kernel with a hypothetical "Q-Kernel" that leverages quantum computing principles.</p>
+        <p><strong>Traditional Kernel:</strong> Represents a standard monolithic or microkernel architecture. Nodes represent subsystems, and lines indicate dependencies.</p>
+        <p><strong>Q-Kernel:</strong> Explores how quantum phenomena like superposition and entanglement could <em>potentially</em> be used to manage kernel operations. This is a conceptual model, as a fully functional quantum kernel is currently theoretical.</p>
         <ul>
-          <li><strong>Click</strong> on a node to highlight its immediate dependencies.</li>
-          <li><strong>Hover</strong> over a node to see a brief description of its functionality.</li>
-            <li> The thickness and style of the connecting lines represent the strength of the dependency (Strong, Medium, Weak).</li>
+            <li><strong>Click</strong> on a node to highlight its immediate dependencies.</li>
+            <li><strong>Hover</strong> over a node to see a brief description of its functionality.</li>
+            <li>The thickness and style of the connecting lines represent the strength of the dependency (Strong, Medium, Weak).</li>
         </ul>
-          <p><strong>Conceptual Differences Represented:</strong></p>
-          <ul>
-              <li><strong>Scheduler (Q-Kernel):</strong> Could use quantum algorithms for optimized task scheduling.</li>
-              <li><strong>Memory Manager (Q-Kernel):</strong>  Might leverage quantum memory for faster, larger address spaces.</li>
-              <li><strong>IPC - Inter-Process Communication (Q-Kernel):</strong> Explores using quantum entanglement for secure, ultra-fast communication.</li>
-              <li><strong>Security Module (Q-Kernel):</strong> Quantum-resistant cryptography and key distribution.</li>
-              <li><strong>Interrupt Handler (Q-Kernel):</strong> Quantum-prioritized interrupt handling.</li>
-
-          </ul>
-          <p><i>Disclaimer: This Q-Kernel representation is highly speculative and for illustrative purposes. The feasibility of many of these quantum-enhanced features is an open research question.</i></p>
+        <p><strong>Conceptual Differences Represented:</strong></p>
+        <ul>
+            <li><strong>Scheduler (Q-Kernel):</strong> Could use quantum algorithms for optimized task scheduling.</li>
+            <li><strong>Memory Manager (Q-Kernel):</strong> Might leverage quantum memory for faster, larger address spaces.</li>
+            <li><strong>IPC - Inter-Process Communication (Q-Kernel):</strong> Explores using quantum entanglement for secure, ultra-fast communication.</li>
+            <li><strong>Security Module (Q-Kernel):</strong> Quantum-resistant cryptography and key distribution.</li>
+            <li><strong>Interrupt Handler (Q-Kernel):</strong> Quantum-prioritized interrupt handling.</li>
+        </ul>
+        <p><em>Disclaimer: This Q-Kernel representation is highly speculative and for illustrative purposes. The feasibility of many of these quantum-enhanced features is an open research question.</em></p>
 
     </div>
 
-    <script>
-        // Data for Traditional Kernel.  Place nodes relative to *its* section.
-        const traditionalData = [
-            { id: "scheduler", label: "Scheduler", x: 150, y: 100 , details: "Manages task scheduling and execution." , class: "node traditional-node", labelClass: "label traditional-label"},
-            { id: "memory_manager", label: "Memory Manager", x: 380, y: 180, details: "Handles memory allocation and deallocation." , class: "node traditional-node", labelClass: "label traditional-label"},
-            { id: "file_system", label: "File System", x: 150, y: 320 , details: "Manages file storage and access.", class: "node traditional-node", labelClass: "label traditional-label"},
-            { id: "network_stack", label: "Network Stack", x: 450, y: 340, details: "Handles network communication.", class: "node traditional-node", labelClass: "label traditional-label"},
-            { id: "device_drivers", label: "Device Drivers",x: 300, y: 480, details: "Interfaces with hardware devices." , class: "node traditional-node", labelClass: "label traditional-label"},
+     <script>
+        // Data for Traditional Kernel
+        const traditionalData = {
+            nodes: [
+                { id: "traditional-scheduler", name: "Scheduler", x: 100, y: 100, details: "Manages task scheduling and execution in a traditional manner." },
+                { id: "traditional-memory_manager", name: "Memory Manager", x: 300, y: 100, details: "Handles memory allocation and virtual memory using standard techniques." },
+                { id: "traditional-filesystem", name: "File System", x: 100, y: 300, details: "Manages file storage and access using traditional file systems (ext4, NTFS, etc.)." },
+                { id: "traditional-network_stack", name: "Network Stack", x: 300, y: 300, details: "Implements network protocols (TCP/IP) using conventional methods." },
+                { id: "traditional-device_drivers", name: "Device Drivers", x: 500, y: 200, details: "Interfaces with hardware devices through standard driver models." }
+               // Add more traditional kernel nodes here
+            ],
+             links: [
+                { source: "traditional-scheduler", target: "traditional-memory_manager"},
+                { source: "traditional-memory_manager", target: "traditional-filesystem"},
+                { source: "traditional-filesystem", target: "traditional-device_drivers"},
+                { source: "traditional-network_stack", target: "traditional-device_drivers" }
+            ]
 
-        ];
+        };
 
-        // Data for Q-Kernel. Place nodes relative to *its* section (remember the translate(600, 0) ).
-        const qData = [
-          { id: "scheduler", label: "Scheduler", x: 150, y: 150,   details: "Scheduler:\nQuantum-enhanced task prioritization.", class: "q-node", labelClass: "q-label" },  // Added details for Q-Kernel
-              { id: "memory_manager", label: "Memory Manager", x: 450, y: 150,  details: "Memory Manager:\nPotential for quantum memory addressing.",class: "q-node", labelClass: "q-label"},
-              { id: "file_system", label: "File System",  x: 450, y: 400, details: "File System:\nQuantum-accelerated data access.",class: "q-node", labelClass: "q-label"},
-              { id: "network_stack", label: "Network Stack", x: 50, y: 400, details: "Network Stack:\nQuantum-secured communication channels.",class: "q-node", labelClass: "q-label"},
-              { id: "device_drivers", label: "Device Drivers", x: 250, y: 300, details: "Device Drivers:\nQuantum-optimized I/O operations" ,class: "q-node", labelClass: "q-label"},
-              { id: "ipc", label: "IPC", x: 150, y:600,  details: "IPC: Quantum entanglement for interprocess communication.",class: "q-node", labelClass: "q-label" },
-              { id: "security_module", label: "Security Module", x: 400, y:450,  details: "Security Module:\nZKP-enhanced access control.",class:"q-node", labelClass: "q-label"},
-              { id: "interrupt_handler", label: "Interrupt Handler", x: 250, y: 60, details: "Interrupt Handler: Prioritized via entangled states",class:"q-node", labelClass: "q-label" }
-        ];
-         // Define link types for Q-Kernel
-        const qLinksData = [
-          { source: "scheduler", target: "memory_manager", type: "strong" },
-          { source: "scheduler", target: "network_stack", type: "medium" },
-          { source: "scheduler", target: "device_drivers", type: "weak"  },
-          { source: "memory_manager", target: "file_system", type: "strong" },
-          { source: "memory_manager", target: "device_drivers", type: "medium" },
-          { source: "file_system", target: "ipc", type: "medium" },
-          { source: "network_stack", target: "device_drivers", type: "strong" },
-          { source: "network_stack", target: "ipc", type: "medium" },
-          { source: "device_drivers", target: "ipc", type: "strong" },
-          { source: "device_drivers", target: "interrupt_handler", type: "medium"},
-          { source: "ipc", target: "security_module", type: "strong" },
-          { source: "interrupt_handler", target: "memory_manager", type: "medium" },
-          { source: "interrupt_handler", target: "file_system", type: "weak"},
+        // Data for Q-Kernel
+          const qData = {
+            nodes: [
+                { id: "scheduler", name: "Scheduler", x: 100, y: 100 , details: "Could use quantum algorithms\nfor optimized task scheduling."},
+                { id: "memory_manager", name: "Memory Manager", x: 300, y: 100, details: "Might leverage quantum memory\nfor faster, larger address spaces." },
+                { id: "filesystem", name: "File System", x: 500, y: 100 , details: "Handles file storage, potentially with\nquantum-enhanced data integrity checks."},
+                { id: "network_stack", name: "Network Stack", x: 100, y: 300 , details: "Explores quantum communication protocols\nfor secure data transmission."},
+                { id: "device_drivers", name: "Device Drivers", x: 300, y: 300, details: "Classical drivers, with potential\nfor quantum-enhanced device control." },
+                { id: "interrupt_handler", name: "Interrupt Handler", x: 500, y: 300, details: "Quantum-prioritized interrupt handling." },
+                { id: "security_module", name: "Security Module", x: 400, y: 500 , details: "Quantum-resistant cryptography\nand key distribution."},
+                { id: "ipc", name: "IPC", x: 200, y: 500, details: "Explores quantum entanglement\nfor secure, fast inter-process communication."}
+
+            ],
+            links: [
+                { source: "scheduler", target: "memory_manager", type: "strong" },
+                { source: "scheduler", target: "interrupt_handler", type: "medium" },
+                { source: "scheduler", target: "ipc", type: "medium" }, // scheduler to ipc
+                { source: "memory_manager", target: "filesystem", type: "strong" },
+                { source: "memory_manager", target: "device_drivers", type: "medium" },
+                { source: "filesystem", target: "device_drivers", type: "strong" },
+                { source: "network_stack", target: "device_drivers", type: "strong" },
+                { source: "device_drivers", target: "interrupt_handler", type: "strong" },
+                { source: "security_module", target: "scheduler", type: "weak" },
+                { source: "security_module", target: "memory_manager", type: "weak" },
+                { source: "security_module", target: "filesystem", type: "weak" },
+                { source: "security_module", target: "ipc", type: "strong" },
+                { source: "ipc", target: "memory_manager", type: "medium" }, //ipc to mem manager
+                { source: "ipc", target: "filesystem", type: "medium" } //ipc to filesystem
+
+              ]
+
+        };
 
 
-        ];
 
-            //links for the traditionalData
-        const traditionalLinksData = [
-            {source: "scheduler", target: "memory_manager"},
-            {source: "memory_manager", target: "file_system"},
-            {source: "file_system", target: "device_drivers"},
-            {source: "network_stack", target: "memory_manager"},
-            {source: "network_stack", target: "device_drivers"},
 
-        ];
+        // Get SVG groups
+        const traditionalLinksGroup = document.getElementById("traditional-links");
+        const traditionalNodesGroup = document.getElementById("traditional-nodes");
+        const qLinksGroup = document.getElementById("q-links");
+        const qNodesGroup = document.getElementById("q-nodes");
 
-            // Get groups from the SVG
-            const traditionalNodesGroup = document.getElementById("traditional-nodes");
-            const traditionalLinksGroup = document.getElementById("traditional-links");
-            const qNodesGroup = document.getElementById("q-kernel").getElementById("q-nodes");  // Corrected qNodesGroup selection
-            const qLinksGroup = document.getElementById("q-kernel").getElementById("q-links");     // Corrected qLinksGroup selection
-            const tooltipBg = document.getElementById("tooltip-bg");
-            const tooltipText = document.getElementById("tooltip-text");
 
-            // Function to create nodes
-        function createNodes(data, group) {
-            data.forEach(nodeData => {
-              const node = document.createElementNS("http://www.w3.org/2000/svg", "circle");
-              node.setAttribute("id", nodeData.id); // Use the node's ID
-              node.setAttribute("cx", nodeData.x);
-              node.setAttribute("cy", nodeData.y);
-              node.setAttribute("r", 20);
-              node.setAttribute("class", nodeData.class);
 
-                node.addEventListener("click", function() {
-                 highlightLinks(this.id , "traditional" , traditionalLinksData );
-                 highlightLinks(this.id , "q-kernel" , qLinksData);
-                });
 
-              node.addEventListener("mouseover", (event) => showTooltip(event, nodeData));
-              node.addEventListener("mouseout", hideTooltip);
-              group.appendChild(node);
 
-              const label = document.createElementNS("http://www.w3.org/2000/svg", "text");
-              label.setAttribute("x", nodeData.x);
-              label.setAttribute("y", nodeData.y + (nodeData.labelClass === "q-label" ? -25 : 25)); // Conditional positioning
-              label.textContent = nodeData.label;
-              label.setAttribute("class", nodeData.labelClass);
-              group.appendChild(label);
-            });
-          }
-          // Function to create links
-          function createLinks(data, group) {
-             const links = (group.id === "q-links") ?  qLinksData : traditionalLinksData;
+        // Function to create links
+        function createLinks(data, group, isQKernel = false) {
+          data.links.forEach(link => {
+            const sourceNode = data.nodes.find(n => n.id === link.source);
+            const targetNode = data.nodes.find(n => n.id === link.target);
 
-              links.forEach(linkData => {
-                const source = data.find(n => n.id === linkData.source);
-                const target = data.find(n => n.id === linkData.target);
-
-                if (source && target) {
-                  const link = document.createElementNS("http://www.w3.org/2000/svg", "line");
-                  link.setAttribute("x1", source.x);
-                  link.setAttribute("y1", source.y);
-                  link.setAttribute("x2", target.x);
-                  link.setAttribute("y2", target.y);
-                  link.setAttribute("class", "link"); //base style
-                  link.dataset.source = linkData.source;
-                  link.dataset.target = linkData.target;
-
-                  // Check and apply specific link type from qLinksData
-                  if (group.id === "q-links") {
-                    const qLink = qLinksData.find(l => l.source === linkData.source && l.target === linkData.target);
-                    if (qLink && qLink.type) {
-                      link.classList.add(`${qLink.type}-link`);
-                    }
-                  }
-                  group.appendChild(link);
-                }
-
-              });
+            if (sourceNode && targetNode) {
+              const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
+              line.setAttribute("class", isQKernel ? `link ${link.type}-link` : "traditional-link link"); // Apply link type styles for Q-Kernel
+              line.setAttribute("x1", sourceNode.x);
+              line.setAttribute("y1", sourceNode.y);
+              line.setAttribute("x2", targetNode.x);
+              line.setAttribute("y2", targetNode.y);
+               // Set marker based on kernel type
+              line.setAttribute("marker-end", isQKernel ? "url(#arrow-qkernel)" : "url(#arrow-traditional)");
+              line.dataset.source = link.source;
+              line.dataset.target = link.target;
+              group.appendChild(line);
             }
+          });
+        }
 
+        // Function to create nodes
+        function createNodes(data, group, isQKernel=false) {
+            data.nodes.forEach(node => {
+                const circle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+                circle.setAttribute("class", isQKernel? `node q-node` : `node traditional-node`); // Apply appropriate class
+                circle.setAttribute("r", 20);
+                circle.setAttribute("cx", node.x);
+                circle.setAttribute("cy", node.y);
+                circle.setAttribute("id", node.id); // Keep ID
+                circle.addEventListener("click", () => highlightNode(node.id));  // Pass full node ID
+                circle.addEventListener("mouseover", (event) => showTooltip(event, node, isQKernel));
+                circle.addEventListener("mouseout", () => hideTooltip(isQKernel));
+                group.appendChild(circle);
 
-           // Highlight links
-        function highlightLinks(baseId, prefix , linksData ) {
-            resetHighlight(); //clear previous highlight
-            const links = (prefix ==="q-kernel") ? qLinksGroup.getElementsByClassName("link") : traditionalLinksGroup.getElementsByClassName("link");
-            //highlight all links either out going  or incoming
-            Array.from(links).forEach(link => {
-                //check and highlight the matching entries, only highlight current section.
-                if (link.dataset.source === baseId || link.dataset.target === baseId) {
+                const label = document.createElementNS("http://www.w3.org/2000/svg", "text");
+                label.setAttribute("class", isQKernel ? "label q-label" : "label traditional-label"); // Apply class
+                label.setAttribute("x", node.x);
+                label.setAttribute("y",  isQKernel? node.y -25: node.y + 25);
+                label.textContent = node.name;
+                group.appendChild(label);
+            });
+        }
+
+     // Function to highlight node and its connections
+        function highlightNode(nodeId) {
+            resetHighlight();
+
+            const clickedNode = document.getElementById(nodeId);
+            if (!clickedNode) return;
+
+            clickedNode.classList.add("highlighted-node");
+
+            // Determine if it's a Q-Kernel or Traditional node based on ID prefix
+            const isQKernel = !nodeId.startsWith("traditional-");
+            const linksGroup = isQKernel ? qLinksGroup : traditionalLinksGroup;
+            const data = isQKernel ? qData : traditionalData;
+
+            // Highlight connected links (both incoming and outgoing)
+            const allLinks = Array.from(linksGroup.getElementsByClassName("link"));
+            allLinks.forEach(link => {
+
+                if (link.dataset.source === nodeId || link.dataset.target === nodeId) {
+
                     link.classList.add("highlighted-link");
-                    //highlight the nodes based on links.
-                    const sourceNode = document.getElementById(prefix === "q-kernel" ? link.dataset.source :  link.dataset.source );
-                    const targetNode = document.getElementById(prefix === "q-kernel" ? link.dataset.target : link.dataset.target);
 
-                    if (sourceNode) {
-                       sourceNode.classList.add("highlighted-node");
+                    //highlight target
+                    const targetNode = document.getElementById(link.dataset.target);
+                    if(targetNode){
+                        targetNode.classList.add("highlighted-node")
                     }
-                    if (targetNode) {
-                        targetNode.classList.add("highlighted-node");
+
+                    //highlight source
+                    const sourceNode = document.getElementById(link.dataset.source);
+                    if(sourceNode){
+                        sourceNode.classList.add("highlighted-node");
                     }
                 }
             });
         }
 
+        // Function to reset highlighting
+        function resetHighlight() {
+          const allQNodes = Array.from(qNodesGroup.getElementsByClassName("node"));
+          allQNodes.forEach(node => node.classList.remove("highlighted-node"));
+            const allTraditionalNodes = Array.from(traditionalNodesGroup.getElementsByClassName("node"));
+            allTraditionalNodes.forEach(node => node.classList.remove("highlighted-node"));
 
+          const allQLinks = Array.from(qLinksGroup.getElementsByClassName("link"));
+          allQLinks.forEach(link => link.classList.remove("highlighted-link"));
 
-           //reset the highlight
-       function resetHighlight() {
+          const allTraditionalLinks = Array.from(traditionalLinksGroup.getElementsByClassName("link"));
+          allTraditionalLinks.forEach(link => link.classList.remove("highlighted-link"));
 
-           const alltraditionalNodes = Array.from(traditionalNodesGroup.getElementsByClassName("node"));
-            alltraditionalNodes.forEach(node => node.classList.remove("highlighted-node"));
+        }
 
-            const allTraditionalLinks = Array.from(traditionalLinksGroup.getElementsByClassName("link"));
-            allTraditionalLinks.forEach(link => link.classList.remove("highlighted-link"));
+       // Tooltip functions (modified for Q-Kernel and Traditional)
+        function showTooltip(event, node, isQKernel) {
+            const tooltipText = isQKernel ? document.getElementById("tooltip-text-qkernel") : document.getElementById("tooltip-text-traditional");
+            const tooltipBg = isQKernel ? document.getElementById("tooltip-bg-qkernel") : document.getElementById("tooltip-bg-traditional");
 
-            const allqNodes = Array.from(qNodesGroup.getElementsByClassName("node"));
-              allqNodes.forEach(node => node.classList.remove("highlighted-node"));
+            tooltipText.textContent = `${node.name}:\n${node.details}`;
 
+            // Calculate dynamic width
+            const tempText = document.createElementNS("http://www.w3.org/2000/svg", "text");
+            tempText.setAttribute("class", "tooltip"); // Apply tooltip style
+            tempText.textContent = tooltipText.textContent;
+            document.body.appendChild(tempText); // Temporarily add to DOM
+            const textWidth = tempText.getBBox().width;
+            document.body.removeChild(tempText); // Remove temporary element.
 
-            const allqLinks = Array.from(qLinksGroup.getElementsByClassName("link"));
-            allqLinks.forEach(link => link.classList.remove("highlighted-link"));
+            tooltipBg.setAttribute("width", textWidth + 10);
+            tooltipBg.setAttribute("height", 40); // Adjust as necessary
 
-
-       }
-
-            // Tooltip functions
-        function showTooltip(event, nodeData) {
-            tooltipText.textContent = nodeData.details;
-              // Calculate the width of the text, add padding for nice look
-
-            const textWidth = tooltipText.getComputedTextLength();
-
-            tooltipBg.setAttribute("width", textWidth + 20);
 
             tooltipText.setAttribute("visibility", "visible");
             tooltipBg.setAttribute("visibility", "visible");
@@ -416,19 +457,21 @@
           tooltipText.setAttribute("y", y + 15);
         }
 
-        function hideTooltip() {
+        function hideTooltip(isQKernel) {
+            const tooltipText = isQKernel ? document.getElementById("tooltip-text-qkernel") : document.getElementById("tooltip-text-traditional");
+            const tooltipBg = isQKernel ? document.getElementById("tooltip-bg-qkernel") : document.getElementById("tooltip-bg-traditional");
             tooltipText.setAttribute("visibility", "hidden");
             tooltipBg.setAttribute("visibility", "hidden");
         }
 
 
-
-
         // Initialize: Create nodes and links for both kernels
         createNodes(traditionalData, traditionalNodesGroup);
-        createLinks(traditionalData, traditionalLinksGroup);
-        createNodes(qData, qNodesGroup);
-        createLinks(qData, qLinksGroup); // qData is also fine here
+        createLinks(traditionalData, traditionalLinksGroup);  // traditionalData is for traditional links
+        createNodes(qData, qNodesGroup, true);
+        createLinks(qData, qLinksGroup, true); // qData is also fine here
+
+
         //add the global click
 
         document.addEventListener("click", (event) => {
