@@ -9,17 +9,13 @@
       stroke-width: 1.5px;
       cursor: pointer;
       transition: fill 0.2s ease, stroke 0.2s ease; /* Smooth transitions */
+      fill: #eee; /* Default node color */
     }
     .node:hover {
       stroke: #000;
       stroke-width: 2.5px;
     }
-    .node.active {
-      fill: #f00; /* Highlight color */
-    }
-    .node.related {
-      fill: #ff9900;
-    }
+    /* No need for .node.active and .node.related anymore, we'll use .highlighted-node */
 
     .link {
       stroke: #999;
@@ -27,10 +23,8 @@
       stroke-opacity: 0.6;
       transition: stroke-opacity 0.2s ease, stroke-width 0.2s ease;
     }
-    .link.active {
-      stroke-opacity: 1;
-      stroke: #f00;  /* Highlight color for active link*/
-    }
+    /* No need for .link.active, we'll use .highlighted-link */
+
 
     .label {
       font-family: sans-serif;
@@ -201,10 +195,10 @@
     // Function to reset highlighting on all nodes and links
     function resetHighlight() {
       const allNodes = Array.from(nodesGroup.getElementsByClassName("node"));
-      allNodes.forEach(node => node.classList.remove("highlighted-node", "related"));
+      allNodes.forEach(node => node.classList.remove("highlighted-node"));
 
       const allLinks = Array.from(linksGroup.getElementsByClassName("link"));
-      allLinks.forEach(link => link.classList.remove("highlighted-link", "active"));
+      allLinks.forEach(link => link.classList.remove("highlighted-link"));
     }
 
     // Tooltip functions
