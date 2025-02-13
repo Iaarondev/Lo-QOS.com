@@ -4,8 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Q-Kernel vs. Traditional Kernel: Subsystem Entanglement Map</title>
-    <meta name="description" content="Explore the conceptual differences between a traditional operating system kernel and a hypothetical Q-Kernel leveraging quantum computing principles, the Swarm Oracle Network, and multi-agent systems.  This interactive diagram visualizes subsystem dependencies and entanglement, showcasing potential quantum enhancements.">
-    <meta name="keywords" content="Q-Kernel, quantum computing, operating system, kernel, scheduler, memory manager, IPC, security, interrupts, entanglement, superposition, quantum algorithms, traditional kernel, subsystem, dependency map, visualization, Swarm Oracle Network, multi-agent system, optimization, Coinbase, oracle, AI, glassmorphism, quantum">
+    <meta name="description" content="Explore the conceptual differences between a traditional operating system kernel and a hypothetical Q-Kernel, leveraging quantum computing principles, the Swarm Oracle Network, and multi-agent systems. This interactive diagram visualizes subsystem dependencies and entanglement, highlighting potential quantum enhancements.">
+    <meta name="keywords" content="Q-Kernel, quantum computing, operating system, kernel, scheduler, memory manager, IPC, security, interrupts, entanglement, superposition, quantum algorithms, traditional kernel, subsystem, dependency map, visualization, Swarm Oracle Network, multi-agent system, optimization, Coinbase, oracle, AI, glassmorphism, quantum, particles.js">
     <meta name="robots" content="index, follow">
     <style>
         body {
@@ -18,21 +18,34 @@
             min-height: 100vh;
             background: linear-gradient(135deg, #0f0c29, #302b63, #24243e); /* Dark, quantum-inspired background */
             color: #fff;
+            overflow-x: hidden; /* Prevent horizontal scrollbar */
+        }
+
+        #particles-js {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            z-index: 0; /* Behind other content */
         }
 
         #container {
+            position: relative; /* For z-index to work */
+            z-index: 1;     /* Above the background */
             background-color: rgba(255, 255, 255, 0.1); /* Glassmorphism - translucent white */
             backdrop-filter: blur(10px); /* Glassmorphism - blur effect */
             border-radius: 15px;
             box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37); /* Glassmorphism - subtle shadow */
             border: 1px solid rgba(255, 255, 255, 0.18); /* Glassmorphism - subtle border */
             padding: 20px;
-            overflow: auto;
+            /*overflow: auto; */ /* Removed overflow for full visibility */
             margin-bottom: 20px;
-            width: 95%; /* Responsive width */
-            max-width: 1400px; /* Limit maximum width */
+            width: 98%;  /* Responsive width */
+            max-width: 1500px; /* Limit maximum width */
         }
+
         #description {
+          position: relative;
+          z-index: 1;
           background-color: rgba(255, 255, 255, 0.1);
           backdrop-filter: blur(10px);
           border-radius: 15px;
@@ -47,10 +60,14 @@
         }
 
         #svg-container {
+            position: relative;
             display: flex;
             justify-content: space-around;
             width: 100%;
             flex-wrap: wrap; /* Allow wrapping on smaller screens */
+            overflow-x: visible; /*Ensure the svg is fully rendering*/
+
+
         }
 
         #kernel-map-svg-traditional, #kernel-map-svg-qkernel {
@@ -58,6 +75,7 @@
             min-width: 300px; /* Minimum width for smaller screens */
             height: auto; /* Maintain aspect ratio */
             margin-bottom: 20px;
+
         }
 
 
@@ -153,404 +171,388 @@
     }
 
 
-
     .kernel-title {
         font-size: 22px; /* Larger title */
         font-weight: bold;
         text-anchor: middle;
         dominant-baseline: hanging;
         margin-bottom: 20px;
-    }
-      .legend-label {
-        font-size: 18px; /* Larger legend labels */
-        font-weight: bold;
-        text-anchor: start;
-        margin-bottom: 10px;
+        color:#eee;
     }
 
-    /* Specific Styles for Kernels */
-    .traditional-node {
-        fill: rgba(70, 130, 180, 0.4); /* Steel Blue - Semi-transparent */
-        stroke: #4682B4; /* Steel Blue */
+     /* Keyframes for Link Animations */
+      @keyframes pulse-strong {
+        0% { stroke-opacity: 0.7; }
+        50% { stroke-opacity: 1; }
+        100% { stroke-opacity: 0.7; }
+      }
+
+      @keyframes pulse-medium {
+       0% { stroke-opacity: 0.6; }
+       50% { stroke-opacity: 0.9; }
+       100% { stroke-opacity: 0.6; }
+      }
+
+      @keyframes pulse-weak {
+       0% { stroke-opacity: 0.5; }
+       50% { stroke-opacity: 0.8; }
+       100% { stroke-opacity: 0.5; }
+      }
+
+       /*Legend Styles */
+      .legend {
+         display: flex;
+         align-items: center;
+         margin-bottom: 10px;
+      }
+    .legend-item {
+        display: flex;
+        align-items: center;
+        margin-right: 20px;
+        font-size: 14px;
+      }
+
+      .legend-color-box {
+       width: 20px;
+       height: 20px;
+       margin-right: 5px;
+       border: 1px solid #fff;
+      }
+         .legend-line {
+        width: 30px;
+        height: 2px;
+        margin-right: 5px;
+        background-color: #fff; /* Default color */
+      }
+    /* Custom scroll bar */
+
+    ::-webkit-scrollbar {
+        width: 12px; /* Width of the scrollbar */
     }
 
-    .q-node {
-         fill: rgba(50, 205, 50, 0.4); /* Lime Green - Semi-transparent */
-        stroke: #32CD32; /* Lime Green */
+    ::-webkit-scrollbar-track {
+        background: rgba(0, 0, 0, 0.1); /* Track color */
     }
 
-    /* Animations */
-    @keyframes pulse-strong {
-      0% { stroke-width: 4; stroke-opacity: 0.7; }
-      50% { stroke-width: 5; stroke-opacity: 1; }
-      100% { stroke-width: 4; stroke-opacity: 0.7; }
-    }
-    @keyframes pulse-medium {
-      0% { stroke-width: 2.5; stroke-opacity: 0.7; }
-      50% { stroke-width: 3; stroke-opacity: 0.9; }
-      100% { stroke-width: 2.5; stroke-opacity: 0.7; }
-    }
-
-        @keyframes pulse-weak {
-      0% { stroke-width: 2; stroke-opacity: 0.5; }
-      50% { stroke-width: 2.5; stroke-opacity: 0.7; }
-      100% { stroke-width: 2; stroke-opacity: 0.5; }
-    }
-
-    /* Responsive adjustments */
-      @media (max-width: 800px) {
-        #svg-container {
-          flex-direction: column; /* Stack SVGs vertically */
+   ::-webkit-scrollbar-thumb {
+         background: linear-gradient(135deg, #00bfff, #1e90ff); /* Scrollbar color */
+         border-radius: 6px; /* Rounded corners */
+   }
+   ::-webkit-scrollbar-thumb:hover {
+        background: linear-gradient(135deg,  #1e90ff, #00bfff); /* Slightly different color on hover */
         }
-        #kernel-map-svg-traditional, #kernel-map-svg-qkernel {
-            width: 95%;
-        }
-    }
-
-    /* Legend Key Item Styles */
-    .legend-key {
-      display: flex;
-      align-items: center;
-      margin-bottom: 10px;
-    }
-    .legend-color-box {
-      width: 20px;
-      height: 20px;
-      border: 1px solid #ccc;
-      margin-right: 10px;
-    }
-       /* Hide tooltips by default on mobile */
-    @media (max-width: 600px) {
-        .tooltip {
-            display: none !important;
-        }
-         #description, #container{
-           width: 98%;
-         }
-    }
-
-
     </style>
 </head>
 <body>
+    <!-- Particle.js container -->
+  <div id="particles-js"></div>
+
+     <!-- Main Container -->
     <div id="container">
-      <div id="svg-container">
-        <!-- Traditional Kernel SVG -->
-        <svg id="kernel-map-svg-traditional" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-          <text x="50%" y="30" class="kernel-title">Traditional Kernel</text>
-            <g id="links-traditional"></g>
-            <g id="nodes-traditional"></g>
-            <rect id="tooltip-bg-traditional" class="tooltip" x="0" y="0" width="120" height="40" rx="5" ry="5"/>
-            <text id="tooltip-text-traditional" class="tooltip" x="10" y="20"></text>
-        </svg>
 
-        <!-- Separator Line (moved outside SVGs) -->
-        <div style="width: 1px; height: 80%; background-color: rgba(255, 255, 255, 0.2); margin: 0 10px;"></div>
 
-        <!-- Q-Kernel SVG -->
-         <svg id="kernel-map-svg-qkernel" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-          <text x="50%" y="30" class="kernel-title">Q-Kernel</text>
-          <g id="links-qkernel"></g>
-          <g id="nodes-qkernel"></g>
-          <rect id="tooltip-bg-qkernel" class="tooltip" x="0" y="0" width="120" height="50" rx="5" ry="5"/>
-          <text id="tooltip-text-qkernel" class="tooltip" x="10" y="20"></text>
-        </svg>
-      </div>
-        <!-- Legend (Moved outside of SVG) -->
-        <div style="width: 300px; margin: 20px auto 0;">
-            <h3 class="legend-label">Legend</h3>
-            <div class="legend-key">
-                <div class="legend-color-box traditional-node"></div>
-                <span>Traditional Kernel Node</span>
-            </div>
-            <div class="legend-key">
-                <div class="legend-color-box q-node"> </div>
-                <span>Q-Kernel Node</span>
-            </div>
-             <div class="legend-key">
-                <div style="width: 20px; height: 3px; background-color: #228B22;"></div>
-                <span>Strong Dependency</span>
-            </div>
-            <div class="legend-key">
-                <div style="width: 20px; height: 3px; background-color: #3CB371;"></div>
-                <span>Medium Dependency</span>
-            </div>
-             <div class="legend-key">
-                   <div style="width: 20px; height: 3px; background-color:#90EE90; border: 1px dashed #90EE90;"></div>
-                <span>Weak Dependency</span>
-            </div>
+        <h2 class = "kernel-title"> Q-Kernel vs. Traditional Kernel: Subsystem Entanglement Visualization</h2>
+        <div id="description">
+           <p>This interactive diagram presents a comparative visualization of subsystem relationships within a <b>traditional operating system kernel</b> and a conceptual <b>Q-Kernel</b>.  The Q-Kernel leverages principles of quantum computing* and the <b>Swarm Oracle Network</b>, and multi-agent system design for enhanced optimization, security, and system-wide coherence.</p>
+            <p>*Note: A fully functional, general-purpose quantum kernel is beyond current technological capabilities.  This visualization is a conceptual exploration of potential future architectures.</p>
+
+          <h3>Key Differences and Concepts:</h3>
+            <ul>
+                <li><b>Traditional Kernel:</b> Represents a standard monolithic or microkernel architecture.  Nodes represent subsystems (Scheduler, Memory Manager, etc.), and lines indicate dependencies.  Subsystems are often optimized in isolation.</li>
+                <li><b>Q-Kernel:</b> Represents a  "quantum-entangled" kernel architecture. Subsystems are deeply interconnected, enabling system-wide optimization. Changes in one subsystem can have immediate and coordinated effects on others.</li>
+                <li><b>Swarm Oracle Network:</b> The Q-Kernel conceptually integrates with the <a href="https://blog.coinbase.com/introducing-coinbase-oracles-signed-price-data-published-on-chain-by-coinbase-71d465bce68" target="_blank" rel="noopener noreferrer">Swarm Oracle Network</a> for secure and reliable external data feeds.  This would allow the kernel to react to real-world events and optimize accordingly.</li>
+              <li><b>Multi-Agent System:</b>  The subsystems within the Q-Kernel are modeled as a multi-agent system where individual components (agents) collaborate and negotiate to achieve global system goals. This allows for adaptive and resilient behavior.</li>
+                <li><b>Qubit-to-Bit Assembly (QBA):</b>  Specific quantum subroutines, represented as QBA components, would interface with classical computing systems, translating quantum results into actionable instructions for the kernel.</li>
+                <li><b>Golden Ratio Optimization:</b> The Q-Kernel scheduler utilizes principles derived from the Golden Ratio to achieve a balance between task urgency, resource allocation, and overall system stability.</li>
+                 <li><b>Zero Knowledge Proofs (ZKPs):</b> Security Modules utilize ZKPs to achieve a high standard of security, without revealing sensitive data</li>
+          </ul>
+
+          <h3>Interactive Features:</h3>
+          <ul>
+            <li>Click on a node to highlight its immediate dependencies.</li>
+             <li>Hover over a node to see a brief description of its functionality.</li>
+              <li>The thickness and style of the connecting lines represent the strength of the dependency:</li>
+              <ul>
+                 <li><b>Strong Dependency:</b>  Critical for operation; frequent communication.  (Example: Scheduler and Memory Manager).</li>
+                  <li><b>Medium Dependency:</b> Regular interaction but less critical.  (Example: File System and Device Drivers).</li>
+                  <li><b>Weak Dependency:</b> Infrequent interaction or indirect influence.  (Example: Filesystem and Security Module; the kernel often communicates through intermediates.)</li>
+              </ul>
+          </ul>
         </div>
 
+        <div class="legend">
+             <div class="legend-item">
+               <div class="legend-color-box" style="background-color: #add8e6;"></div>
+               <div>Traditional Kernel Node</div>
+            </div>
+            <div class="legend-item">
+               <div class="legend-color-box" style="background-color: #90ee90;"></div>
+               <div>Q-Kernel Node</div>
+             </div>
+        </div>
+        <div class="legend">
+            <div class="legend-item">
+              <div class="legend-line strong-link" ></div>
+              <div>Strong Dependency</div>
+            </div>
+            <div class="legend-item">
+              <div class="legend-line medium-link" ></div>
+              <div>Medium Dependency</div>
+            </div>
+             <div class="legend-item">
+               <div class="legend-line weak-link"></div>
+               <div>Weak Dependency</div>
+                </div>
+        </div>
+
+
+        <div id="svg-container">
+           <!-- Traditional Kernel SVG -->
+          <svg id="kernel-map-svg-traditional" width="700" height="650" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+             <style>
+                .traditional-node {
+                  fill: #add8e6;
+                }
+             </style>
+            <title>Traditional Kernel Subsystem Map</title>
+              <g id="traditional-kernel" transform="translate(0,50)">
+                <text x="250" y="-20" class="kernel-title traditional-label" text-anchor="middle">Traditional Kernel</text>
+
+                <g id="traditional-links"></g>
+               <g id="traditional-nodes"></g>
+             </g>
+             <!-- Traditional Kernel Tool tip-->
+            <rect id="tooltip-bg-traditional" class="tooltip" x="0" y="0" width="120" height="40" rx="5" ry="5" />
+            <text id="tooltip-text-traditional" class="tooltip" x="10" y="20"></text>
+         </svg>
+
+         <!-- Q-Kernel SVG -->
+          <svg id="kernel-map-svg-qkernel" width="700" height="650" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+              <style>
+                .q-node{
+                    fill: #90ee90; /* Light Green */
+                 }
+             </style>
+             <title>Q-Kernel Subsystem Entanglement Map</title>
+
+              <g id="q-kernel" transform="translate(0,50)">
+                <text x="250" y="-20" class="kernel-title q-label" text-anchor="middle">Q-Kernel</text>
+                <g id="q-links"></g>
+                <g id="q-nodes"></g>
+               </g>
+
+                <!-- Q-Kernel ToolTip -->
+              <rect id="tooltip-bg-qkernel" class="tooltip" x="0" y="0" width="120" height="40" rx="5" ry="5"/>
+              <text id="tooltip-text-qkernel" class="tooltip" x="10" y="20"></text>
+        </svg>
+        </div>
     </div>
 
 
-    <div id="description">
-      <h2>Q-Kernel vs. Traditional Kernel: Subsystem Entanglement Visualization</h2>
-      <p>
-          This interactive diagram presents a comparative visualization of subsystem relationships within a <strong>traditional operating system kernel</strong> and a conceptual <strong>Q-Kernel</strong>. The Q-Kernel leverages principles of quantum computing, the <a href="https://www.coinbase.com/price/swarm-network" target="_blank">Swarm Oracle Network</a>, and multi-agent system design for enhanced optimization and coordination.
-      </p>
-      <h3>Traditional Kernel</h3>
-      <p>
-          Represents a standard monolithic or microkernel architecture.  Nodes (circles) depict core subsystems, and lines indicate dependencies.  Traditional kernels often exhibit a hierarchical structure, with subsystems designed and optimized in relative isolation. This can lead to performance bottlenecks and inefficiencies when managing complex, dynamic workloads.
-      </p>
-
-      <h3>Q-Kernel</h3>
-      <p>
-           The Q-Kernel, represented on the right, introduces a novel approach inspired by quantum mechanics.  Key concepts include:
-      </p>
-      <ul>
-        <li><strong>Entanglement-Inspired Subsystem Management:</strong>  Subsystems are treated as "entangled" entities. Changes in one subsystem can instantly influence others, facilitating system-wide optimization strategies. This is a conceptual analogy, not a literal implementation of quantum entanglement.</li>
-        <li><strong>Swarm Oracle Network Integration:</strong>  A decentralized network of oracles (inspired by Coinbase's Swarm) provides real-time, verified data about system state, resource availability, and external conditions.  This data feeds into the Q-Kernel's optimization algorithms.</li>
-        <li><strong>Multi-Agent System Coordination:</strong>  Kernel subsystems are managed by interacting software agents.  These agents utilize game theory, reinforcement learning,  and distributed consensus mechanisms to achieve coordinated optimization goals.</li>
-        <li><strong>Qubit-to-Bit Assembly (QBA):</strong>  A conceptual mechanism for mapping quantum computational results (from simulations or hybrid computations) to classical bit-level instructions for kernel operations. This allows for leveraging quantum algorithms for specific optimization tasks.</li>
-        <li><strong>Golden Ratio Optimization:</strong> Incorporates the golden ratio (φ ≈ 1.618) into scheduling and resource allocation algorithms to achieve a balance between efficiency and fairness, drawing inspiration from its prevalence in natural systems.</li>
-      </ul>
-
-        <h3>Interactive Features</h3>
-        <ul>
-          <li><strong>Click:</strong> Select a node to highlight its immediate dependencies.</li>
-          <li><strong>Hover:</strong> View a tooltip with detailed information about the selected subsystem and its role in the kernel.</li>
-          <li><strong>Line Thickness/Style:</strong> Represents the strength of the relationship between subsystems:
-        <ul><span>•  <b>Strong</b>: Direct, frequent interaction and high interdependence.</span>
-            <span>• <b>Medium</b>: Significant interaction, but with some degree of independence.</span>
-          <span>•  <b>Weak</b>:  Infrequent interaction or indirect dependencies, often through shared resources.</span>
-        </ul>
-      </li>
-        </ul>
-
-      <h3>Subsystem Details</h3>
-      <p>
-        Hover over a node for specific descriptions. The Q-Kernel subsystems include:
-      </p>
-           <ul>
-                <li><strong>Scheduler (Q-Kernel):</strong>  Advanced scheduling using Golden Ratio optimization and real-time data from the Swarm Oracle Network.  Dynamic prioritization and workload balancing.</li>
-                <li><strong>Memory Manager (Q-Kernel):</strong> Incorporates QBA for optimal memory allocation, preventing leaks and enhancing efficiency.  Responds to system-wide demands in coordinated fashion.</li>
-                <li><strong>Inter-Process Communication (IPC)(Q-Kernel):</strong>  Leverages quantum-inspired algorithms for fast, secure, and ultra-low latency communication between processes, informed by multi-agent negotiation.</li>
-                <li><strong>Security Module (Q-Kernel):</strong> Utilizes quantum-resistant cryptography and distributed consensus mechanisms for robust security and integrity verification. Key distribution and threat detection via the Swarm network.</li>
-                <li><strong>Interrupt Handler (Q-Kernel):</strong>  Quantum-prioritized interrupt handling.  Predictive preemption based on system-wide analysis.</li>
-                <li><strong>File System (Q-Kernel)</strong>: Optimized through agent-based negotiation and system-wide state awareness</li>
-            </ul>
 
 
-      <h3>Disclaimer</h3>
-      <p>
-          The Q-Kernel architecture presented here is a highly speculative, future-oriented concept.  Many of the proposed quantum enhancements rely on advancements in quantum computing and distributed systems that are currently under research.  The visualization is intended to illustrate potential future directions, rather than an immediately implementable design.
-      </p>
-</div>
+    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+
     <script>
-   // Data for Traditional Kernel
-   const traditionalData = {
-      nodes: [
-        { id: "traditional-scheduler", name: "Scheduler", x: 100, y: 100 , details: "Traditional scheduler, often priority-based or round-robin.  Operates largely independently, less adaptable to dynamic workloads.", class:"traditional-node" },
-        { id: "traditional-memory_manager", name: "Memory Manager", x: 300, y: 100, details: "Standard memory management techniques. May not optimize for global system efficiency, focuses on local process needs.",class:"traditional-node" },
-        { id: "traditional-filesystem", name: "File System", x: 100, y: 250 , details: "Traditional file system (e.g., ext4, NTFS).  Focuses on individual file operations, minimal interaction with other subsystems.", class:"traditional-node"},
-        { id: "traditional-network_stack", name: "Network Stack", x: 300, y: 250 , details: "Standard network stack. Protocol-specific optimizations.  Limited interaction with other subsystems outside of direct data transfer.", class:"traditional-node" },
-        { id: "traditional-device_drivers", name: "Device Drivers", x: 200, y: 400, details: "Drivers for hardware devices.  Typically operate independently, responding to hardware interrupts.",class:"traditional-node" },
-      ],
-      links: [
-        { source: "traditional-scheduler", target: "traditional-memory_manager", type:"medium" },
-        { source: "traditional-memory_manager", target: "traditional-filesystem", type:"medium" },
-        { source: "traditional-filesystem", target: "traditional-device_drivers",type:"medium" },
-        { source: "traditional-network_stack", target: "traditional-device_drivers", type:"medium"},
-      ]
-    };
+         /* particlesJS.load(@dom-id, @path-json, @callback (optional)); */
+    particlesJS.load('particles-js', 'particles.json', function() {
+        console.log('callback - particles.js config loaded');
+    });
 
 
-      // Data for Q-Kernel (Enhanced with more details and Swarm integration)
-        const qData = {
+    // SVG Data and Functions:
+    const traditionalNodesGroup = document.getElementById("traditional-nodes");
+    const traditionalLinksGroup = document.getElementById("traditional-links");
+    const qNodesGroup = document.getElementById("q-nodes");
+    const qLinksGroup = document.getElementById("q-links");
+
+    const traditionalData = {
+        nodes: [
+          { id: "scheduler", name: "Scheduler", x: 100, y: 100 , details: "Traditional scheduler,\noften priority-based or\nround-robin.\nLess adaptable to dynamic workloads.", class:"traditional-node" },
+          { id: "memory_manager", name: "Memory Manager", x: 300, y: 100, details: "Standard memory\nmanagement techniques.\nMay not optimize for\nglobal system efficiency.",class:"traditional-node" },
+          { id: "filesystem", name: "File System", x: 100, y: 250 , details: "Traditional file system,\ne.g., ext4, NTFS.\nFocuses on individual\nfile operations.", class:"traditional-node"},
+          { id: "network_stack", name: "Network Stack", x: 300, y: 250 , details: "Standard network stack\nimplementation.  Optimizations\noften target specific\nprotocol.", class:"traditional-node" },
+          { id: "device_drivers", name: "Device Drivers", x: 100, y: 400, details: "Drivers for hardware\ndevices. Typically operate\nindependently.",class:"traditional-node" },
+            { id: "interrupt_handler", name: "Interrupt Handler", x: 300, y: 400, details: "Handles hardware interrupts.\nOften implemented with\npriority levels.", class:"traditional-node" },
+        ],
+        links: [
+          { source: "scheduler", target: "memory_manager", type: "strong" },
+          { source: "scheduler", target: "interrupt_handler", type: "medium" },
+          { source: "memory_manager", target: "filesystem", type:"medium" },
+          { source: "memory_manager", target: "network_stack", type: "medium" },
+          { source: "filesystem", target: "device_drivers",type:"weak" },
+          { source: "network_stack", target: "device_drivers", type:"weak" },
+          {source: "interrupt_handler", target: "device_drivers", type:"medium"},
+        ]
+      };
+
+        // Data for Q-Kernel
+      const qData = {
           nodes: [
-            { id: "q-scheduler", name: "Scheduler", x: 100, y: 100, details: "Advanced scheduling using Golden Ratio optimization and real-time data from the Swarm Oracle Network.\nDynamic prioritization of tasks based on global system state.  Agent-based workload balancing.", class: "q-node" },
-            { id: "q-memory_manager", name: "Memory Manager", x: 300, y: 100, details: "Incorporates QBA for optimal memory allocation, garbage collection, and protection.\nResponds to system-wide memory demands, coordinated via multi-agent negotiation.\nLeverages Swarm oracles for real-time memory pressure data.", class: "q-node" },
-            { id: "q-ipc", name: "IPC", x: 100, y: 250, details: "Inter-Process Communication (IPC) using quantum-inspired algorithms for fast, secure, and ultra-low latency.\nMulti-agent negotiation for optimized data transfer routes and priorities.\nEntanglement-inspired approach for synchronized communication across processes.", class: "q-node" },
-            { id: "q-security_module", name: "Security Module", x: 300, y: 250, details: "Employs quantum-resistant cryptography and distributed consensus mechanisms for enhanced security.\nKey distribution and threat detection using the Swarm Oracle Network.\nMulti-agent system monitors for anomalies and coordinates responses.", class: "q-node" },
-            { id: "q-interrupt_handler", name: "Interrupt Handler", x: 50, y: 400, details: "Quantum-prioritized interrupt handling, minimizing latency for critical operations.\nPredictive preemption based on system-wide analysis, informed by Swarm data.\nAdaptive response based on multi-agent consensus.", class: "q-node" },
-            { id: "q-device_drivers", name: "Device Drivers", x: 200, y: 400, details: "Device driver management optimized through a multi-agent system.\nReal-time adaptation to device states using Swarm Oracle data.\nCoordinated resource allocation via agent negotiation.", class: "q-node" },
-            { id: "q-network_stack",   name: "Network Stack",    x: 350, y: 400 , details: "Network stack leverages QBA for optimal packet routing. Multi-agent negotiation for network load balancing.", class:"q-node"},
-            {id: "q-filesystem", name:"File System", x: 500, y:250, details: "File system optimized by Swarm Network data on file access and access control.", class: "q-node"}
-         ],
+            { id: "scheduler", name: "Scheduler", x: 100, y: 100, details: "Manages task scheduling\nwith Golden Ratio\noptimization. Affects\nresponsiveness and\nthroughput, using QBA.", class:"q-node"},
+            { id: "memory_manager", name: "Memory Manager", x: 300, y: 100,  details: "Leverages quantum memory\nmanagement for faster,\nlarger address spaces,\npotentially using superposition\nfor memory allocation.",class:"q-node" },
+            { id: "ipc", name: "IPC", x: 100, y: 250, details: "Inter-Process Communication\nUses quantum entanglement\nfor ultra-fast, secure\nmessage passing.  Includes\nZero-Knowledge Proofs.",class:"q-node" },
+            { id: "security_module", name: "Security Module", x: 300, y: 250 , details: "Employs quantum-resistant\ncryptography and key\ndistribution.  Protects\nagainst attacks with quantum\nalgorithms. Uses ZKPs",class:"q-node" },
+            { id: "interrupt_handler", name: "Interrupt Handler", x: 100, y: 400, details: "Quantum-prioritized\ninterrupt handling.\nCan potentially predict\nand preempt interrupts\nusing quantum algorithms.",class:"q-node" },
+            { id: "swarm_oracle", name: "Swarm Oracle", x: 300, y: 400, details: "Connects to the Swarm Oracle\nNetwork for real-time data\nfeeds.  Enables the kernel\nto react to external events\nand optimize globally.",class:"q-node" },
+          ],
           links: [
-            { source: "q-scheduler", target: "q-memory_manager", type: "strong" },
-            { source: "q-scheduler", target: "q-ipc", type: "strong" },
-            { source: "q-scheduler", target: "q-interrupt_handler", type: "strong" },
-            { source: "q-memory_manager", target: "q-ipc", type: "medium" },
-             { source: "q-memory_manager", target: "q-security_module", type: "medium" },
-            { source: "q-memory_manager", target: "q-filesystem", type:"medium"},
-            { source: "q-ipc", target: "q-security_module", type: "medium" },
-            { source: "q-security_module", target: "q-device_drivers", type: "weak" },
-            { source: "q-security_module", target: "q-network_stack", type: "weak" },
-            { source: "q-interrupt_handler", target: "q-device_drivers", type: "medium" },
-             {source: "q-device_drivers", target: "q-network_stack", type:"medium"},
-             {source: "q-filesystem", target: "q-security_module", type:"weak"},
-             {source:"q-filesystem", target: "q-memory_manager", type: "medium"}
-          ]
-        };
+            { source: "scheduler", target: "memory_manager", type: "strong" },
+            { source: "scheduler", target: "ipc", type: "strong" },
+            { source: "scheduler", target: "interrupt_handler", type: "medium"},
+            { source: "memory_manager", target: "security_module", type:"strong" },
+            { source: "memory_manager", target: "swarm_oracle", type:"medium" },
+            { source: "ipc", target: "security_module", type: "strong" },
+            { source: "ipc", target: "interrupt_handler", type:"medium" },
+            { source: "security_module", target: "swarm_oracle", type: "weak" },
+            { source: "interrupt_handler", target: "swarm_oracle", type:"medium"},
+          ]};
 
+      function createLinks(data, linksGroup){
+            data.links.forEach(link => {
+             const sourceNode = data.nodes.find(n => n.id === link.source);
+             const targetNode = data.nodes.find(n => n.id === link.target);
 
-    // Get SVG elements (Corrected IDs)
-     const traditionalLinksGroup = document.getElementById("links-traditional");
-     const traditionalNodesGroup = document.getElementById("nodes-traditional");
-     const qLinksGroup = document.getElementById("links-qkernel"); // Corrected ID
-     const qNodesGroup = document.getElementById("nodes-qkernel"); // Corrected ID
+             if (!sourceNode || !targetNode) return;
 
-        // Function to create links (Generalized)
-        function createLinks(data, linksGroup) {
-          data.links.forEach(link => {
-            const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
-            const sourceNode = data.nodes.find(n => n.id === link.source);
-            const targetNode = data.nodes.find(n => n.id === link.target);
-
-            // Check if sourceNode and targetNode exist, handle missing
-            if (!sourceNode || !targetNode) {
-              console.warn(`Missing node for link: ${link.source} -> ${link.target}`);
-              return; // Skip this link
-            }
-            line.setAttribute("x1", sourceNode.x);
-            line.setAttribute("y1", sourceNode.y);
-            line.setAttribute("x2", targetNode.x);
-            line.setAttribute("y2", targetNode.y);
-            line.setAttribute("class", `link ${link.type}-link`);
-            line.dataset.source = link.source.replace(/^traditional-|^q-/, ''); // Store the source ID
-            line.dataset.target = link.target.replace(/^traditional-|^q-/, ''); // Store the target ID
-            linksGroup.appendChild(line);
-          });
-        }
-
-       // Function to create nodes (Generalized - for BOTH kernels)
-       function createNodes(data, nodesGroup) {
-          const isQKernel = nodesGroup.id.startsWith("nodes-q"); // Check if it's Q-Kernel nodes
-
-            data.nodes.forEach(node => {
-            const circle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
-            circle.setAttribute("cx", node.x);
-            circle.setAttribute("cy", node.y);
-            circle.setAttribute("r", 20);
-            circle.setAttribute("class", `node ${node.class}`); // Use class from data
-            circle.setAttribute("id", node.id); // Keep the ID as is (prefixed for traditional)
-            circle.addEventListener("click", () => highlightNode(node.id));
-            circle.addEventListener("mouseover", (event) => showTooltip(event, node, isQKernel));
-            circle.addEventListener("mouseout", () => hideTooltip(isQKernel));
-            nodesGroup.appendChild(circle);
-
-            const label = document.createElementNS("http://www.w3.org/2000/svg", "text");
-            label.setAttribute("class", isQKernel ? "label q-label" : "label traditional-label");
-            label.setAttribute("x", node.x);
-            label.setAttribute("y", isQKernel ? node.y - 25 : node.y + 25); // Position above if Q-Kernel
-            label.textContent = node.name;
-            nodesGroup.appendChild(label);
-          });
-        }
-
-
-
-        function highlightNode(nodeId) {
-              // Determine if it's a traditional or Q-Kernel node
-            const isQKernel = !nodeId.startsWith("traditional-");
-            const nodesGroup = isQKernel ? qNodesGroup : traditionalNodesGroup;
-            const linksGroup = isQKernel ? qLinksGroup : traditionalLinksGroup;
-
-            resetHighlight(); // First, reset any previous highlights
-
-             // Highlight the clicked node
-            const clickedNode = document.getElementById(nodeId); // Use the full ID
-
-            if (clickedNode) {
-                 clickedNode.classList.add("highlighted-node");
-            }
-           // Highlight links and connected nodes for Q-Kernel;
-           if (isQKernel){
-                const allLinks = Array.from(linksGroup.getElementsByClassName("link"));
-                allLinks.forEach(link => {
-                if (link.dataset.source === nodeId.replace(/^q-/, '') || link.dataset.target === nodeId.replace(/^q-/, '')) {
-                link.classList.add("highlighted-link");
-
-                    //highlight target
-                    const targetNode = document.getElementById("q-" + link.dataset.target);
-                    if(targetNode){
-                        targetNode.classList.add("highlighted-node")
-                    }
-
-                    //highlight source
-                    const sourceNode = document.getElementById("q-" + link.dataset.source);
-                    if(sourceNode){
-                        sourceNode.classList.add("highlighted-node");
-                    }
-
-                  }
-              });
-           }
-           //Highlight links and connected nodes for Traditional Kernel
-          else{
-               const allLinks = Array.from(linksGroup.getElementsByClassName("link"));
-                allLinks.forEach(link => {
-                if (link.dataset.source === nodeId.replace(/^traditional-/, '') || link.dataset.target === nodeId.replace(/^traditional-/, '')) {
-
-                link.classList.add("highlighted-link");
-                    //highlight target
-                    const targetNode = document.getElementById("traditional-" + link.dataset.target);
-                    if(targetNode){
-                        targetNode.classList.add("highlighted-node")
-                    }
-
-                    //highlight source
-                    const sourceNode = document.getElementById("traditional-" + link.dataset.source);
-                    if(sourceNode){
-                        sourceNode.classList.add("highlighted-node");
-                    }
-
-                  }
-              });
-           }
-
-        }
-
-      function resetHighlight() {
-            // Reset traditional nodes and links
-          const traditionalNodes = Array.from(traditionalNodesGroup.getElementsByClassName("node"));
-          traditionalNodes.forEach(node => node.classList.remove("highlighted-node"));
-
-          const traditionalLinks = Array.from(traditionalLinksGroup.getElementsByClassName("link"));
-          traditionalLinks.forEach(link => link.classList.remove("highlighted-link"));
-
-          // Reset Q-Kernel nodes and links
-          const qNodes = Array.from(qNodesGroup.getElementsByClassName("node"));
-          qNodes.forEach(node => node.classList.remove("highlighted-node"));
-
-          const qLinks = Array.from(qLinksGroup.getElementsByClassName("link"));
-          qLinks.forEach(link => link.classList.remove("highlighted-link"));
+             const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
+             line.setAttribute("x1", sourceNode.x);
+             line.setAttribute("y1", sourceNode.y);
+             line.setAttribute("x2", targetNode.x);
+             line.setAttribute("y2", targetNode.y);
+             line.classList.add("link");
+            line.classList.add(`${link.type}-link`); //Important for styling and animations
+             line.dataset.source = link.source; // Store for highlighting
+             line.dataset.target = link.target;
+             linksGroup.appendChild(line);
+            });
       }
+    function createNodes(data, nodesGroup) {
+          data.nodes.forEach(node => {
+              const circle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+              circle.setAttribute("cx", node.x);
+              circle.setAttribute("cy", node.y);
+              circle.setAttribute("r", 20);
+              circle.classList.add("node");
+              if(data == traditionalData){
+                  circle.classList.add("traditional-node");
+              } else{
+                  circle.classList.add("q-node")
+              }
+
+              circle.setAttribute("id", (data === traditionalData ? "traditional-" : "qkernel-") + node.id);  // Add prefix
 
 
-       function showTooltip(event, node, isQKernel) {
-            const tooltipText = isQKernel ? document.getElementById("tooltip-text-qkernel") : document.getElementById("tooltip-text-traditional");
-            const tooltipBg = isQKernel ? document.getElementById("tooltip-bg-qkernel") : document.getElementById("tooltip-bg-traditional");
+              circle.addEventListener("click", () => highlightNode((data == traditionalData ? "traditional-" : "qkernel-") + node.id));
+              circle.addEventListener("mouseover", (event) => showTooltip(event, node, data === qData));
+              circle.addEventListener("mouseout", () => hideTooltip(data === qData));
+
+              nodesGroup.appendChild(circle);
 
 
-            tooltipText.textContent = `${node.name}: ${node.details}`;
+              const label = document.createElementNS("http://www.w3.org/2000/svg", "text");
+              label.setAttribute("x", node.x);
+            label.setAttribute("y", data === qData ? node.y - 25 : node.y + 25);
+              label.textContent = node.name;
+              label.classList.add("label"); // Add common label class
+             if (data === qData) {
+                label.classList.add("q-label"); // Add q-label for styling
+            } else{
+                label.classList.add("traditional-label")
+            }
+              nodesGroup.appendChild(label);
+          });
+    }
+    function highlightNode(nodeId) {
 
-            const textWidth = tooltipText.getComputedTextLength(); // Get *actual* text width, crucial for correct sizing.  This method works even with hidden temporary element.
+            // Determine if it's a traditional or Q-Kernel node
+        const isTraditional = nodeId.startsWith("traditional-");
+        const prefix = isTraditional ? "traditional-" : "qkernel-";
+        const baseId = nodeId.replace(/^traditional-|^qkernel-/, '');  // Remove prefix
 
-            tooltipBg.setAttribute("width", textWidth + 20);
-            tooltipBg.setAttribute("height", 60); // Adjust as necessary
+        // Reset all nodes and links on both sides
+        resetHighlight();
+
+         // Highlight node on correct side
+        const clickedNode = document.getElementById(nodeId);
+        if (!clickedNode) return;
+        clickedNode.classList.add("highlighted-node");
 
 
-            tooltipText.setAttribute("visibility", "visible");
-            tooltipBg.setAttribute("visibility", "visible");
+            // Select correct link group (traditional or queue links)
+            const relevantLinksGroup = isTraditional ? traditionalLinksGroup : qLinksGroup;
 
-            // Position the tooltip.  Adjust as needed for your layout.
-          const x = event.clientX + 15; // Offset from cursor.
-          const y = event.clientY + 15;
-          tooltipBg.setAttribute("x", x);
-          tooltipBg.setAttribute("y", y);
-          tooltipText.setAttribute("x", x+10);
-          tooltipText.setAttribute("y", y + 15);
-        }
+         // Highlight connected links on the *SAME* side
+        const allLinks = Array.from(relevantLinksGroup.getElementsByClassName("link"));
+        allLinks.forEach(link => {
+             //check links on correct side
+            if (link.dataset.source === baseId || link.dataset.target === baseId) {
+                link.classList.add("highlighted-link");
 
-        function hideTooltip(isQKernel) {
+                if(link.dataset.source === baseId){ //highlight targets
+                    const targetNode = document.getElementById(prefix + link.dataset.target)
+                    if(targetNode){
+                        targetNode.classList.add("highlighted-node")
+                    }
+
+                    //highlight source
+                    const sourceNode = document.getElementById(prefix + link.dataset.source);
+                    if(sourceNode){
+                        sourceNode.classList.add("highlighted-node");
+                    }
+
+                  }
+              });
+
+      }
+    function resetHighlight() {
+          // Reset traditional nodes and links
+        const traditionalNodes = Array.from(traditionalNodesGroup.getElementsByClassName("node"));
+        traditionalNodes.forEach(node => node.classList.remove("highlighted-node"));
+
+        const traditionalLinks = Array.from(traditionalLinksGroup.getElementsByClassName("link"));
+        traditionalLinks.forEach(link => link.classList.remove("highlighted-link"));
+
+        // Reset Q-Kernel nodes and links
+        const qNodes = Array.from(qNodesGroup.getElementsByClassName("node"));
+        qNodes.forEach(node => node.classList.remove("highlighted-node"));
+
+        const qLinks = Array.from(qLinksGroup.getElementsByClassName("link"));
+        qLinks.forEach(link => link.classList.remove("highlighted-link"));
+    }
+
+
+     function showTooltip(event, node, isQKernel) {
           const tooltipText = isQKernel ? document.getElementById("tooltip-text-qkernel") : document.getElementById("tooltip-text-traditional");
           const tooltipBg = isQKernel ? document.getElementById("tooltip-bg-qkernel") : document.getElementById("tooltip-bg-traditional");
-          tooltipText.setAttribute("visibility", "hidden");
-          tooltipBg.setAttribute("visibility", "hidden");
-       }
+
+
+          tooltipText.textContent = `${node.name}: ${node.details}`;
+
+          const textWidth = tooltipText.getComputedTextLength(); // Get *actual* text width, crucial for correct sizing.  This method works even with hidden temporary element.
+
+          tooltipBg.setAttribute("width", textWidth + 20);
+          tooltipBg.setAttribute("height", 60); // Adjust as necessary
+
+
+          tooltipText.setAttribute("visibility", "visible");
+          tooltipBg.setAttribute("visibility", "visible");
+
+          // Position the tooltip.  Adjust as needed for your layout.
+        const x = event.clientX + 15; // Offset from cursor.
+        const y = event.clientY + 15;
+        tooltipBg.setAttribute("x", x);
+        tooltipBg.setAttribute("y", y);
+        tooltipText.setAttribute("x", x+10);
+        tooltipText.setAttribute("y", y + 15);
+      }
+
+      function hideTooltip(isQKernel) {
+        const tooltipText = isQKernel ? document.getElementById("tooltip-text-qkernel") : document.getElementById("tooltip-text-traditional");
+        const tooltipBg = isQKernel ? document.getElementById("tooltip-bg-qkernel") : document.getElementById("tooltip-bg-traditional");
+        tooltipText.setAttribute("visibility", "hidden");
+        tooltipBg.setAttribute("visibility", "hidden");
+     }
 
 
     // Initialize
