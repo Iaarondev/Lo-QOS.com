@@ -185,7 +185,7 @@ class OracleAgent:
 
 #### **3. Entanglement Mapper**
 
-![Entanglement Map](docs/entanglement_map.png)
+![Entanglement Map](https://lo-qos.com/docs/QkernelX/kernelmap.svg)
 *Visualization of kernel subsystem dependencies*
 
 #### **4. Qubit-to-Bit Assembly (QBA) and ZKP Layer**
