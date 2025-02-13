@@ -180,148 +180,265 @@
 
                 </g>
 
-            <!-- Separator Line -->
-            <line x1="600" y1="50" x2="600" y2="700" stroke="#ccc" stroke-width="2" stroke-dasharray="5,5" />
+           <!-- Separator line -->
+            <line x1="600" y1="0" x2="600" y2="750" style="stroke:lightgray;stroke-width:2; stroke-dasharray: 5,5" />
 
-            <!-- Traditional Kernel -->
-            <g id="traditional" transform="translate(50, 100)">
-               <text x="250" y="-40" font-family="sans-serif"  font-size="18" text-anchor="middle"  font-weight="bold"  >Traditional Kernel</text>
-               <g id="traditional-links"></g> <!--Links Added first-->
-                <g id="traditional-nodes"></g><!--nodes go over links-->
-
-
+            <!-- Titles for each section -->
+            <text x="300" y="30" text-anchor="middle" font-weight="bold" font-size="18">Traditional Kernel</text>
+            <text x="900" y="30" text-anchor="middle" font-weight="bold" font-size="18">Q-Kernel</text>
+           <!-- Traditional Kernel Section -->
+            <g id="traditional-kernel">
+                <g id="traditional-nodes"></g>
+                <g id="traditional-links"></g>
             </g>
 
-            <!-- Q-Kernel -->
-            <g id="q-kernel" transform="translate(650, 100)">
-                <text x="250" y="-40" font-family="sans-serif" font-size="18" text-anchor="middle" font-weight="bold">Q-Kernel</text>
-                <g id="q-links"></g>
-                <g id="q-nodes"></g>
+           <!-- Q-Kernel Section -->
+            <g id="q-kernel" transform="translate(600, 0)">
+              <g id="q-nodes"></g>
+              <g id="q-links"></g>
             </g>
 
-             <script type="text/ecmascript"><![CDATA[
+        </svg>
+    </div>
 
-                // Data for Traditional Kernel
-                const traditionalData = [
-                  { id: "scheduler", label: "Scheduler", x: 100, y: 50 , details: "Scheduler:\nManages process execution order." , class: "traditional-node", labelClass: "traditional-label" },
-                  { id: "memory_manager", label: "Memory Manager", x: 400, y: 50,  details: "Memory Manager:\nHandles RAM allocation/deallocation.",class: "traditional-node", labelClass: "traditional-label" },
-                  { id: "file_system", label: "File System", x: 100, y: 250 , details: "File  System:\nOrganizes data on storage devices." ,class: "traditional-node", labelClass: "traditional-label"},
-                  { id: "network_stack", label: "Network Stack", x: 400, y: 250 , details: "Network Stack:\nManages network communication.", class: "traditional-node", labelClass: "traditional-label"},
-                  { id: "device_drivers", label: "Device Drivers", x: 250, y: 450 , details: "Device  Drivers:\nControl hardware devices.",class: "traditional-node", labelClass: "traditional-label" },
-                ];
+      <div id="description">
+        <p>
+          This interactive diagram compares the subsystem dependencies of a traditional kernel with a hypothetical
+          "Q-Kernel" that leverages quantum computing principles.
+        </p>
+        <p>
+            <strong>Traditional Kernel:</strong> Represents a standard monolithic or microkernel architecture.  Nodes
+            represent subsystems, and lines indicate dependencies.
+        </p>
+        <p>
+          <strong>Q-Kernel:</strong> Explores how quantum phenomena like superposition and entanglement could *potentially*
+          be used to manage kernel operations.  This is a conceptual model, as a fully functional quantum kernel
+          is currently theoretical.
+        </p>
+        <ul>
+          <li><strong>Click</strong> on a node to highlight its immediate dependencies.</li>
+          <li><strong>Hover</strong> over a node to see a brief description of its functionality.</li>
+            <li> The thickness and style of the connecting lines represent the strength of the dependency (Strong, Medium, Weak).</li>
+        </ul>
+          <p><strong>Conceptual Differences Represented:</strong></p>
+          <ul>
+              <li><strong>Scheduler (Q-Kernel):</strong> Could use quantum algorithms for optimized task scheduling.</li>
+              <li><strong>Memory Manager (Q-Kernel):</strong>  Might leverage quantum memory for faster, larger address spaces.</li>
+              <li><strong>IPC - Inter-Process Communication (Q-Kernel):</strong> Explores using quantum entanglement for secure, ultra-fast communication.</li>
+              <li><strong>Security Module (Q-Kernel):</strong> Quantum-resistant cryptography and key distribution.</li>
+              <li><strong>Interrupt Handler (Q-Kernel):</strong> Quantum-prioritized interrupt handling.</li>
 
-                // Data for Q-Kernel (Entanglement Map)
-                const qData = [
-                  { id: "scheduler", label: "Scheduler", x: 100, y: 50, details: "Scheduler:\nOptimized with Golden Ratio.", class:"q-node", labelClass: "q-label"},
-                  { id: "memory_manager", label: "Memory Manager", x: 400, y: 50, details: "Memory  Manager:\nUses entanglement-aware allocation.", class:"q-node", labelClass: "q-label"},
-                  { id: "file_system", label: "File System", x: 400, y: 250, details: "File System:\nLeverages quantum indexing.", class:"q-node", labelClass: "q-label"},
-                  { id: "network_stack", label: "Network Stack", x: 100, y: 250 , details: "Network Stack:\nEntangled packet routing.", class:"q-node", labelClass: "q-label"},
-                  { id: "device_drivers", label: "Device Drivers", x: 250, y: 250,  details: "Device Drivers:\nQubit-mapped I/O.", class:"q-node", labelClass: "q-label" },
-                  { id: "ipc", label: "IPC", x: 250, y: 450,  details: "IPC:\nSwarm-optimized message passing.", class:"q-node", labelClass: "q-label" },
-                  { id: "security_module", label: "Security Module", x: 400, y:450,  details: "Security Module:\nZKP-enhanced access control.",class:"q-node", labelClass: "q-label"},
-                  { id: "interrupt_handler", label: "Interrupt Handler", x: 250, y: 60, details: "Interrupt Handler: Prioritized via entangled states",class:"q-node", labelClass: "q-label" }
-            ];
-             // Define link types for Q-Kernel
-            const qLinksData = [
-              { source: "scheduler", target: "memory_manager", type: "strong" },
-              { source: "scheduler", target: "network_stack", type: "medium" },
-              { source: "scheduler", target: "device_drivers", type: "weak"  },
-              { source: "memory_manager", target: "file_system", type: "strong" },
-              { source: "memory_manager", target: "device_drivers", type: "medium" },
-              { source: "file_system", target: "ipc", type: "medium" },
-              { source: "network_stack", target: "device_drivers", type: "strong" },
-              { source: "network_stack", target: "ipc", type: "medium" },
-              { source: "device_drivers", target: "ipc", type: "strong" },
-              { source: "device_drivers", target: "interrupt_handler", type: "medium"},
-              { source: "ipc", target: "security_module", type: "strong" },
-              { source: "interrupt_handler", target: "memory_manager", type: "medium" },
-              { source: "interrupt_handler", target: "file_system", type: "weak"},
+          </ul>
+          <p><i>Disclaimer: This Q-Kernel representation is highly speculative and for illustrative purposes. The feasibility of many of these quantum-enhanced features is an open research question.</i></p>
+
+    </div>
+
+    <script>
+        // Data for Traditional Kernel.  Place nodes relative to *its* section.
+        const traditionalData = [
+            { id: "scheduler", label: "Scheduler", x: 150, y: 100 , details: "Manages task scheduling and execution." , class: "node traditional-node", labelClass: "label traditional-label"},
+            { id: "memory_manager", label: "Memory Manager", x: 380, y: 180, details: "Handles memory allocation and deallocation." , class: "node traditional-node", labelClass: "label traditional-label"},
+            { id: "file_system", label: "File System", x: 150, y: 320 , details: "Manages file storage and access.", class: "node traditional-node", labelClass: "label traditional-label"},
+            { id: "network_stack", label: "Network Stack", x: 450, y: 340, details: "Handles network communication.", class: "node traditional-node", labelClass: "label traditional-label"},
+            { id: "device_drivers", label: "Device Drivers",x: 300, y: 480, details: "Interfaces with hardware devices." , class: "node traditional-node", labelClass: "label traditional-label"},
+
+        ];
+
+        // Data for Q-Kernel. Place nodes relative to *its* section (remember the translate(600, 0) ).
+        const qData = [
+          { id: "scheduler", label: "Scheduler", x: 150, y: 150,   details: "Scheduler:\nQuantum-enhanced task prioritization.", class: "q-node", labelClass: "q-label" },  // Added details for Q-Kernel
+              { id: "memory_manager", label: "Memory Manager", x: 450, y: 150,  details: "Memory Manager:\nPotential for quantum memory addressing.",class: "q-node", labelClass: "q-label"},
+              { id: "file_system", label: "File System",  x: 450, y: 400, details: "File System:\nQuantum-accelerated data access.",class: "q-node", labelClass: "q-label"},
+              { id: "network_stack", label: "Network Stack", x: 50, y: 400, details: "Network Stack:\nQuantum-secured communication channels.",class: "q-node", labelClass: "q-label"},
+              { id: "device_drivers", label: "Device Drivers", x: 250, y: 300, details: "Device Drivers:\nQuantum-optimized I/O operations" ,class: "q-node", labelClass: "q-label"},
+              { id: "ipc", label: "IPC", x: 150, y:600,  details: "IPC: Quantum entanglement for interprocess communication.",class: "q-node", labelClass: "q-label" },
+              { id: "security_module", label: "Security Module", x: 400, y:450,  details: "Security Module:\nZKP-enhanced access control.",class:"q-node", labelClass: "q-label"},
+              { id: "interrupt_handler", label: "Interrupt Handler", x: 250, y: 60, details: "Interrupt Handler: Prioritized via entangled states",class:"q-node", labelClass: "q-label" }
+        ];
+         // Define link types for Q-Kernel
+        const qLinksData = [
+          { source: "scheduler", target: "memory_manager", type: "strong" },
+          { source: "scheduler", target: "network_stack", type: "medium" },
+          { source: "scheduler", target: "device_drivers", type: "weak"  },
+          { source: "memory_manager", target: "file_system", type: "strong" },
+          { source: "memory_manager", target: "device_drivers", type: "medium" },
+          { source: "file_system", target: "ipc", type: "medium" },
+          { source: "network_stack", target: "device_drivers", type: "strong" },
+          { source: "network_stack", target: "ipc", type: "medium" },
+          { source: "device_drivers", target: "ipc", type: "strong" },
+          { source: "device_drivers", target: "interrupt_handler", type: "medium"},
+          { source: "ipc", target: "security_module", type: "strong" },
+          { source: "interrupt_handler", target: "memory_manager", type: "medium" },
+          { source: "interrupt_handler", target: "file_system", type: "weak"},
 
 
-            ];
+        ];
 
-                //links for the traditionalData
-            const traditionalLinksData = [
-                {source: "scheduler", target: "memory_manager"},
-                {source: "memory_manager", target: "file_system"},
-                {source: "file_system", target: "device_drivers"},
-                {source: "network_stack", target: "memory_manager"},
-                {source: "network_stack", target: "device_drivers"},
+            //links for the traditionalData
+        const traditionalLinksData = [
+            {source: "scheduler", target: "memory_manager"},
+            {source: "memory_manager", target: "file_system"},
+            {source: "file_system", target: "device_drivers"},
+            {source: "network_stack", target: "memory_manager"},
+            {source: "network_stack", target: "device_drivers"},
 
-            ];
+        ];
 
-                // Get groups from the SVG
-                const traditionalNodesGroup = document.getElementById("traditional-nodes");
-                const traditionalLinksGroup = document.getElementById("traditional-links");
-                const qNodesGroup = document.getElementById("q-kernel").getElementById("q-nodes");  // Corrected qNodesGroup selection
-                const qLinksGroup = document.getElementById("q-kernel").getElementById("q-links");     // Corrected qLinksGroup selection
-                const tooltipBg = document.getElementById("tooltip-bg");
-                const tooltipText = document.getElementById("tooltip-text");
+            // Get groups from the SVG
+            const traditionalNodesGroup = document.getElementById("traditional-nodes");
+            const traditionalLinksGroup = document.getElementById("traditional-links");
+            const qNodesGroup = document.getElementById("q-kernel").getElementById("q-nodes");  // Corrected qNodesGroup selection
+            const qLinksGroup = document.getElementById("q-kernel").getElementById("q-links");     // Corrected qLinksGroup selection
+            const tooltipBg = document.getElementById("tooltip-bg");
+            const tooltipText = document.getElementById("tooltip-text");
 
-                // Function to create nodes
-            function createNodes(data, group) {
-                data.forEach(nodeData => {
-                  const node = document.createElementNS("http://www.w3.org/2000/svg", "circle");
-                  node.setAttribute("id", nodeData.id); // Use the node's ID
-                  node.setAttribute("cx", nodeData.x);
-                  node.setAttribute("cy", nodeData.y);
-                  node.setAttribute("r", 20);
-                  node.setAttribute("class", nodeData.class);
+            // Function to create nodes
+        function createNodes(data, group) {
+            data.forEach(nodeData => {
+              const node = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+              node.setAttribute("id", nodeData.id); // Use the node's ID
+              node.setAttribute("cx", nodeData.x);
+              node.setAttribute("cy", nodeData.y);
+              node.setAttribute("r", 20);
+              node.setAttribute("class", nodeData.class);
 
-                    node.addEventListener("click", function() {
-                     highlightLinks(this.id , "traditional" , traditionalLinksData );
-                     highlightLinks(this.id , "q-kernel" , qLinksData);
-                    });
-
-                  node.addEventListener("mouseover", (event) => showTooltip(event, nodeData));
-                  node.addEventListener("mouseout", hideTooltip);
-                  group.appendChild(node);
-
-                  const label = document.createElementNS("http://www.w3.org/2000/svg", "text");
-                  label.setAttribute("x", nodeData.x);
-                  label.setAttribute("y", nodeData.y + (nodeData.labelClass === "q-label" ? -25 : 25)); // Conditional positioning
-                  label.textContent = nodeData.label;
-                  label.setAttribute("class", nodeData.labelClass);
-                  group.appendChild(label);
+                node.addEventListener("click", function() {
+                 highlightLinks(this.id , "traditional" , traditionalLinksData );
+                 highlightLinks(this.id , "q-kernel" , qLinksData);
                 });
-              }
-              // Function to create links
-              function createLinks(data, group) {
-                 const links = (group.id === "q-links") ?  qLinksData : traditionalLinksData;
 
-                  links.forEach(linkData => {
-                    const source = data.find(n => n.id === linkData.source);
-                    const target = data.find(n => n.id === linkData.target);
+              node.addEventListener("mouseover", (event) => showTooltip(event, nodeData));
+              node.addEventListener("mouseout", hideTooltip);
+              group.appendChild(node);
 
-                    if (source && target) {
-                      const link = document.createElementNS("http://www.w3.org/2000/svg", "line");
-                      link.setAttribute("x1", source.x);
-                      link.setAttribute("y1", source.y);
-                      link.setAttribute("x2", target.x);
-                      link.setAttribute("y2", target.y);
-                      link.setAttribute("class", "link"); //base style
-                      link.dataset.source = linkData.source;
-                      link.dataset.target = linkData.target;
+              const label = document.createElementNS("http://www.w3.org/2000/svg", "text");
+              label.setAttribute("x", nodeData.x);
+              label.setAttribute("y", nodeData.y + (nodeData.labelClass === "q-label" ? -25 : 25)); // Conditional positioning
+              label.textContent = nodeData.label;
+              label.setAttribute("class", nodeData.labelClass);
+              group.appendChild(label);
+            });
+          }
+          // Function to create links
+          function createLinks(data, group) {
+             const links = (group.id === "q-links") ?  qLinksData : traditionalLinksData;
 
-                      // Check and apply specific link type from qLinksData
-                      if (group.id === "q-links") {
-                        const qLink = qLinksData.find(l => l.source === linkData.source && l.target === linkData.target);
-                        if (qLink && qLink.type) {
-                          link.classList.add(`${qLink.type}-link`);
-                        }
-                      }
-                      group.appendChild(link);
+              links.forEach(linkData => {
+                const source = data.find(n => n.id === linkData.source);
+                const target = data.find(n => n.id === linkData.target);
+
+                if (source && target) {
+                  const link = document.createElementNS("http://www.w3.org/2000/svg", "line");
+                  link.setAttribute("x1", source.x);
+                  link.setAttribute("y1", source.y);
+                  link.setAttribute("x2", target.x);
+                  link.setAttribute("y2", target.y);
+                  link.setAttribute("class", "link"); //base style
+                  link.dataset.source = linkData.source;
+                  link.dataset.target = linkData.target;
+
+                  // Check and apply specific link type from qLinksData
+                  if (group.id === "q-links") {
+                    const qLink = qLinksData.find(l => l.source === linkData.source && l.target === linkData.target);
+                    if (qLink && qLink.type) {
+                      link.classList.add(`${qLink.type}-link`);
                     }
-
-                  });
+                  }
+                  group.appendChild(link);
                 }
 
+              });
+            }
 
-               // Highlight links
-            function highlightLinks(baseId, prefix , linksData ) {
-                resetHighlight(); //clear previous highlight
-                const links = (prefix ==="q-kernel") ? qLinksGroup.getElementsByClassName("link") : traditionalLinksGroup.getElementsByClassName("link");
-                //highlight all links either out going  or incoming
-                Array.from(links).forEach(link => {
-                    //check and highlight the matching entries, only highlight current section.
-                    if (link.dataset.s
+
+           // Highlight links
+        function highlightLinks(baseId, prefix , linksData ) {
+            resetHighlight(); //clear previous highlight
+            const links = (prefix ==="q-kernel") ? qLinksGroup.getElementsByClassName("link") : traditionalLinksGroup.getElementsByClassName("link");
+            //highlight all links either out going  or incoming
+            Array.from(links).forEach(link => {
+                //check and highlight the matching entries, only highlight current section.
+                if (link.dataset.source === baseId || link.dataset.target === baseId) {
+                    link.classList.add("highlighted-link");
+                    //highlight the nodes based on links.
+                    const sourceNode = document.getElementById(prefix === "q-kernel" ? link.dataset.source :  link.dataset.source );
+                    const targetNode = document.getElementById(prefix === "q-kernel" ? link.dataset.target : link.dataset.target);
+
+                    if (sourceNode) {
+                       sourceNode.classList.add("highlighted-node");
+                    }
+                    if (targetNode) {
+                        targetNode.classList.add("highlighted-node");
+                    }
+                }
+            });
+        }
+
+
+
+           //reset the highlight
+       function resetHighlight() {
+
+           const alltraditionalNodes = Array.from(traditionalNodesGroup.getElementsByClassName("node"));
+            alltraditionalNodes.forEach(node => node.classList.remove("highlighted-node"));
+
+            const allTraditionalLinks = Array.from(traditionalLinksGroup.getElementsByClassName("link"));
+            allTraditionalLinks.forEach(link => link.classList.remove("highlighted-link"));
+
+            const allqNodes = Array.from(qNodesGroup.getElementsByClassName("node"));
+              allqNodes.forEach(node => node.classList.remove("highlighted-node"));
+
+
+            const allqLinks = Array.from(qLinksGroup.getElementsByClassName("link"));
+            allqLinks.forEach(link => link.classList.remove("highlighted-link"));
+
+
+       }
+
+            // Tooltip functions
+        function showTooltip(event, nodeData) {
+            tooltipText.textContent = nodeData.details;
+              // Calculate the width of the text, add padding for nice look
+
+            const textWidth = tooltipText.getComputedTextLength();
+
+            tooltipBg.setAttribute("width", textWidth + 20);
+
+            tooltipText.setAttribute("visibility", "visible");
+            tooltipBg.setAttribute("visibility", "visible");
+
+            // Position the tooltip.  Adjust as needed for your layout.
+          const x = event.clientX + 15; // Offset from cursor.
+          const y = event.clientY + 15;
+          tooltipBg.setAttribute("x", x);
+          tooltipBg.setAttribute("y", y);
+          tooltipText.setAttribute("x", x+10);
+          tooltipText.setAttribute("y", y + 15);
+        }
+
+        function hideTooltip() {
+            tooltipText.setAttribute("visibility", "hidden");
+            tooltipBg.setAttribute("visibility", "hidden");
+        }
+
+
+
+
+        // Initialize: Create nodes and links for both kernels
+        createNodes(traditionalData, traditionalNodesGroup);
+        createLinks(traditionalData, traditionalLinksGroup);
+        createNodes(qData, qNodesGroup);
+        createLinks(qData, qLinksGroup); // qData is also fine here
+        //add the global click
+
+        document.addEventListener("click", (event) => {
+            // Check if NOT click to node or path, then reset
+            if (!event.target.closest('.node') && !event.target.closest('.link') ) {
+              resetHighlight();
+            }
+        });
+
+
+    </script>
+</body>
+</html>
